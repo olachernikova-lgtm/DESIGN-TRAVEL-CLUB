@@ -1,41 +1,69 @@
-function doPost(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  const data = JSON.parse(e.postData.contents);
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Регистрация</title>
+</head>
 
-  const values = sheet.getDataRange().getValues();
+<body style="font-family:Arial;text-align:center;padding:40px;background:#0f172a;color:white">
 
-  // проверка дубля по телефону
-  for (let i = 1; i < values.length; i++) {
-    if (values[i][3] === data.phone) {
-      return ContentService.createTextOutput(JSON.stringify({
-        status: "duplicate"
-      }));
-    }
+<div class="card">
+
+<h2>Форма регистрации для участия в розыгрыше</h2>
+
+<input id="name" placeholder="Имя"><br><br>
+<input id="surname" placeholder="Фамилия"><br><br>
+<input id="phone" placeholder="Телефон"><br><br>
+<input id="email" placeholder="Email"><br><br>
+
+<select id="club">
+  <option>Да</option>
+  <option>Безусловно</option>
+  <option>Несомненно</option>
+  <option>В следующий раз</option>
+</select>
+
+<br><br>
+
+<button onclick="send()">Зарегистрироваться</button>
+
+<p id="msg"></p>
+
+</div>
+
+<script>
+const API_URL = "ВСТАВЬ_СЮДА_ССЫЛКУ_ИЗ_APPS_SCRIPT";
+
+async function send(){
+
+  const data = {
+    name: name.value,
+    surname: surname.value,
+    phone: phone.value,
+    email: email.value,
+    club: club.value
+  };
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(data)
+  });
+
+  const result = await res.json();
+
+  if(result.status === "duplicate"){
+    msg.innerText = "Вы уже зарегистрированы";
+    return;
   }
 
-  const currentCount = values.length; // включая заголовок
-
-  const nextNumber = currentCount; // 1..100
-  if (nextNumber > 100) {
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "full"
-    }));
+  if(result.status === "full"){
+    msg.innerText = "Мест нет (100/100)";
+    return;
   }
 
-  const formattedNumber = String(nextNumber).padStart(3, "0");
-
-  sheet.appendRow([
-    new Date(),
-    data.name,
-    data.surname,
-    data.phone,
-    data.email,
-    data.club,
-    formattedNumber
-  ]);
-
-  return ContentService.createTextOutput(JSON.stringify({
-    status: "ok",
-    number: formattedNumber
-  }));
+  msg.innerText = "Ваш номер: " + result.number;
 }
+</script>
+
+</body>
+</html>
