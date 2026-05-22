@@ -38,13 +38,15 @@ h1{
 label{
   font-size:13px;
   opacity:0.9;
+  display:block;
+  margin-top:10px;
 }
 
 input, select{
   width:100%;
   padding:14px;
   margin-top:6px;
-  margin-bottom:12px;
+  margin-bottom:10px;
   border-radius:10px;
   border:none;
   outline:none;
@@ -72,20 +74,20 @@ button{
   font-weight:bold;
   font-size:16px;
   cursor:pointer;
+  margin-top:10px;
 }
 
 button:disabled{
   opacity:0.6;
-  cursor:not-allowed;
 }
 
 #msg{
   text-align:center;
-  margin-top:14px;
+  margin-top:12px;
   font-size:14px;
 }
 
-/* билет */
+/* TICKET */
 .ticket{
   text-align:center;
 }
@@ -97,13 +99,26 @@ button:disabled{
   background: rgba(255,255,255,0.12);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.2);
+  position:relative;
+  overflow:hidden;
 }
 
 .number{
-  font-size:48px;
+  font-size:52px;
   font-weight:bold;
   letter-spacing:6px;
   margin:10px 0;
+  color:#a7f3d0;
+}
+
+.turtle{
+  position:absolute;
+  font-size:140px;
+  opacity:0.08;
+  top:10px;
+  right:-10px;
+  transform:rotate(-15deg);
+  pointer-events:none;
 }
 </style>
 </head>
@@ -115,18 +130,21 @@ button:disabled{
 <h1>Форма регистрации для участия в розыгрыше</h1>
 
 <label>Имя *</label>
-<input id="name" placeholder="Введите имя">
+<input id="name">
 
 <label>Фамилия *</label>
-<input id="surname" placeholder="Введите фамилию">
+<input id="surname">
 
 <label>Телефон *</label>
-<input id="phone" placeholder="Введите телефон">
+<input id="phone">
 
 <label>Email</label>
-<input id="email" placeholder="Введите email">
+<input id="email">
 
-<label>Хотите присоединиться к закрытому клубу путешественников?</label>
+<label>
+Хотите присоединиться к закрытому клубу путешественников и первыми узнавать о роскошных направлениях, уникальных маршрутах и эксклюзивных предложениях?
+</label>
+
 <select id="club">
   <option>Да</option>
   <option>Безусловно</option>
@@ -134,23 +152,26 @@ button:disabled{
   <option>В следующий раз</option>
 </select>
 
-<button onclick="send()" id="btn">Зарегистрироваться</button>
+<button id="btn" onclick="send()">Зарегистрироваться</button>
 
 <p id="msg"></p>
 
 </div>
 
 <script>
+
 const API_URL = "https://script.google.com/macros/s/AKfycby1wgwq3Ii6LZkHbv8O6tI97O-PBr2ci4ik9VsTtFc0RajqOm_NfiR-ajmp6vXGAgw_9g/exec";
 
 function showTicket(number, name, surname, phone, club){
   document.getElementById("card").innerHTML = `
     <div class="ticket">
 
-      <h2>🎟 Ваш билет участника</h2>
+      <h2>🎟 Travel Pass</h2>
       <p>Design Travel Club</p>
 
       <div class="ticket-box">
+
+        <div class="turtle">🐢</div>
 
         <div class="number">${number}</div>
 
@@ -158,10 +179,19 @@ function showTicket(number, name, surname, phone, club){
         <p>${phone}</p>
         <p>${club}</p>
 
+        <div style="
+          margin-top:15px;
+          font-size:12px;
+          opacity:0.6;
+          letter-spacing:1px;
+        ">
+          SLOW TRAVEL • LUXURY JOURNEYS • PRIVATE CLUB
+        </div>
+
       </div>
 
       <p style="margin-top:15px;opacity:0.7">
-        Сохраните ваш номер
+        Ваш номер участника сохранён
       </p>
 
     </div>
@@ -214,11 +244,12 @@ async function send(){
     showTicket(result.number, data.name, data.surname, data.phone, data.club);
 
   } catch(e){
-    msg.innerText = "Ошибка соединения с сервером";
+    msg.innerText = "Ошибка сервера";
     btn.disabled = false;
     btn.innerText = "Зарегистрироваться";
   }
 }
+
 </script>
 
 </body>
