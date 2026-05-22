@@ -2,23 +2,55 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Регистрация</title>
+<title>Design Travel Club</title>
 </head>
-<body style="font-family:Arial;text-align:center;padding:50px">
+<body style="font-family:Arial;text-align:center;padding:40px">
 
-<h2>Регистрация на розыгрыш</h2>
+<h2>Регистрация в клуб</h2>
 
 <input id="name" placeholder="Имя"><br><br>
+<input id="surname" placeholder="Фамилия"><br><br>
 <input id="phone" placeholder="Телефон"><br><br>
+<input id="email" placeholder="Email"><br><br>
 
-<button onclick="send()">Отправить</button>
+<select id="club">
+  <option>Да</option>
+  <option>Безусловно</option>
+  <option>Несомненно</option>
+  <option>В следующий раз</option>
+</select>
+
+<br><br>
+
+<button onclick="send()">Зарегистрироваться</button>
 
 <p id="msg"></p>
 
 <script>
-function send(){
-  document.getElementById("msg").innerText =
-    "Сайт работает. Регистрация будет подключена дальше.";
+const API_URL = "https://script.google.com/macros/s/AKfycbxfNnAI4deRqHyVxspnLL0VgRsxNBh0ExeBc23riGbfTcXRHuRZdKwWWvTIVKFiMtEHaA/exec";
+
+async function send(){
+  const data = {
+    name: document.getElementById("name").value,
+    surname: document.getElementById("surname").value,
+    phone: document.getElementById("phone").value,
+    email: document.getElementById("email").value,
+    club: document.getElementById("club").value
+  };
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(data)
+  });
+
+  const result = await res.json();
+
+  if(result.status === "duplicate"){
+    msg.innerText = "Вы уже зарегистрированы";
+    return;
+  }
+
+  msg.innerText = "Готово! Ваш номер: " + result.number;
 }
 </script>
 
