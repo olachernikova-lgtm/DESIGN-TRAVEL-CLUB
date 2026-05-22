@@ -8,7 +8,7 @@
 <style>
 body{
   margin:0;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #0f766e, #1e3a8a);
   display:flex;
   justify-content:center;
@@ -16,6 +16,7 @@ body{
   min-height:100vh;
   padding:20px;
   color:#fff;
+  box-sizing:border-box;
 }
 
 .card{
@@ -25,47 +26,85 @@ body{
   border-radius:18px;
   background: rgba(255,255,255,0.12);
   backdrop-filter: blur(12px);
+  box-shadow:0 10px 40px rgba(0,0,0,0.3);
 }
 
 h1{
   font-size:18px;
   text-align:center;
+  margin-bottom:18px;
+}
+
+label{
+  font-size:13px;
+  opacity:0.9;
+  display:block;
+  margin-top:10px;
+}
+
+input, select{
+  width:100%;
+  padding:14px;
+  margin-top:6px;
+  margin-bottom:10px;
+  border-radius:10px;
+  border:none;
+  outline:none;
+  font-size:16px;
+  box-sizing:border-box;
 }
 
 input{
-  width:100%;
-  padding:14px;
-  margin-top:10px;
-  border-radius:10px;
-  border:none;
-  font-size:16px;
+  background:white;
+  color:black;
+}
+
+select{
+  background:white;
+  color:black;
 }
 
 button{
   width:100%;
   padding:14px;
-  margin-top:15px;
   border:none;
   border-radius:10px;
   background:#10b981;
   color:white;
   font-weight:bold;
   font-size:16px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+button:disabled{
+  opacity:0.6;
 }
 
 #msg{
   text-align:center;
-  margin-top:10px;
+  margin-top:12px;
+  font-size:14px;
 }
 
-/* ticket */
+/* TICKET */
 .ticket{
   text-align:center;
+}
+
+.ticket-box{
+  margin-top:20px;
+  padding:25px;
+  border-radius:16px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
 .number{
   font-size:52px;
   font-weight:bold;
+  letter-spacing:6px;
   margin:10px 0;
   color:#a7f3d0;
 }
@@ -76,14 +115,32 @@ button{
 
 <div class="card" id="card">
 
-<h1>Регистрация на розыгрыш</h1>
+<h1>Форма регистрации для участия в розыгрыше</h1>
 
-<input id="name" placeholder="Имя">
-<input id="surname" placeholder="Фамилия">
-<input id="phone" placeholder="Телефон">
-<input id="email" placeholder="Email">
+<label>Имя *</label>
+<input id="name">
 
-<button onclick="send()" id="btn">Зарегистрироваться</button>
+<label>Фамилия *</label>
+<input id="surname">
+
+<label>Телефон *</label>
+<input id="phone">
+
+<label>Email</label>
+<input id="email">
+
+<label>
+Хотите присоединиться к закрытому клубу путешественников и первыми узнавать о роскошных направлениях, уникальных маршрутах и эксклюзивных предложениях?
+</label>
+
+<select id="club">
+  <option>Да</option>
+  <option>Безусловно</option>
+  <option>Несомненно</option>
+  <option>В следующий раз</option>
+</select>
+
+<button id="btn" onclick="send()">Зарегистрироваться</button>
 
 <p id="msg"></p>
 
@@ -93,19 +150,34 @@ button{
 
 const API_URL = "https://script.google.com/macros/s/AKfycby1wgwq3Ii6LZkHbv8O6tI97O-PBr2ci4ik9VsTtFc0RajqOm_NfiR-ajmp6vXGAgw_9g/exec";
 
-function showTicket(number, name, surname, phone){
+function showTicket(number, name, surname, phone, club){
   document.getElementById("card").innerHTML = `
     <div class="ticket">
 
-      <h2>🎟 Счастливый билет</h2>
+      <h2>🎟 Travel Pass</h2>
+      <p>Design Travel Club</p>
 
-      <div class="number">${number}</div>
+      <div class="ticket-box">
 
-      <p><b>${name} ${surname}</b></p>
-      <p>${phone}</p>
+        <div class="number">${number}</div>
 
-      <p style="opacity:0.7;margin-top:10px;">
-        Ваш номер участника
+        <p><b>${name} ${surname}</b></p>
+        <p>${phone}</p>
+        
+
+        <div style="
+          margin-top:15px;
+          font-size:12px;
+          opacity:0.6;
+          letter-spacing:1px;
+        ">
+ 
+        </div>
+
+      </div>
+
+      <p style="margin-top:15px;opacity:0.7">
+        Ваш номер участника сохранён
       </p>
 
     </div>
@@ -122,7 +194,8 @@ async function send(){
     name: document.getElementById("name").value.trim(),
     surname: document.getElementById("surname").value.trim(),
     phone: document.getElementById("phone").value.trim(),
-    email: document.getElementById("email").value.trim()
+    email: document.getElementById("email").value.trim(),
+    club: document.getElementById("club").value
   };
 
   if(!data.name || !data.surname || !data.phone){
@@ -147,7 +220,14 @@ async function send(){
       return;
     }
 
-    showTicket(result.number, data.name, data.surname, data.phone);
+    if(result.status === "full"){
+      msg.innerText = "Регистрация закрыта (100/100)";
+      btn.disabled = false;
+      btn.innerText = "Зарегистрироваться";
+      return;
+    }
+
+    showTicket(result.number, data.name, data.surname, data.phone, data.club);
 
   } catch(e){
     msg.innerText = "Ошибка сервера";
