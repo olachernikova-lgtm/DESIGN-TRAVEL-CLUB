@@ -99,8 +99,6 @@ button:disabled{
   background: rgba(255,255,255,0.12);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.2);
-  position:relative;
-  overflow:hidden;
 }
 
 .number{
@@ -109,16 +107,6 @@ button:disabled{
   letter-spacing:6px;
   margin:10px 0;
   color:#a7f3d0;
-}
-
-.turtle{
-  position:absolute;
-  font-size:140px;
-  opacity:0.08;
-  top:10px;
-  right:-10px;
-  transform:rotate(-15deg);
-  pointer-events:none;
 }
 </style>
 </head>
@@ -170,8 +158,6 @@ function showTicket(number, name, surname, phone, club){
       <p>Design Travel Club</p>
 
       <div class="ticket-box">
-
-        <div class="turtle">🐢</div>
 
         <div class="number">${number}</div>
 
