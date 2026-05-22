@@ -2,16 +2,105 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Design Travel Club</title>
+<title>Форма регистрации для участия в розыгрыше</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0f766e, #1e3a8a);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  color:#fff;
+}
+
+.card{
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  padding:30px;
+  border-radius:16px;
+  width:360px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+input, select{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  outline:none;
+}
+
+input{
+  background:#ffffff;
+  color:#000;
+}
+
+select{
+  background:#ffffff;
+  color:#000;
+}
+
+button{
+  width:100%;
+  margin-top:15px;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  background:#10b981;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#059669;
+}
+
+label{
+  font-size:14px;
+  display:block;
+  margin-top:12px;
+  opacity:0.9;
+}
+
+#msg{
+  margin-top:15px;
+  text-align:center;
+  font-weight:bold;
+}
+</style>
 </head>
-<body style="font-family:Arial;text-align:center;padding:40px">
+
+<body>
+
+<div class="card">
 
 <h2>Форма регистрации для участия в розыгрыше</h2>
 
-<input id="name" placeholder="Имя"><br><br>
-<input id="surname" placeholder="Фамилия"><br><br>
-<input id="phone" placeholder="Телефон"><br><br>
-<input id="email" placeholder="Email"><br><br>
+<label>Имя *</label>
+<input id="name" placeholder="Введите имя">
+
+<label>Фамилия *</label>
+<input id="surname" placeholder="Введите фамилию">
+
+<label>Телефон *</label>
+<input id="phone" placeholder="Введите телефон">
+
+<label>E-mail</label>
+<input id="email" placeholder="Введите email">
+
+<label>
+Хотите присоединиться к закрытому клубу путешественников и первыми узнавать о роскошных направлениях, уникальных маршрутах и эксклюзивных предложениях?
+</label>
 
 <select id="club">
   <option>Да</option>
@@ -20,20 +109,31 @@
   <option>В следующий раз</option>
 </select>
 
-<br><br>
-
 <button onclick="send()">Зарегистрироваться</button>
 
 <p id="msg"></p>
+
+</div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxfNnAI4deRqHyVxspnLL0VgRsxNBh0ExeBc23riGbfTcXRHuRZdKwWWvTIVKFiMtEHaA/exec";
 
 async function send(){
+
+  const name = document.getElementById("name").value;
+  const surname = document.getElementById("surname").value;
+  const phone = document.getElementById("phone").value;
+
+  if(!name || !surname || !phone){
+    msg.innerText = "Пожалуйста, заполните обязательные поля";
+    msg.style.color = "#fca5a5";
+    return;
+  }
+
   const data = {
-    name: document.getElementById("name").value,
-    surname: document.getElementById("surname").value,
-    phone: document.getElementById("phone").value,
+    name,
+    surname,
+    phone,
     email: document.getElementById("email").value,
     club: document.getElementById("club").value
   };
@@ -47,10 +147,14 @@ async function send(){
 
   if(result.status === "duplicate"){
     msg.innerText = "Вы уже зарегистрированы";
+    msg.style.color = "#fca5a5";
     return;
   }
 
   msg.innerText = "Готово! Ваш номер: " + result.number;
+  msg.style.color = "#a7f3d0";
+
+  document.querySelectorAll("input").forEach(i => i.value = "");
 }
 </script>
 
