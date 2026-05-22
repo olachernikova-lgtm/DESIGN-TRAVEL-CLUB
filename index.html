@@ -2,28 +2,103 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Регистрация</title>
+<title>Форма регистрации для участия в розыгрыше</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0f766e, #1e3a8a);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  color:#fff;
+}
+
+.card{
+  width:420px;
+  padding:30px;
+  border-radius:18px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(12px);
+  box-shadow:0 10px 40px rgba(0,0,0,0.3);
+}
+
+h1{
+  font-size:20px;
+  text-align:center;
+  margin-bottom:20px;
+}
+
+label{
+  font-size:13px;
+  opacity:0.9;
+}
+
+input, select{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  margin-bottom:14px;
+  border-radius:8px;
+  border:none;
+  outline:none;
+}
+
+input{
+  background:white;
+  color:black;
+}
+
+select{
+  background:white;
+  color:black;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#10b981;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+#msg{
+  text-align:center;
+  margin-top:15px;
+}
+</style>
 </head>
 
-<body style="font-family:Arial;text-align:center;padding:40px;background:#0f172a;color:white">
+<body>
 
 <div class="card">
 
-<h2>Форма регистрации для участия в розыгрыше</h2>
+<h1>Форма регистрации для участия в розыгрыше</h1>
 
-<input id="name" placeholder="Имя"><br><br>
-<input id="surname" placeholder="Фамилия"><br><br>
-<input id="phone" placeholder="Телефон"><br><br>
-<input id="email" placeholder="Email"><br><br>
+<label>Имя *</label>
+<input id="name" placeholder="Введите имя">
 
+<label>Фамилия *</label>
+<input id="surname" placeholder="Введите фамилию">
+
+<label>Телефон *</label>
+<input id="phone" placeholder="Введите телефон">
+
+<label>Email</label>
+<input id="email" placeholder="Введите email">
+
+<label>Хотите присоединиться к закрытому клубу путешественников?</label>
 <select id="club">
   <option>Да</option>
   <option>Безусловно</option>
   <option>Несомненно</option>
   <option>В следующий раз</option>
 </select>
-
-<br><br>
 
 <button onclick="send()">Зарегистрироваться</button>
 
@@ -44,24 +119,29 @@ async function send(){
     club: club.value
   };
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify(data)
-  });
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify(data)
+    });
 
-  const result = await res.json();
+    const result = await res.json();
 
-  if(result.status === "duplicate"){
-    msg.innerText = "Вы уже зарегистрированы";
-    return;
+    if(result.status === "duplicate"){
+      msg.innerText = "Вы уже зарегистрированы";
+      return;
+    }
+
+    if(result.status === "full"){
+      msg.innerText = "Регистрация закрыта (100/100)";
+      return;
+    }
+
+    msg.innerText = "Готово! Ваш номер: " + result.number;
+
+  } catch(e){
+    msg.innerText = "Ошибка соединения с сервером";
   }
-
-  if(result.status === "full"){
-    msg.innerText = "Мест нет (100/100)";
-    return;
-  }
-
-  msg.innerText = "Ваш номер: " + result.number;
 }
 </script>
 
