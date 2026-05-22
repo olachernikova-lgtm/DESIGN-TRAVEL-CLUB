@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Travel Club Registration</title>
+<title>Регистрация розыгрыша</title>
 
 <style>
 body{
@@ -76,6 +76,7 @@ button{
 
 button:disabled{
   opacity:0.6;
+  cursor:not-allowed;
 }
 
 #msg{
@@ -84,7 +85,7 @@ button:disabled{
   font-size:14px;
 }
 
-/* TICKET */
+/* билет */
 .ticket{
   text-align:center;
 }
@@ -96,27 +97,13 @@ button:disabled{
   background: rgba(255,255,255,0.12);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.2);
-  position:relative;
-  overflow:hidden;
 }
 
 .number{
-  font-size:52px;
+  font-size:48px;
   font-weight:bold;
   letter-spacing:6px;
   margin:10px 0;
-  color:#a7f3d0;
-}
-
-/* turtle watermark */
-.turtle{
-  position:absolute;
-  font-size:140px;
-  opacity:0.08;
-  top:10px;
-  right:-10px;
-  transform:rotate(-15deg);
-  pointer-events:none;
 }
 </style>
 </head>
@@ -128,18 +115,18 @@ button:disabled{
 <h1>Форма регистрации для участия в розыгрыше</h1>
 
 <label>Имя *</label>
-<input id="name">
+<input id="name" placeholder="Введите имя">
 
 <label>Фамилия *</label>
-<input id="surname">
+<input id="surname" placeholder="Введите фамилию">
 
 <label>Телефон *</label>
-<input id="phone">
+<input id="phone" placeholder="Введите телефон">
 
 <label>Email</label>
-<input id="email">
+<input id="email" placeholder="Введите email">
 
-<label>Клуб путешественников</label>
+<label>Хотите присоединиться к закрытому клубу путешественников?</label>
 <select id="club">
   <option>Да</option>
   <option>Безусловно</option>
@@ -147,26 +134,23 @@ button:disabled{
   <option>В следующий раз</option>
 </select>
 
-<button id="btn" onclick="send()">Зарегистрироваться</button>
+<button onclick="send()" id="btn">Зарегистрироваться</button>
 
 <p id="msg"></p>
 
 </div>
 
 <script>
-
 const API_URL = "https://script.google.com/macros/s/AKfycby1wgwq3Ii6LZkHbv8O6tI97O-PBr2ci4ik9VsTtFc0RajqOm_NfiR-ajmp6vXGAgw_9g/exec";
 
 function showTicket(number, name, surname, phone, club){
   document.getElementById("card").innerHTML = `
     <div class="ticket">
 
-      <h2>🎟 Travel Pass</h2>
-      <p style="opacity:0.8">Design Travel Club</p>
+      <h2>🎟 Ваш билет участника</h2>
+      <p>Design Travel Club</p>
 
       <div class="ticket-box">
-
-        <div class="turtle">🐢</div>
 
         <div class="number">${number}</div>
 
@@ -174,19 +158,10 @@ function showTicket(number, name, surname, phone, club){
         <p>${phone}</p>
         <p>${club}</p>
 
-        <div style="
-          margin-top:15px;
-          font-size:12px;
-          opacity:0.6;
-          letter-spacing:1px;
-        ">
-          SLOW TRAVEL • LUXURY JOURNEYS • PRIVATE CLUB
-        </div>
-
       </div>
 
       <p style="margin-top:15px;opacity:0.7">
-        🐢 Ваш номер сохранён
+        Сохраните ваш номер
       </p>
 
     </div>
@@ -239,12 +214,11 @@ async function send(){
     showTicket(result.number, data.name, data.surname, data.phone, data.club);
 
   } catch(e){
-    msg.innerText = "Ошибка сервера";
+    msg.innerText = "Ошибка соединения с сервером";
     btn.disabled = false;
     btn.innerText = "Зарегистрироваться";
   }
 }
-
 </script>
 
 </body>
