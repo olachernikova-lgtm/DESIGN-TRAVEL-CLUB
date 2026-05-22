@@ -89,7 +89,6 @@ button:hover{
 /* билет */
 .ticket{
   text-align:center;
-  padding:20px;
 }
 
 .ticket-box{
@@ -128,10 +127,7 @@ button:hover{
 <label>Email</label>
 <input id="email" placeholder="Введите email">
 
-<label>
-Хотите присоединиться к закрытому клубу путешественников и первыми узнавать о роскошных направлениях, уникальных маршрутах и эксклюзивных предложениях?
-</label>
-
+<label>Хотите присоединиться к закрытому клубу путешественников?</label>
 <select id="club">
   <option>Да</option>
   <option>Безусловно</option>
@@ -176,11 +172,11 @@ function showTicket(number, name, surname, phone, club){
 async function send(){
 
   const data = {
-    name: name.value,
-    surname: surname.value,
-    phone: phone.value,
-    email: email.value,
-    club: club.value
+    name: document.getElementById("name").value.trim(),
+    surname: document.getElementById("surname").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    club: document.getElementById("club").value
   };
 
   if(!data.name || !data.surname || !data.phone){
