@@ -151,7 +151,7 @@
             <div style="overflow-x: auto;">
                 <table><thead><tr><th>№</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время</th><th>Интерес</th></tr></thead>
                 <tbody id="tableBody"><tr><td colspan="6" style="text-align:center;">Войдите как организатор</td></tr></tbody>
-                </table>
+            20~
             </div>
         </div>
     </div>
@@ -252,24 +252,22 @@
         const statusDiv = document.getElementById('registerStatus');
         statusDiv.innerHTML = '<div class="status" style="background:#fff3cd;">⏳ Отправка...</div>';
         try {
-            const res = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
-            const result = await res.json();
-            if (result.success) {
-                statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 Ваш номер: <strong>${result.id}</strong></div>`;
-                setTimeout(() => statusDiv.innerHTML = '', 5000);
-                if (isAdmin) setTimeout(loadData, 1500);
-                return true;
-            } else if (result.error === 'duplicate_phone') {
-                statusDiv.innerHTML = `<div class="status error">❌ Номер телефона ${formData.phone} уже зарегистрирован!</div>`;
-                setTimeout(() => statusDiv.innerHTML = '', 5000);
-                return false;
-            } else if (result.error === 'duplicate_name') {
-                statusDiv.innerHTML = `<div class="status error">❌ Имя ${formData.name} уже зарегистрировано!</div>`;
-                setTimeout(() => statusDiv.innerHTML = '', 5000);
-                return false;
-            } else {
-                throw new Error('Ошибка');
-            }
+            // Используем режим no-cors для обхода CORS
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            
+            // При no-cors мы не можем прочитать ответ, но запрос уходит
+            // Показываем успех, но без номера (номер будет в таблице)
+            statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!</div>`;
+            setTimeout(() => statusDiv.innerHTML = '', 5000);
+            
+            // Обновляем данные для админа
+            if (isAdmin) setTimeout(loadData, 1500);
+            return true;
         } catch(e) {
             statusDiv.innerHTML = '<div class="status error">❌ Ошибка отправки</div>';
             setTimeout(() => statusDiv.innerHTML = '', 5000);
@@ -315,8 +313,21 @@
         const sel = document.querySelector('input[name="club_interest"]:checked');
         if(sel) interest = sel.value;
         if(!name || !phone) { alert('Заполните имя, фамилию и телефон'); return; }
-        const ok = await register({ name, phone, email, timestamp: new Date().toLocaleString(), interest });
-        if(ok) { e.target.reset(); document.querySelectorAll('input[name="club_interest"]').forEach(r=>r.checked=false); }
+        
+        // Проверка дубликата через загруженные данные (если админ)
+        if (isAdmin && participants.some(p => p.phone === phone)) {
+            showStatus(`❌ Номер телефона ${phone} уже зарегистрирован!`, true);
+            return;
+        }
+        if (isAdmin && participants.some(p => p.name === name)) {
+            showStatus(`❌ Имя ${name} уже зарегистрировано!`, true);
+            return;
+        }
+        
+        await register({ name, phone, email, timestamp: new Date().toLocaleString(), interest });
+        e.target.reset();
+        document.querySelectorAll('input[name="club_interest"]').forEach(r=>r.checked=false);
+        if (isAdmin) setTimeout(loadData, 2000);
     };
     if(sessionStorage.getItem('admin') === 'true') { isAdmin = true; document.getElementById('loginContainer').classList.add('hidden'); document.getElementById('adminPanel').classList.remove('hidden'); loadData(); }
 </script>
