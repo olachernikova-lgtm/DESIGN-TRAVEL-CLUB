@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN TRAVEL CLUB — Розыгрыш | Большой экран</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Georgia', serif;
+            background: linear-gradient(145deg, #d4e9e2 0%, #c2dfd0 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .screen-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .winner-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(4px);
+            border-radius: 80px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border: 3px solid rgba(80, 140, 110, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .winner-card h1 {
+            font-size: 3rem;
+            color: #2c5a4a;
+            margin-bottom: 30px;
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        .prize-badge {
+            font-size: 2rem;
+            background: #e2f4ed;
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 60px;
+            margin-bottom: 40px;
+            color: #2c5a4a;
+        }
+
+        .winner-number {
+            font-size: 12rem;
+            font-weight: bold;
+            color: #2c5a4a;
+            margin: 30px 0;
+            letter-spacing: 10px;
+            line-height: 1;
+        }
+
+        .winner-name {
+            font-size: 4rem;
+            margin: 30px 0;
+            color: #3b6e5c;
+            font-weight: 500;
+        }
+
+        .waiting-message {
+            font-size: 3rem;
+            color: #8baa9c;
+            padding: 60px 20px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .waiting-animation {
+            animation: pulse 2s infinite;
+        }
+
+        /* Адаптация для экрана */
+        @media (max-width: 768px) {
+            .winner-number { font-size: 6rem; }
+            .winner-name { font-size: 2rem; }
+            .winner-card h1 { font-size: 2rem; }
+            .waiting-message { font-size: 1.8rem; }
+            .winner-card { padding: 30px 20px; border-radius: 40px; }
+        }
+    </style>
+</head>
+<body>
+<div class="screen-container">
+    <div class="winner-card" id="winnerCard">
+        <h1>🍸 DESIGN TRAVEL CLUB</h1>
+        <div id="winnerContent">
+            <div class="waiting-message waiting-animation">
+                🎫 Ожидание розыгрыша...
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ================= НАСТРОЙКИ =================
+    const SPREADSHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
+    
+    let currentWinners = [];
+    
+    // Функция для загрузки участников (чтобы проверять наличие)
+    async function loadParticipants() {
+        try {
+            const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+            const response = await fetch(url);
+            const text = await response.text();
+            const jsonText = text.substring(47, text.length - 2);
+            const data = JSON.parse(jsonText);
+            const rows = data.table.rows;
+            
+            if (!rows || rows.length < 2) {
+                return [];
+            }
+            
+            const participants = [];
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i].c;
+                if (row && row[0]?.v) {
+                    participants.push({
+                        id: parseInt(row[0]?.v) || i,
+                        name: row[1]?.v || '',
+                        phone: row[3]?.v || ''
+                    });
+                }
+            }
+            return participants;
+        } catch(err) {
+            console.error('Ошибка загрузки:', err);
+            return [];
+        }
+    }
+    
+    // Функция для получения текущего победителя из URL (через параметр)
+    function checkForWinner() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const winnerId = urlParams.get('winner');
+        const winnerName = urlParams.get('name');
+        const winnerPrize = urlParams.get('prize');
+        
+        if (winnerId && winnerName) {
+            displayWinner(winnerId, winnerName, winnerPrize);
+        } else {
+            // Показываем ожидание
+            document.getElementById('winnerContent').innerHTML = `
+                <div class="waiting-message waiting-animation">
+                    🎫 Ожидание розыгрыша...
+                </div>
+            `;
+        }
+    }
+    
+    function displayWinner(id, name, prizeNumber) {
+        const prizeText = prizeNumber ? `ПРИЗ №${prizeNumber}` : 'ПОБЕДИТЕЛЬ';
+        document.getElementById('winnerContent').innerHTML = `
+            <div class="prize-badge">🏆 ${prizeText} 🏆</div>
+            <div class="winner-number">🎫 № ${id}</div>
+            <div class="winner-name">${decodeURIComponent(name)}</div>
+            <div style="margin-top: 40px; font-size: 1.5rem; color: #8baa9c;">✨ Поздравляем! ✨</div>
+        `;
+    }
+    
+    // Автоматическое обновление (если страница открыта, можно настроить периодическую проверку)
+    function startAutoRefresh() {
+        // Проверяем параметры при загрузке
+        checkForWinner();
+        
+        // Слушаем сообщения от основной страницы (через localStorage)
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'winnerDisplay') {
+                const winnerData = JSON.parse(event.newValue);
+                if (winnerData) {
+                    displayWinner(winnerData.id, winnerData.name, winnerData.prize);
+                }
+            }
+        });
+    }
+    
+    startAutoRefresh();
+</script>
+</body>
+</html>
