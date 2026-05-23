@@ -2,504 +2,499 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>DESIGN TRAVEL CLUB — Розыгрыш</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN TRAVEL CLUB</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(145deg, #d4e9e2 0%, #c2dfd0 100%);
-            min-height: 100vh;
-            transition: all 0.3s ease;
-        }
-        
-        /* Обычный режим */
-        body.normal-mode {
-            padding: 20px;
-        }
-        body.normal-mode .main-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        body.normal-mode .kiosk-container {
-            display: none;
-        }
-        
-        /* Режим киоска */
-        body.kiosk-mode {
+        * {
+            margin: 0;
             padding: 0;
-            overflow: hidden;
+            box-sizing: border-box;
         }
-        body.kiosk-mode .main-container {
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #d4e9e2;
+            padding: 15px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .block {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c5a4a;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid #5f9e86;
+        }
+        h3 {
+            color: #2c5a4a;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        input, button, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 30px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        button {
+            background: #5f9e86;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        .radio-group {
+            margin: 10px 0;
+        }
+        .radio-group label {
+            display: block;
+            background: #f0f7f3;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 30px;
+            cursor: pointer;
+            border: 1px solid #cde4db;
+        }
+        .radio-group input {
+            width: 20px;
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 30px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .winner-block {
+            background: linear-gradient(135deg, #e2f4ed, #c8e6d9);
+            border-radius: 30px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #5f9e86;
+        }
+        .winner-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #2c5a4a;
+            margin: 15px 0;
+        }
+        .winner-name {
+            font-size: 1.5rem;
+            color: #3b6e5c;
+        }
+        .hidden {
             display: none;
         }
-        body.kiosk-mode .kiosk-container {
-            display: flex;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #eaf5f0;
+        }
+        .kiosk-mode {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100vh;
+            height: 100%;
+            background: linear-gradient(145deg, #d4e9e2, #c2dfd0);
+            display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(145deg, #d4e9e2 0%, #c2dfd0 100%);
             z-index: 1000;
-            padding: 20px;
         }
-        body.kiosk-mode .kiosk-winner-card {
-            background: rgba(255,255,255,0.95);
+        .kiosk-card {
+            background: white;
             border-radius: 60px;
-            padding: 60px 40px;
+            padding: 50px 30px;
             text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
-            border: 3px solid rgba(80,140,110,0.3);
-            max-width: 1000px;
-            width: 100%;
+            max-width: 90%;
+            width: 600px;
         }
-        body.kiosk-mode .kiosk-winner-card h1 {
-            font-size: 2.8rem;
+        .kiosk-number {
+            font-size: 6rem;
+            font-weight: bold;
             color: #2c5a4a;
-            margin-bottom: 30px;
+            margin: 30px 0;
         }
-        body.kiosk-mode .kiosk-prize {
+        .kiosk-name {
             font-size: 2rem;
+            color: #3b6e5c;
+            margin: 20px 0;
+        }
+        .kiosk-prize {
+            font-size: 1.5rem;
             background: #e2f4ed;
             display: inline-block;
-            padding: 12px 40px;
-            border-radius: 60px;
-            margin-bottom: 30px;
-            color: #2c5a4a;
-            font-weight: bold;
-        }
-        body.kiosk-mode .kiosk-number {
-            font-size: 10rem;
-            font-weight: bold;
-            color: #2c5a4a;
-            margin: 30px 0;
-            letter-spacing: 10px;
-            line-height: 1;
-        }
-        body.kiosk-mode .kiosk-name {
-            font-size: 2.5rem;
-            margin: 30px 0;
-            color: #3b6e5c;
-            font-weight: 500;
-            word-break: break-word;
-        }
-        body.kiosk-mode .kiosk-waiting {
-            font-size: 2rem;
-            color: #8baa9c;
-            padding: 60px 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes pulse {
-            0%,100%{ opacity: 1; }
-            50%{ opacity: 0.5; }
-        }
-        
-        /* Карточки */
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 28px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(80, 140, 110, 0.2);
-        }
-        h2 {
-            font-size: 1.6rem;
-            color: #2c5a4a;
-            border-left: 4px solid #8bc7b2;
-            padding-left: 15px;
-            margin-bottom: 20px;
-        }
-        h3 { font-size: 1.3rem; color: #2c5a4a; margin-bottom: 15px; }
-        
-        /* Форма */
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-weight: 500; color: #3b6e5c; margin-bottom: 6px; font-size: 0.9rem; }
-        input, button, select {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 24px;
-            border: 1px solid #cde4db;
-            font-size: 1rem;
-            background: white;
-            font-family: inherit;
-        }
-        button {
-            background: linear-gradient(95deg, #86baa8 0%, #5f9e86 100%);
-            color: white;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
-        button:active { transform: scale(0.98); }
-        
-        /* Радио-кнопки */
-        .radio-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 8px;
-        }
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #f2faf5;
-            padding: 10px 16px;
-            border-radius: 30px;
-            border: 1px solid #cde4db;
-            cursor: pointer;
-            font-weight: normal;
-            margin: 0;
-        }
-        .radio-group input {
-            width: 20px;
-            height: 20px;
-            margin: 0;
-            accent-color: #5f9e86;
-        }
-        
-        /* Статус */
-        .status {
-            padding: 12px;
-            border-radius: 28px;
-            margin-top: 16px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-        .status.success { background: #dff0e9; color: #2a6b55; border-left: 4px solid #5f9e86; }
-        .status.error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
-        
-        /* Панель администратора */
-        .admin-panel { background: #f4fbf7; border-radius: 24px; padding: 18px; margin-top: 20px; }
-        
-        /* Победитель в обычном режиме */
-        .winner-announcement {
-            background: linear-gradient(125deg, #e2f4ed 0%, #d1e9df 100%);
+            padding: 10px 30px;
             border-radius: 40px;
-            padding: 30px;
-            text-align: center;
-            border: 2px solid #5f9e86;
         }
-        .winner-number { font-size: 3rem; font-weight: bold; color: #2c5a4a; margin: 15px 0; }
-        .winner-name { font-size: 1.5rem; margin: 15px 0; word-break: break-word; }
-        
-        .hidden { display: none; }
-        .draw-step-btn { font-size: 1.2rem; padding: 14px; }
-        
-        /* Таблица */
-        .table-wrapper { overflow-x: auto; border-radius: 20px; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 20px; font-size: 0.85rem; }
-        th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid #d9ece3; }
-        th { background: #eaf5f0; color: #2c5a4a; }
-        
-        /* Кнопки в панели */
-        .flex-right { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-bottom: 20px; }
-        .logout-btn, .reset-btn, .kiosk-mode-btn, .export-main-btn { 
-            width: auto; 
-            padding: 8px 18px; 
-            font-size: 0.85rem;
+        .flex-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
         }
-        .reset-btn { background: #ccaa88; }
-        .kiosk-mode-btn { background: #4f9e86; }
-        .export-main-btn { background: #2c7a5e; }
-        
-        /* Адаптация для планшетов и телефонов */
-        @media (max-width: 768px) {
-            body.normal-mode { padding: 15px; }
-            .card { padding: 18px; }
-            h2 { font-size: 1.3rem; }
-            h3 { font-size: 1.1rem; }
-            .winner-number { font-size: 2.2rem; }
-            .winner-name { font-size: 1.2rem; }
-            .flex-right button { width: 100%; }
-            body.kiosk-mode .kiosk-winner-card { padding: 30px 20px; border-radius: 40px; }
-            body.kiosk-mode .kiosk-winner-card h1 { font-size: 1.8rem; margin-bottom: 20px; }
-            body.kiosk-mode .kiosk-prize { font-size: 1.2rem; padding: 8px 25px; margin-bottom: 20px; }
-            body.kiosk-mode .kiosk-number { font-size: 4rem; letter-spacing: 5px; margin: 15px 0; }
-            body.kiosk-mode .kiosk-name { font-size: 1.4rem; margin: 15px 0; }
-            body.kiosk-mode .kiosk-waiting { font-size: 1.2rem; padding: 30px 15px; }
+        .flex-buttons button {
+            flex: 1;
+            margin-bottom: 0;
         }
-        
-        @media (max-width: 480px) {
-            .radio-group label { padding: 8px 12px; font-size: 0.85rem; }
-            input, button, select { padding: 10px 12px; font-size: 0.9rem; }
-            th, td { font-size: 0.75rem; padding: 8px 5px; }
+        .table-wrapper {
+            overflow-x: auto;
         }
     </style>
 </head>
-<body class="normal-mode">
-
-<!-- Обычный режим -->
-<div class="main-container">
-    <div class="card">
-        <h2>🍸 Коктейльный вечер DESIGN TRAVEL CLUB</h2>
-        <div id="publicWinnerContent"></div>
+<body>
+<div class="container" id="normalView">
+    <!-- Блок победителя -->
+    <div class="block">
+        <h2>🍸 Коктейльный вечер</h2>
+        <div id="winnerDisplay"></div>
     </div>
 
-    <div class="card">
-        <form id="registrationForm">
-            <div class="form-group"><label>Имя *</label><input type="text" id="first_name" required></div>
-            <div class="form-group"><label>Фамилия *</label><input type="text" id="last_name" required></div>
-            <div class="form-group"><label>Телефон *</label><input type="tel" id="phone" required></div>
-            <div class="form-group"><label>Email</label><input type="email" id="email"></div>
-            <div class="form-group">
-                <label>✨ Хотите присоединиться к закрытому клубу путешественников?</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="club_interest" value="Да"> Да</label>
-                    <label><input type="radio" name="club_interest" value="Безусловно"> Безусловно</label>
-                    <label><input type="radio" name="club_interest" value="Несомненно"> Несомненно</label>
-                    <label><input type="radio" name="club_interest" value="В следующий раз"> В следующий раз</label>
-                </div>
+    <!-- Форма регистрации -->
+    <div class="block">
+        <form id="regForm">
+            <input type="text" id="firstName" placeholder="Имя *" required>
+            <input type="text" id="lastName" placeholder="Фамилия *" required>
+            <input type="tel" id="phone" placeholder="Телефон *" required>
+            <input type="email" id="email" placeholder="Email">
+            <div class="radio-group">
+                <label><input type="radio" name="interest" value="Да"> Да</label>
+                <label><input type="radio" name="interest" value="Безусловно"> Безусловно</label>
+                <label><input type="radio" name="interest" value="Несомненно"> Несомненно</label>
+                <label><input type="radio" name="interest" value="В следующий раз"> В следующий раз</label>
             </div>
             <button type="submit">✨ Зарегистрироваться</button>
         </form>
-        <div id="registerStatus"></div>
+        <div id="regStatus"></div>
     </div>
 
-    <div id="loginContainer" class="card" style="text-align: center;">
+    <!-- Вход организатора -->
+    <div class="block" id="loginBlock">
         <h2>🔐 Организатор</h2>
-        <input type="password" id="adminPassword" placeholder="Пароль" style="max-width: 260px; margin: 0 auto 12px;">
-        <button id="loginBtn" style="max-width: 180px;">Войти</button>
-        <div id="loginError" style="color: red; margin-top: 12px; font-size: 0.85rem;"></div>
+        <input type="password" id="adminPass" placeholder="Пароль">
+        <button id="loginBtn">Войти</button>
+        <div id="loginMsg" style="color:red; margin-top:10px;"></div>
     </div>
 
-    <div id="adminPanel" class="card hidden">
-        <div class="flex-right">
-            <button class="kiosk-mode-btn" id="kioskModeBtn">🖥️ Большой экран</button>
-            <button class="export-main-btn" id="exportMainBtn">📥 Скачать CSV</button>
-            <button class="reset-btn" id="resetDrawBtn">🔄 Сбросить розыгрыш</button>
-            <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
+    <!-- Панель организатора (скрыта) -->
+    <div id="adminBlock" class="block hidden">
+        <div class="flex-buttons">
+            <button id="kioskBtn">🖥️ Большой экран</button>
+            <button id="exportBtn">📥 Скачать CSV</button>
+            <button id="resetDrawBtn">🔄 Сбросить</button>
+            <button id="logoutBtn">🚪 Выйти</button>
         </div>
-        <h2>🌿 Панель организатора</h2>
-        <div class="admin-panel">
-            <h3>🎁 Розыгрыш</h3>
-            <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-                <div style="flex:1; min-width: 100px;"><label>Количество призов:</label><select id="prizeCount"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="5">5</option></select></div>
-                <div style="flex:2;"><label>Статус:</label><div id="drawStatus" style="background:#eaf5f0; padding: 10px; border-radius: 30px; font-size:0.85rem;">⏳ Ожидание</div></div>
-            </div>
-            <button class="draw-step-btn" id="drawStepBtn" disabled>🎲 Разыграть следующий приз</button>
-            <div id="lastWinnerInfo" style="margin-top: 16px;"></div>
+        <h2>🌿 Розыгрыш</h2>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <select id="prizeCount" style="width: auto; flex:1;">
+                <option value="1">1 приз</option>
+                <option value="2" selected>2 приза</option>
+                <option value="3">3 приза</option>
+                <option value="5">5 призов</option>
+            </select>
+            <div id="drawStatus" style="background:#eaf5f0; padding: 10px; border-radius: 30px; flex:2; text-align:center;">⏳ Ожидание</div>
         </div>
-        <div class="admin-panel">
-            <h3>📜 История победителей</h3>
-            <div id="winnersHistoryList" style="background:#f0f7f3; border-radius:20px; padding:12px; font-size:0.85rem;">Пока нет</div>
-        </div>
-        <div class="admin-panel">
-            <h3>📋 Список участников</h3>
-            <div class="table-wrapper">
-                <table><thead><tr><th>№</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время</th><th>Интерес</th></tr></thead>
-                <tbody id="tableBody"><tr><td colspan="6">Загрузка...<\/td><\/tr><\/tbody>
-            20~
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Режим киоска (большой экран) -->
-<div class="kiosk-container" style="display: none;">
-    <div class="kiosk-winner-card">
-        <h1>🍸 DESIGN TRAVEL CLUB</h1>
-        <div id="kioskContent">
-            <div class="kiosk-waiting">🎫 Ожидание розыгрыша...</div>
+        <button id="drawBtn" disabled>🎲 Разыграть следующий приз</button>
+        <div id="lastWinner" style="margin-top: 15px;"></div>
+        
+        <h3 style="margin-top: 20px;">📜 Победители</h3>
+        <div id="winnersList" style="background:#f0f7f3; border-radius: 20px; padding: 12px;">Пока нет</div>
+        
+        <h3 style="margin-top: 20px;">📋 Участники</h3>
+        <div class="table-wrapper">
+            <table id="participantsTable">
+                <thead><tr><th>№</th><th>ФИО</th><th>Телефон</th></tr></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
         </div>
     </div>
 </div>
 
 <script>
-    const ADMIN_PASSWORD = "travelclub2025";
+    const PASSWORD = "travelclub2025";
     let participants = JSON.parse(localStorage.getItem('participants')) || [];
-    let isAdmin = false;
-    let available = [];
     let winners = [];
+    let available = [];
+    let isAdmin = false;
     let drawActive = false;
-    let isKioskMode = false;
+    let kioskMode = false;
     
-    function saveParticipants() { localStorage.setItem('participants', JSON.stringify(participants)); }
-    
-    function updateKioskDisplay(winner, prizeNum) {
-        const kioskContent = document.getElementById('kioskContent');
-        if (winner) {
-            kioskContent.innerHTML = `
-                <div class="kiosk-prize">🏆 ПРИЗ №${prizeNum} 🏆</div>
-                <div class="kiosk-number">🎫 № ${winner.id}</div>
-                <div class="kiosk-name">${winner.name}</div>
-                <div style="margin-top: 30px; font-size: 1.5rem;">✨ Поздравляем! ✨</div>
-            `;
-        } else {
-            kioskContent.innerHTML = '<div class="kiosk-waiting">🎫 Ожидание розыгрыша...</div>';
-        }
-    }
-    
-    function updateNormalDisplay(winner, prizeNum) {
-        const publicContent = document.getElementById('publicWinnerContent');
-        if (winner) {
-            publicContent.innerHTML = `
-                <div class="winner-announcement">
-                    <h2>🏆 ПРИЗ №${prizeNum} 🏆</h2>
-                    <div class="winner-number">🎫 № ${winner.id}</div>
-                    <div class="winner-name">${winner.name}</div>
-                </div>
-            `;
-        } else {
-            publicContent.innerHTML = '';
-        }
+    function save() {
+        localStorage.setItem('participants', JSON.stringify(participants));
     }
     
     function updateTable() {
         const tbody = document.getElementById('tableBody');
         if (!tbody) return;
         tbody.innerHTML = '';
-        if (participants.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Нет участников<\/td><\/tr>'; return; }
         participants.forEach(p => {
             const row = tbody.insertRow();
             row.insertCell(0).textContent = p.id;
             row.insertCell(1).textContent = p.name;
-            row.insertCell(2).textContent = p.email || '';
-            row.insertCell(3).textContent = p.phone;
-            row.insertCell(4).textContent = p.timestamp;
-            row.insertCell(5).textContent = p.interest || '—';
+            row.insertCell(2).textContent = p.phone;
         });
-        resetDraw();
     }
     
-    function showStatus(msg, isError) {
-        const div = document.getElementById('registerStatus');
-        div.innerHTML = `<div class="status ${isError ? 'error' : 'success'}">${msg}</div>`;
-        setTimeout(() => div.innerHTML = '', 5000);
+    function updateWinnersDisplay() {
+        const div = document.getElementById('winnersList');
+        if (winners.length === 0) {
+            div.innerHTML = 'Пока нет';
+        } else {
+            let html = '';
+            winners.forEach((w, i) => {
+                html += `<div style="background:white; padding:10px; margin:8px 0; border-radius:15px;">🏆 Приз ${i+1} — №${w.id} — ${w.name}</div>`;
+            });
+            div.innerHTML = html;
+        }
+    }
+    
+    function showWinnerOnScreen(winner, prizeNum) {
+        const winnerDiv = document.getElementById('winnerDisplay');
+        winnerDiv.innerHTML = `
+            <div class="winner-block">
+                <h2>🏆 ПРИЗ №${prizeNum} 🏆</h2>
+                <div class="winner-number">🎫 № ${winner.id}</div>
+                <div class="winner-name">${winner.name}</div>
+            </div>
+        `;
+        // Если в режиме киоска - обновляем и его
+        if (kioskMode) {
+            const kioskDiv = document.getElementById('kioskContent');
+            if (kioskDiv) {
+                kioskDiv.innerHTML = `
+                    <div class="kiosk-prize">🏆 ПРИЗ №${prizeNum} 🏆</div>
+                    <div class="kiosk-number">🎫 № ${winner.id}</div>
+                    <div class="kiosk-name">${winner.name}</div>
+                    <div style="margin-top:20px;">✨ Поздравляем! ✨</div>
+                `;
+            }
+        }
     }
     
     function resetDraw() {
         available = [...participants];
         winners = [];
         drawActive = true;
-        for (let i = available.length - 1; i > 0; i--) { 
-            let j = Math.floor(Math.random() * (i + 1)); 
-            [available[i], available[j]] = [available[j], available[i]]; 
+        // перемешиваем
+        for (let i = available.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [available[i], available[j]] = [available[j], available[i]];
         }
-        updateUI();
-        document.getElementById('winnersHistoryList').innerHTML = '<div style="color:#8baa9c; text-align:center;">Пока нет победителей</div>';
-        updateNormalDisplay(null, null);
-        if (isKioskMode) updateKioskDisplay(null, null);
+        updateDrawUI();
+        updateWinnersDisplay();
+        document.getElementById('winnerDisplay').innerHTML = '';
+        document.getElementById('lastWinner').innerHTML = '';
+        if (kioskMode) {
+            const kioskDiv = document.getElementById('kioskContent');
+            if (kioskDiv) kioskDiv.innerHTML = '<div class="kiosk-waiting">🎫 Ожидание розыгрыша...</div>';
+        }
     }
     
-    function updateUI() {
-        const count = parseInt(document.getElementById('prizeCount')?.value || 2);
-        const left = count - winners.length;
-        const btn = document.getElementById('drawStepBtn');
+    function updateDrawUI() {
+        const total = parseInt(document.getElementById('prizeCount').value);
+        const left = total - winners.length;
+        const btn = document.getElementById('drawBtn');
         const statusDiv = document.getElementById('drawStatus');
-        if (!drawActive) { statusDiv.innerHTML = '⏸️ Нажмите "Сбросить"'; btn.disabled = true; return; }
-        if (winners.length >= count) { statusDiv.innerHTML = '✅ Розыгрыш завершён'; btn.disabled = true; }
-        else if (available.length === 0) { statusDiv.innerHTML = '⚠️ Нет участников'; btn.disabled = true; }
-        else { statusDiv.innerHTML = `🎲 Осталось ${left} призов | Доступно ${available.length} чел`; btn.disabled = false; }
+        if (!drawActive) {
+            statusDiv.innerHTML = '⏸️ Нажмите "Сбросить"';
+            btn.disabled = true;
+            return;
+        }
+        if (winners.length >= total) {
+            statusDiv.innerHTML = '✅ Розыгрыш завершён';
+            btn.disabled = true;
+        } else if (available.length === 0) {
+            statusDiv.innerHTML = '⚠️ Нет участников';
+            btn.disabled = true;
+        } else {
+            statusDiv.innerHTML = `🎲 Осталось ${left} призов | Доступно ${available.length} чел`;
+            btn.disabled = false;
+        }
     }
     
     function drawWinner() {
-        if (!drawActive) { alert('Нажмите "Сбросить розыгрыш"'); return; }
+        if (!drawActive) { alert('Нажмите "Сбросить"'); return; }
         const total = parseInt(document.getElementById('prizeCount').value);
-        if (winners.length >= total) { alert('Все призы разыграны'); updateUI(); return; }
-        if (available.length === 0) { alert('Нет участников'); updateUI(); return; }
+        if (winners.length >= total) { alert('Все призы разыграны'); updateDrawUI(); return; }
+        if (available.length === 0) { alert('Нет участников'); updateDrawUI(); return; }
+        
         const winner = available[0];
         available = available.filter(p => p.id !== winner.id);
         winners.push(winner);
         const prizeNum = winners.length;
         
-        updateNormalDisplay(winner, prizeNum);
-        if (isKioskMode) updateKioskDisplay(winner, prizeNum);
-        
-        document.getElementById('lastWinnerInfo').innerHTML = `<div style="background:#dff0e9; border-radius:20px; padding:12px; text-align:center;"><strong>✅ Приз №${prizeNum}</strong><br>🏆 ${winner.name} (№${winner.id})</div>`;
-        setTimeout(() => document.getElementById('lastWinnerInfo').innerHTML = '', 4000);
-        let html = '';
-        winners.forEach((w,i) => { html += `<div style="background:white; margin:8px 0; padding:10px; border-radius:15px;">🏆 Приз ${i+1} — №${w.id} — ${w.name}</div>`; });
-        document.getElementById('winnersHistoryList').innerHTML = html;
-        updateUI();
+        showWinnerOnScreen(winner, prizeNum);
+        document.getElementById('lastWinner').innerHTML = `<div style="background:#dff0e9; border-radius:20px; padding:12px; text-align:center;"><strong>✅ Приз №${prizeNum}</strong><br>🏆 ${winner.name} (№${winner.id})</div>`;
+        setTimeout(() => document.getElementById('lastWinner').innerHTML = '', 3000);
+        updateWinnersDisplay();
+        updateDrawUI();
     }
     
-    function exportToCSV() {
+    function exportCSV() {
         if (participants.length === 0) { alert('Нет данных'); return; }
-        let csv = "№,ФИО,Email,Телефон,Время,Интерес\n";
-        participants.forEach(p => csv += `${p.id},"${p.name}",${p.email},${p.phone},${p.timestamp},"${p.interest || ''}"\n`);
+        let csv = "№,ФИО,Телефон,Email,Время,Интерес\n";
+        participants.forEach(p => {
+            csv += `${p.id},"${p.name}",${p.phone},${p.email},${p.timestamp},"${p.interest || ''}"\n`;
+        });
         const blob = new Blob(["\uFEFF" + csv], {type: 'text/csv'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = 'participants.csv';
         a.click();
         URL.revokeObjectURL(a.href);
-        showStatus('✅ CSV скачан', false);
     }
     
-    function toggleKioskMode() {
-        const body = document.body;
-        if (!isKioskMode) {
-            body.classList.remove('normal-mode');
-            body.classList.add('kiosk-mode');
-            isKioskMode = true;
-            if (winners.length > 0) {
-                const lastWinner = winners[winners.length - 1];
-                updateKioskDisplay(lastWinner, winners.length);
-            } else {
-                updateKioskDisplay(null, null);
+    function showKioskMode() {
+        kioskMode = true;
+        const kioskHtml = `
+            <div id="kioskView" class="kiosk-mode">
+                <div class="kiosk-card">
+                    <h1 style="color:#2c5a4a; margin-bottom:30px;">🍸 DESIGN TRAVEL CLUB</h1>
+                    <div id="kioskContent">
+                        <div class="kiosk-waiting">🎫 Ожидание розыгрыша...</div>
+                    </div>
+                    <button id="closeKiosk" style="margin-top:40px; background:#ccaa88; width:auto; padding:10px 30px;">Закрыть</button>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', kioskHtml);
+        
+        // Если уже есть победители - показываем последнего
+        if (winners.length > 0) {
+            const last = winners[winners.length - 1];
+            const kioskDiv = document.getElementById('kioskContent');
+            if (kioskDiv) {
+                kioskDiv.innerHTML = `
+                    <div class="kiosk-prize">🏆 ПРИЗ №${winners.length} 🏆</div>
+                    <div class="kiosk-number">🎫 № ${last.id}</div>
+                    <div class="kiosk-name">${last.name}</div>
+                    <div style="margin-top:20px;">✨ Поздравляем! ✨</div>
+                `;
             }
-        } else {
-            body.classList.remove('kiosk-mode');
-            body.classList.add('normal-mode');
-            isKioskMode = false;
         }
+        
+        document.getElementById('closeKiosk').onclick = () => {
+            document.getElementById('kioskView').remove();
+            kioskMode = false;
+        };
     }
     
-    document.getElementById('registrationForm').onsubmit = (e) => {
+    // Регистрация
+    document.getElementById('regForm').onsubmit = (e) => {
         e.preventDefault();
-        const name = `${document.getElementById('first_name').value.trim()} ${document.getElementById('last_name').value.trim()}`;
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const name = `${firstName} ${lastName}`;
         const phone = document.getElementById('phone').value.trim();
         const email = document.getElementById('email').value.trim();
-        let interest = document.querySelector('input[name="club_interest"]:checked')?.value || '';
-        if (!name || !phone) { alert('Заполните имя, фамилию и телефон'); return; }
-        if (participants.some(p => p.phone === phone)) { showStatus(`❌ Телефон ${phone} уже зарегистрирован!`, true); return; }
-        if (participants.some(p => p.name === name)) { showStatus(`❌ Имя ${name} уже зарегистрировано!`, true); return; }
+        const interestRadio = document.querySelector('input[name="interest"]:checked');
+        const interest = interestRadio ? interestRadio.value : '';
+        
+        if (!firstName || !lastName || !phone) {
+            alert('Заполните имя, фамилию и телефон');
+            return;
+        }
+        
+        if (participants.some(p => p.phone === phone)) {
+            document.getElementById('regStatus').innerHTML = `<div class="status error">❌ Телефон ${phone} уже зарегистрирован!</div>`;
+            setTimeout(() => document.getElementById('regStatus').innerHTML = '', 3000);
+            return;
+        }
+        
+        if (participants.some(p => p.name === name)) {
+            document.getElementById('regStatus').innerHTML = `<div class="status error">❌ Имя ${name} уже зарегистрировано!</div>`;
+            setTimeout(() => document.getElementById('regStatus').innerHTML = '', 3000);
+            return;
+        }
+        
         const newId = participants.length + 1;
-        participants.push({ id: newId, name, email, phone, timestamp: new Date().toLocaleString(), interest });
-        saveParticipants();
-        showStatus(`✅ ${name}, вы зарегистрированы!<br>🎫 ВАШ НОМЕР: ${newId}`, false);
+        participants.push({
+            id: newId,
+            name: name,
+            phone: phone,
+            email: email,
+            timestamp: new Date().toLocaleString(),
+            interest: interest
+        });
+        save();
+        
+        document.getElementById('regStatus').innerHTML = `<div class="status success">✅ ${name}, вы зарегистрированы!<br>🎫 <strong>ВАШ НОМЕР: ${newId}</strong></div>`;
+        setTimeout(() => document.getElementById('regStatus').innerHTML = '', 5000);
+        
         e.target.reset();
-        if (isAdmin) updateTable();
+        
+        if (isAdmin) {
+            updateTable();
+            resetDraw();
+        }
     };
     
+    // Админ
     document.getElementById('loginBtn').onclick = () => {
-        if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
-            sessionStorage.setItem('admin', 'true');
+        if (document.getElementById('adminPass').value === PASSWORD) {
             isAdmin = true;
-            document.getElementById('loginContainer').classList.add('hidden');
-            document.getElementById('adminPanel').classList.remove('hidden');
+            document.getElementById('loginBlock').classList.add('hidden');
+            document.getElementById('adminBlock').classList.remove('hidden');
             updateTable();
-        } else { document.getElementById('loginError').innerText = 'Неверный пароль'; }
+            resetDraw();
+        } else {
+            document.getElementById('loginMsg').innerText = 'Неверный пароль';
+            setTimeout(() => document.getElementById('loginMsg').innerText = '', 2000);
+        }
     };
+    
     document.getElementById('logoutBtn').onclick = () => {
-        sessionStorage.removeItem('admin');
         isAdmin = false;
-        document.getElementById('loginContainer').classList.remove('hidden');
-        document.getElementById('adminPanel').classList.add('hidden');
+        document.getElementById('loginBlock').classList.remove('hidden');
+        document.getElementById('adminBlock').classList.add('hidden');
     };
-    document.getElementById('resetDrawBtn').onclick = () => { if(participants.length) resetDraw(); else alert('Нет участников'); };
-    document.getElementById('drawStepBtn').onclick = drawWinner;
-    document.getElementById('prizeCount').onchange = updateUI;
-    document.getElementById('kioskModeBtn').onclick = toggleKioskMode;
-    document.getElementById('exportMainBtn').onclick = exportToCSV;
+    
+    document.getElementById('resetDrawBtn').onclick = () => {
+        if (participants.length) resetDraw();
+        else alert('Нет участников');
+    };
+    
+    document.getElementById('drawBtn').onclick = drawWinner;
+    document.getElementById('prizeCount').onchange = updateDrawUI;
+    document.getElementById('kioskBtn').onclick = showKioskMode;
+    document.getElementById('exportBtn').onclick = exportCSV;
     
     if (sessionStorage.getItem('admin') === 'true') {
         isAdmin = true;
-        document.getElementById('loginContainer').classList.add('hidden');
-        document.getElementById('adminPanel').classList.remove('hidden');
+        document.getElementById('loginBlock').classList.add('hidden');
+        document.getElementById('adminBlock').classList.remove('hidden');
         updateTable();
+        resetDraw();
     }
+    
     updateTable();
 </script>
 </body>
