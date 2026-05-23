@@ -2,296 +2,194 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESIGN TRAVEL CLUB</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>DESIGN TRAVEL CLUB — Регистрация</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: Arial, sans-serif;
-            background: #d4e9e2;
-            padding: 20px;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(145deg, #dbeae3 0%, #c4d3cb 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
         }
-        .container { max-width: 550px; margin: 0 auto; }
+        .container { max-width: 500px; margin: 0 auto; }
         .card {
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 2rem;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(90, 130, 110, 0.2);
         }
-        h2 {
-            color: #2c5a4a;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            border-left: 4px solid #5f9e86;
-            padding-left: 12px;
+        h1, h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a4d3e;
+            margin-bottom: 1rem;
+            padding-left: 0.75rem;
+            border-left: 5px solid #6b9c86;
+            text-align: center;
+            border-left: none;
+            padding-left: 0;
+        }
+        .form-group { margin-bottom: 1.25rem; }
+        label {
+            display: block;
+            font-weight: 500;
+            color: #2b5b4a;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
         }
         input, button {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            border-radius: 30px;
-            border: 1px solid #ccc;
-            font-size: 16px;
+            padding: 0.8rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid #cbdcd3;
+            font-size: 1rem;
+            background: white;
         }
         button {
-            background: #5f9e86;
+            background: linear-gradient(95deg, #6b9c86, #4d7963);
             color: white;
-            font-weight: bold;
+            font-weight: 600;
             border: none;
             cursor: pointer;
         }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
         .radio-group label {
-            display: block;
-            background: #f0f7f3;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #edf6f1;
+            padding: 0.7rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid #d0e0d7;
+            font-weight: normal;
             cursor: pointer;
         }
-        .status {
-            padding: 10px;
-            border-radius: 20px;
-            margin-top: 10px;
-            text-align: center;
+        .radio-group input {
+            width: 1.2rem;
+            height: 1.2rem;
+            accent-color: #4d7963;
         }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
-        .waiting { background: #fff3cd; color: #856404; }
-        .winner-block {
-            background: linear-gradient(135deg, #e2f4ed, #c8e6d9);
-            border-radius: 30px;
-            padding: 20px;
+        .status-message {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 1.5rem;
             text-align: center;
+            font-size: 0.9rem;
         }
-        .winner-number { font-size: 2.5rem; font-weight: bold; color: #2c5a4a; }
-        .hidden { display: none; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #eaf5f0; }
+        .success { background: #e0f2e9; color: #1a5a48; border-left: 4px solid #2b8c6b; }
+        .error { background: #ffe6e5; color: #bc4e4e; border-left: 4px solid #dc5f5f; }
+        .info { background: #eef2fa; color: #2c5a6e; }
+        .number-big {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1a4d3e;
+            text-align: center;
+            margin: 1rem 0;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-
-    <!-- Экран победителя -->
     <div class="card">
-        <h2>🍸 Коктейльный вечер</h2>
-        <div id="winnerScreen" class="winner-block">🎫 Ожидание розыгрыша</div>
+        <h1>🍸 Коктейльный вечер</h1>
+        <h2>DESIGN TRAVEL CLUB</h2>
     </div>
 
-    <!-- Форма регистрации -->
     <div class="card">
-        <h2>✨ Регистрация</h2>
-        <form id="regForm">
-            <input type="text" id="firstName" placeholder="Имя" required>
-            <input type="text" id="lastName" placeholder="Фамилия" required>
-            <input type="tel" id="phone" placeholder="Телефон" required>
-            <div class="radio-group">
-                <label><input type="radio" name="interest" value="Да"> Хочу в закрытый клуб</label>
-                <label><input type="radio" name="interest" value="Безусловно"> Безусловно</label>
-                <label><input type="radio" name="interest" value="Несомненно"> Несомненно</label>
-                <label><input type="radio" name="interest" value="В следующий раз"> В следующий раз</label>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label>Имя *</label>
+                <input type="text" id="firstName" required placeholder="Анна">
             </div>
-            <button type="submit">Зарегистрироваться</button>
+            <div class="form-group">
+                <label>Фамилия *</label>
+                <input type="text" id="lastName" required placeholder="Андреева">
+            </div>
+            <div class="form-group">
+                <label>Телефон *</label>
+                <input type="tel" id="phone" required placeholder="+7 900 123 45 67">
+            </div>
+            <div class="form-group">
+                <label>✨ Хотите присоединиться к закрытому клубу путешественников?</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="club_interest" value="Да"> Да</label>
+                    <label><input type="radio" name="club_interest" value="Безусловно"> Безусловно</label>
+                    <label><input type="radio" name="club_interest" value="Несомненно"> Несомненно</label>
+                    <label><input type="radio" name="club_interest" value="В следующий раз"> В следующий раз</label>
+                </div>
+            </div>
+            <button type="submit">✨ Зарегистрироваться</button>
         </form>
-        <div id="regMessage"></div>
-    </div>
-
-    <!-- Вход организатора -->
-    <div class="card" id="loginBox">
-        <h2>🔐 Организатор</h2>
-        <input type="password" id="adminPass" placeholder="Пароль">
-        <button id="loginBtn">Войти</button>
-        <div id="loginError" style="color:red"></div>
-    </div>
-
-    <!-- Панель организатора -->
-    <div id="adminBox" class="card hidden">
-        <h2>🎁 Розыгрыш</h2>
-        <select id="prizeCount">
-            <option value="1">1 приз</option>
-            <option value="2" selected>2 приза</option>
-            <option value="3">3 приза</option>
-            <option value="5">5 призов</option>
-        </select>
-        <button id="drawBtn">Разыграть следующий приз</button>
-        <div id="drawStatus" style="background:#eaf5f0; padding:10px; border-radius:20px; margin:10px 0;"></div>
-        <button id="resetDrawBtn">Сбросить розыгрыш</button>
-        <button id="logoutBtn">Выйти</button>
-        <h3 style="margin-top:15px;">Участники</h3>
-        <div style="overflow-x:auto;">20~<thead><tr><th>№</th><th>Имя</th><th>Фамилия</th><th>Телефон</th></tr></thead><tbody id="userTable"></tbody>20~</div>
-        <button id="refreshBtn" style="margin-top:10px;">Обновить список</button>
+        <div id="regFormStatus"></div>
     </div>
 </div>
 
 <script>
-    const PASSWORD = "travelclub2025";
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwv_aOPmeoxfy4BixpjeiX5F9Z6XT8_3KIz4qlIXMwi5IsMgESVOr3jbvmoC3uXkkqS/exec';
-    const SHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/ВАШ_URL_СКРИПТА/exec'; // ЗАМЕНИТЕ!
     
-    let users = [];
-    let winners = [];
-    let available = [];
-    let isAdmin = false;
-    
-    // Нормализация телефона
     function normalizePhone(phone) {
         return String(phone).replace(/[\s\-\(\)\+]/g, '');
     }
     
-    // Загрузка из таблицы
-    async function loadUsers() {
-        const tbody = document.getElementById('userTable');
-        if (tbody) tbody.innerHTML = '<tr><td colspan="4">Загрузка...<\/td><\/tr>';
-        try {
-            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-            const res = await fetch(url);
-            const text = await res.text();
-            const json = JSON.parse(text.substring(47, text.length - 2));
-            const rows = json.table.rows;
-            
-            if (!rows || rows.length < 2) {
-                users = [];
-                if (tbody) tbody.innerHTML = '<tr><td colspan="4">Нет участников<\/td><\/tr>';
-                return;
-            }
-            
-            users = [];
-            for (let i = 1; i < rows.length; i++) {
-                const r = rows[i].c;
-                if (r && r[0] && r[0].v) {
-                    users.push({
-                        id: parseInt(r[0].v),
-                        firstName: r[1]?.v || '',
-                        lastName: r[2]?.v || '',
-                        phone: r[3]?.v || ''
-                    });
-                }
-            }
-            users.sort((a,b) => a.id - b.id);
-            
-            if (tbody) {
-                tbody.innerHTML = '';
-                users.forEach(u => {
-                    tbody.innerHTML += `<tr><td>${u.id}</td><td>${u.firstName}</td><td>${u.lastName}</td><td>${u.phone}</td></tr>`;
-                });
-            }
-            
-            resetDraw();
-        } catch(err) {
-            console.error(err);
-            if (tbody) tbody.innerHTML = '<tr><td colspan="4">Ошибка загрузки<\/td><\/tr>';
-        }
-    }
-    
-    function resetDraw() {
-        available = [...users];
-        winners = [];
-        for (let i = available.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
-            [available[i], available[j]] = [available[j], available[i]];
-        }
-        updateDrawStatus();
-    }
-    
-    function updateDrawStatus() {
-        const total = parseInt(document.getElementById('prizeCount').value);
-        const left = total - winners.length;
-        const div = document.getElementById('drawStatus');
-        if (!div) return;
-        if (winners.length >= total) div.innerHTML = '✅ Розыгрыш завершён';
-        else if (available.length === 0) div.innerHTML = '⚠️ Нет участников';
-        else div.innerHTML = `🎲 Осталось ${left} призов | Доступно ${available.length} чел`;
-    }
-    
-    function showWinner(winner, prizeNum) {
-        document.getElementById('winnerScreen').innerHTML = `
-            <div>
-                <h2>🏆 ПРИЗ №${prizeNum} 🏆</h2>
-                <div class="winner-number">🎫 № ${winner.id}</div>
-                <div>${winner.firstName} ${winner.lastName}</div>
-            </div>
-        `;
-    }
-    
-    function drawWinner() {
-        const total = parseInt(document.getElementById('prizeCount').value);
-        if (winners.length >= total) { alert('Все призы разыграны'); updateDrawStatus(); return; }
-        if (available.length === 0) { alert('Нет участников'); updateDrawStatus(); return; }
-        const winner = available[0];
-        available = available.filter(u => u.id !== winner.id);
-        winners.push(winner);
-        showWinner(winner, winners.length);
-        updateDrawStatus();
-    }
-    
-    // Регистрация
-    async function registerUser(data) {
-        const msgDiv = document.getElementById('regMessage');
-        msgDiv.innerHTML = '<div class="status waiting">⏳ Отправка...</div>';
+    async function register(formData) {
+        const statusDiv = document.getElementById('regFormStatus');
+        statusDiv.innerHTML = '<div class="status-message info">⏳ Отправка...</div>';
+        
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify(formData)
             });
+            
             const result = await response.json();
+            
             if (result.success) {
-                msgDiv.innerHTML = `<div class="status success">✅ ${data.firstName} ${data.lastName}, вы зарегистрированы!<br>🎫 ВАШ НОМЕР: ${result.id}</div>`;
-                setTimeout(() => msgDiv.innerHTML = '', 5000);
-                if (isAdmin) loadUsers();
+                statusDiv.innerHTML = `
+                    <div class="status-message success">
+                        ✅ ${formData.firstName} ${formData.lastName}, вы зарегистрированы!
+                        <div class="number-big">🎫 Ваш номер: ${result.number}</div>
+                    </div>
+                `;
+                setTimeout(() => statusDiv.innerHTML = '', 8000);
                 return true;
             } else if (result.error === 'duplicate_phone') {
-                msgDiv.innerHTML = '<div class="status error">❌ Этот номер телефона уже зарегистрирован</div>';
-                setTimeout(() => msgDiv.innerHTML = '', 4000);
+                statusDiv.innerHTML = '<div class="status-message error">❌ Этот номер телефона уже зарегистрирован.</div>';
+                setTimeout(() => statusDiv.innerHTML = '', 5000);
                 return false;
+            } else {
+                throw new Error('Ошибка');
             }
         } catch(err) {
-            msgDiv.innerHTML = '<div class="status error">❌ Ошибка отправки. Попробуйте ещё раз.</div>';
-            setTimeout(() => msgDiv.innerHTML = '', 4000);
+            statusDiv.innerHTML = '<div class="status-message error">❌ Ошибка отправки. Попробуйте ещё раз.</div>';
+            setTimeout(() => statusDiv.innerHTML = '', 5000);
             return false;
         }
     }
     
-    document.getElementById('regForm').onsubmit = async (e) => {
+    document.getElementById('registrationForm').onsubmit = async (e) => {
         e.preventDefault();
         const firstName = document.getElementById('firstName').value.trim();
         const lastName = document.getElementById('lastName').value.trim();
         const phone = normalizePhone(document.getElementById('phone').value.trim());
-        const interest = document.querySelector('input[name="interest"]:checked')?.value || '';
+        const interest = document.querySelector('input[name="club_interest"]:checked')?.value || '';
         
         if (!firstName || !lastName || !phone) {
             alert('Заполните имя, фамилию и телефон');
             return;
         }
         
-        await registerUser({ firstName, lastName, phone, interest, timestamp: new Date().toLocaleString() });
-        e.target.reset();
+        await register({ firstName, lastName, phone, interest, timestamp: new Date().toLocaleString() });
+        document.getElementById('registrationForm').reset();
     };
-    
-    document.getElementById('loginBtn').onclick = () => {
-        if (document.getElementById('adminPass').value === PASSWORD) {
-            isAdmin = true;
-            document.getElementById('loginBox').classList.add('hidden');
-            document.getElementById('adminBox').classList.remove('hidden');
-            loadUsers();
-        } else {
-            document.getElementById('loginError').innerHTML = 'Неверный пароль';
-            setTimeout(() => document.getElementById('loginError').innerHTML = '', 2000);
-        }
-    };
-    
-    document.getElementById('logoutBtn').onclick = () => {
-        isAdmin = false;
-        document.getElementById('loginBox').classList.remove('hidden');
-        document.getElementById('adminBox').classList.add('hidden');
-    };
-    
-    document.getElementById('drawBtn').onclick = drawWinner;
-    document.getElementById('resetDrawBtn').onclick = () => { if(users.length) resetDraw(); else alert('Нет участников'); };
-    document.getElementById('prizeCount').onchange = updateDrawStatus;
-    document.getElementById('refreshBtn').onclick = loadUsers;
 </script>
 </body>
 </html>
