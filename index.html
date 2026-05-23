@@ -125,6 +125,39 @@
         .reset-btn { background: #ccaa88; }
         .big-screen-btn { background: #4f9e86; width: auto; padding: 8px 24px; margin-left: 0; }
         .export-main-btn { background: #2c7a5e; width: auto; padding: 8px 24px; margin-left: 0; }
+        
+        /* Стили для режима киоска (только победитель) */
+        body.kiosk-mode {
+            padding: 0;
+            overflow: hidden;
+        }
+        body.kiosk-mode .main-container {
+            max-width: 100%;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        body.kiosk-mode .card:not(.winner-card-full) {
+            display: none;
+        }
+        body.kiosk-mode .winner-card-full {
+            display: block !important;
+            margin: 0;
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            padding: 0;
+        }
+        body.kiosk-mode .winner-announcement {
+            transform: scale(1.1);
+            margin: 0 40px;
+        }
+        .winner-card-full {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -133,6 +166,11 @@
     <div class="card">
         <h2>🍸 Коктейльный вечер DESIGN TRAVEL CLUB</h2>
         <div id="publicWinnerContent"></div>
+    </div>
+
+    <!-- Скрытый блок для полноэкранного режима -->
+    <div id="fullscreenWinnerBlock" class="winner-card-full">
+        <div id="fullscreenWinnerContent"></div>
     </div>
 
     <div class="card">
@@ -206,7 +244,7 @@
     let available = [];
     let winners = [];
     let drawActive = false;
-    let bigScreenWindow = null;
+    let isKioskMode = false;
     
     function saveParticipants() {
         localStorage.setItem('participants', JSON.stringify(participants));
@@ -238,9 +276,10 @@
         setTimeout(() => div.innerHTML = '', 5000);
     }
     
-    function updateBigScreen(winner, prize) {
-        // Обновляем на этой странице
-        document.getElementById('publicWinnerContent').innerHTML = `
+    function updateBothScreens(winner, prize) {
+        // Обычный экран
+        const publicContent = document.getElementById('publicWinnerContent');
+        publicContent.innerHTML = `
             <div class="winner-announcement">
                 <h2>🏆 ПРИЗ №${prize} 🏆</h2>
                 <div class="winner-number">🎫 № ${winner.id}</div>
@@ -248,13 +287,17 @@
             </div>
         `;
         
-        // Отправляем на большой экран через URL параметры
-        if (bigScreenWindow && !bigScreenWindow.closed) {
-            const url = `winner-screen.html?id=${winner.id}&name=${encodeURIComponent(winner.name)}&prize=${prize}&t=${Date.now()}`;
-            bigScreenWindow.location.href = url;
-        }
+        // Полноэкранный режим
+        const fullscreenContent = document.getElementById('fullscreenWinnerContent');
+        fullscreenContent.innerHTML = `
+            <div class="winner-announcement">
+                <h2>🏆 ПРИЗ №${prize} 🏆</h2>
+                <div class="winner-number">🎫 № ${winner.id}</div>
+                <div class="winner-name">${winner.name}</div>
+            </div>
+        `;
         
-        // Сохраняем в localStorage для страниц, открытых позже
+        // Сохраняем в localStorage для синхронизации
         localStorage.setItem('winnerDisplay', JSON.stringify({
             id: winner.id,
             name: winner.name,
@@ -275,11 +318,7 @@
         const historyDiv = document.getElementById('winnersHistoryList');
         if (historyDiv) historyDiv.innerHTML = '<div style="color:#8baa9c;">Пока нет победителей</div>';
         document.getElementById('publicWinnerContent').innerHTML = '';
-        
-        // Очищаем большой экран
-        if (bigScreenWindow && !bigScreenWindow.closed) {
-            bigScreenWindow.location.href = 'winner-screen.html?clear=true';
-        }
+        document.getElementById('fullscreenWinnerContent').innerHTML = '';
         localStorage.setItem('winnerDisplay', JSON.stringify({clear: true, time: Date.now()}));
     }
     
@@ -316,7 +355,7 @@
         available = available.filter(p => p.id !== winner.id);
         winners.push(winner);
         const prizeNum = winners.length;
-        updateBigScreen(winner, prizeNum);
+        updateBothScreens(winner, prizeNum);
         const lastDiv = document.getElementById('lastWinnerInfo');
         if(lastDiv) {
             lastDiv.innerHTML = `<div style="background:#dff0e9; border-radius:20px; padding:15px; text-align:center;"><strong>✅ Приз №${prizeNum}</strong><br>🏆 ${winner.name} (№${winner.id})</div>`;
@@ -348,6 +387,16 @@
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
         showStatus('✅ Таблица скачана!', false);
+    }
+    
+    function toggleKioskMode() {
+        if (!isKioskMode) {
+            document.body.classList.add('kiosk-mode');
+            isKioskMode = true;
+        } else {
+            document.body.classList.remove('kiosk-mode');
+            isKioskMode = false;
+        }
     }
     
     document.getElementById('registrationForm').addEventListener('submit', (e) => {
@@ -427,10 +476,45 @@
     document.getElementById('prizeCount').onchange = updateUI;
     
     document.getElementById('openBigScreenBtn').onclick = () => {
-        bigScreenWindow = window.open('winner-screen.html', '_blank');
+        // Открываем новое окно в режиме киоска
+        const kioskWindow = window.open('?kiosk=true', '_blank', 'fullscreen=yes,menubar=no,toolbar=no,location=no');
+        if (kioskWindow) {
+            kioskWindow.focus();
+        }
     };
     
     document.getElementById('exportMainBtn').onclick = exportToCSV;
+    
+    // Проверяем параметр kiosk в URL
+    if (window.location.search.includes('kiosk=true')) {
+        toggleKioskMode();
+        // Скрываем всё лишнее
+        document.getElementById('loginContainer').classList.add('hidden');
+        document.getElementById('adminPanel').classList.add('hidden');
+        // Периодически проверяем обновления
+        setInterval(() => {
+            const saved = localStorage.getItem('winnerDisplay');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.clear) {
+                        document.getElementById('fullscreenWinnerContent').innerHTML = '';
+                    } else if (data.id && Date.now() - data.time < 60000) {
+                        const fullscreenContent = document.getElementById('fullscreenWinnerContent');
+                        if (!fullscreenContent.innerHTML.includes(data.id)) {
+                            fullscreenContent.innerHTML = `
+                                <div class="winner-announcement">
+                                    <h2>🏆 ПРИЗ №${data.prize} 🏆</h2>
+                                    <div class="winner-number">🎫 № ${data.id}</div>
+                                    <div class="winner-name">${data.name}</div>
+                                </div>
+                            `;
+                        }
+                    }
+                } catch(e) {}
+            }
+        }, 1000);
+    }
     
     if (sessionStorage.getItem('admin') === 'true') {
         isAdmin = true;
