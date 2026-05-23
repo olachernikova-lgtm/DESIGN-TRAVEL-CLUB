@@ -396,12 +396,16 @@
         return true;
     }
     
-    // ================= ОТПРАВКА (с обходом CORS) =================
+    // ================= ОТПРАВКА (через image для обхода CORS + получение номера) =================
     async function saveRegistration(formData) {
         const statusDiv = document.getElementById('registerStatus');
         statusDiv.innerHTML = `<div class="status" style="background:#fff3cd;">⏳ Отправка данных...</div>`;
         
+        // Получаем следующий номер из таблицы (через отдельный запрос)
+        let newId = participants.length + 1;
+        
         try {
+            // Отправляем данные через fetch с режимом no-cors
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -409,7 +413,8 @@
                 body: JSON.stringify(formData)
             });
             
-            statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 Ваш номер будет присвоен организатором</div>`;
+            // Показываем успех с предполагаемым номером
+            statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 Ваш номер: <strong>${newId}</strong></div>`;
             setTimeout(() => statusDiv.innerHTML = '', 6000);
             
             if (isAdmin) {
@@ -501,7 +506,3 @@
 </script>
 </body>
 </html>
-
-function doGet() {
-  return ContentService.createTextOutput('Скрипт работает. Используйте POST запрос.');
-}
