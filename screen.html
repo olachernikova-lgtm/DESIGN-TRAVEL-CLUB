@@ -44,16 +44,11 @@
             border-radius: 4rem;
             margin-bottom: 2rem;
         }
-        .winner-number {
-            font-size: 8rem;
+        .winner-name {
+            font-size: 3rem;
             font-weight: 800;
             color: #1a4d3e;
             margin: 1.5rem 0;
-        }
-        .winner-name {
-            font-size: 2.5rem;
-            margin: 1.5rem 0;
-            color: #2f604f;
         }
         .waiting {
             font-size: 2rem;
@@ -66,8 +61,7 @@
             50% { opacity: 0.5; }
         }
         @media (max-width: 768px) {
-            .winner-number { font-size: 4rem; }
-            .winner-name { font-size: 1.5rem; }
+            .winner-name { font-size: 1.8rem; }
             h1 { font-size: 2rem; }
             .winner-card { padding: 2rem; }
         }
@@ -84,10 +78,9 @@
 </div>
 
 <script>
-    function showWinner(number, name, prize) {
+    function showWinner(name, prize) {
         document.getElementById('content').innerHTML = `
             <div class="prize-badge">🏆 ПРИЗ №${prize} 🏆</div>
-            <div class="winner-number">🎫 № ${number}</div>
             <div class="winner-name">${name}</div>
             <div style="margin-top: 1rem;">✨ Поздравляем! ✨</div>
         `;
@@ -99,7 +92,7 @@
             try {
                 const winner = JSON.parse(data);
                 if (winner.time && Date.now() - winner.time < 60000) {
-                    showWinner(winner.number, winner.name, winner.prize);
+                    showWinner(winner.name, winner.prize);
                 }
             } catch(e) {}
         }
@@ -109,7 +102,7 @@
         if (e.key === 'winnerDisplay' && e.newValue) {
             try {
                 const winner = JSON.parse(e.newValue);
-                showWinner(winner.number, winner.name, winner.prize);
+                showWinner(winner.name, winner.prize);
             } catch(e) {}
         }
     });
