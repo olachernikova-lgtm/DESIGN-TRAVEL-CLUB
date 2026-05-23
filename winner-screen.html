@@ -48,43 +48,38 @@
     <div id="content"><div class="waiting">🎫 Ожидание розыгрыша...</div></div>
 </div>
 <script>
-    let lastId = null;
-    let lastUpdateTime = 0;
-    
-    function show(id, name, prize) {
-        const prizeText = prize ? `ПРИЗ №${prize}` : 'ПОБЕДИТЕЛЬ';
+    function showWinner(id, name, prizeNumber) {
+        const prizeText = prizeNumber ? `ПРИЗ №${prizeNumber}` : 'ПОБЕДИТЕЛЬ';
         document.getElementById('content').innerHTML = `
             <div class="prize">🏆 ${prizeText} 🏆</div>
             <div class="number">🎫 № ${id}</div>
-            <div class="name">${name}</div>
+            <div class="name">${decodeURIComponent(name)}</div>
             <div style="margin-top:40px; font-size:1.5rem;">✨ Поздравляем! ✨</div>
         `;
-        lastId = id;
     }
     
     function clearDisplay() {
-        const currentContent = document.getElementById('content').innerHTML;
-        if (!currentContent.includes('Ожидание')) {
-            document.getElementById('content').innerHTML = '<div class="waiting">🎫 Ожидание розыгрыша...</div>';
-        }
-        lastId = null;
+        document.getElementById('content').innerHTML = '<div class="waiting">🎫 Ожидание розыгрыша...</div>';
     }
     
-    function checkForUpdate() {
-        const saved = localStorage.getItem('winnerDisplay');
-        if (saved) {
-            try {
-                const data = JSON.parse(saved);
-                if (data.clear) {
-                    clearDisplay();
-                } else if (data.id && data.id !== lastId && Date.now() - data.time < 60000) {
-                    show(data.id, data.name, data.prize);
-                }
-            } catch(e) {}
+    function checkURLParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.has('clear')) {
+            clearDisplay();
+            return;
+        }
+        
+        const id = urlParams.get('id');
+        const name = urlParams.get('name');
+        const prize = urlParams.get('prize');
+        
+        if (id && name) {
+            showWinner(id, name, prize);
         }
     }
     
-    // Слушаем изменения localStorage (срабатывает для ДРУГИХ вкладок)
+    // Слушаем изменения localStorage (на случай, если страница не закрывается)
     window.addEventListener('storage', (event) => {
         if (event.key === 'winnerDisplay' && event.newValue) {
             try {
@@ -92,17 +87,21 @@
                 if (data.clear) {
                     clearDisplay();
                 } else if (data.id) {
-                    show(data.id, data.name, data.prize);
+                    showWinner(data.id, data.name, data.prize);
                 }
             } catch(e) {}
         }
     });
     
-    // Проверяем каждые 300 мс для надёжности
-    setInterval(checkForUpdate, 300);
+    // Проверяем URL при загрузке и при изменении (для навигации)
+    checkURLParams();
     
-    // Проверяем сразу при загрузке
-    checkForUpdate();
+    // Интервал для проверки (на случай, если страница обновляется через location.href)
+    setInterval(() => {
+        if (window.location.search.includes('id=')) {
+            checkURLParams();
+        }
+    }, 500);
 </script>
 </body>
 </html>
