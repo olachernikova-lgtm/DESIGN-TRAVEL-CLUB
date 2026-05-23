@@ -12,7 +12,7 @@
             min-height: 100vh;
             padding: 2rem 1rem;
         }
-        .container { max-width: 600px; margin: 0 auto; }
+        .container { max-width: 650px; margin: 0 auto; }
         .card {
             background: rgba(255, 255, 255, 0.96);
             border-radius: 2rem;
@@ -48,7 +48,7 @@
             padding: 0.8rem 1rem;
             border-radius: 2rem;
             font-size: 1rem;
-            background: linear-gradient(95deg, #6b9c86, #4d7963);
+            background: #4d7963;
             color: white;
             font-weight: 600;
             border: none;
@@ -62,11 +62,7 @@
             text-align: center;
             border: 2px solid #4d7963;
         }
-        .winner-name { font-size: 1.4rem; font-weight: 500; color: #2f604f; }
-        @media (max-width: 500px) {
-            .card { padding: 1.25rem; }
-            .winner-name { font-size: 1.2rem; }
-        }
+        .winner-name { font-size: 1.6rem; font-weight: 500; color: #1a4d3e; margin: 1rem 0; }
         input, select {
             width: 100%;
             padding: 0.8rem 1rem;
@@ -83,7 +79,7 @@
 </head>
 <body>
 <div class="container">
-    <!-- Блок победителя (общий для всех) -->
+    <!-- Блок победителя -->
     <div class="card">
         <h2>🍸 Коктейльный вечер · DESIGN TRAVEL CLUB</h2>
         <div id="winnerDisplayArea">
@@ -91,17 +87,17 @@
         </div>
     </div>
 
-    <!-- РАБОТАЮЩАЯ ФОРМА (ВСТРОЕННАЯ GOOGLE ФОРМА) -->
+    <!-- ВСТРОЕННАЯ GOOGLE ФОРМА (РАБОТАЕТ БЕЗ CORS) -->
     <div class="card">
         <h2>📝 Регистрация на розыгрыш</h2>
-        <iframe class="form-iframe" src="https://docs.google.com/forms/d/e/1xLVUd6Juf50im7fjKhe2z5Y_rp_7fhiTDM-O-4qsreA/viewform?embedded=true" width="100%" height="650" frameborder="0" marginheight="0" marginwidth="0">Загрузка...</iframe>
+        <iframe class="form-iframe" src="https://docs.google.com/forms/d/e/1xLVUd6Juf50im7fjKhe2z5Y_rp_7fhiTDM-O-4qsreA/viewform?embedded=true" width="100%" height="600" frameborder="0" marginheight="0" marginwidth="0">Загрузка...</iframe>
     </div>
 
-    <!-- БЛОК ОРГАНИЗАТОРА (появляется после входа) -->
+    <!-- БЛОК ОРГАНИЗАТОРА -->
     <div class="card" id="organizerLoginCard">
         <h2>🔐 Организатор розыгрыша</h2>
         <input type="password" id="adminPassword" placeholder="Введите пароль">
-        <button id="loginToAdminBtn">Войти</button>
+        <button id="loginToAdminBtn">Войти в панель</button>
         <div id="loginErrorMsg" style="color: #bc4e4e; margin-top: 0.75rem;"></div>
     </div>
 
@@ -123,7 +119,7 @@
         <div id="drawInfoArea" class="status-message info">Статус: ожидание розыгрыша</div>
 
         <hr style="margin: 1.5rem 0; border-color: #d0dfd7;">
-        <h3>📋 СПИСОК УЧАСТНИКОВ (из Google Sheets)</h3>
+        <h3>📋 СПИСОК УЧАСТНИКОВ</h3>
         <div class="table-wrapper">
             <table id="participantsTable">
                 <thead><tr><th>№</th><th>Имя</th><th>Фамилия</th><th>Телефон</th></tr></thead>
@@ -135,29 +131,28 @@
 </div>
 
 <script>
-    // ПАРОЛЬ И НАСТРОЙКИ
     const ADMIN_PASSWORD = "travelclub2025";
     const SHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
 
     let participantsList = [];
     let remainingForDraw = [];
     let winnersList = [];
-    let isAdmin = false;
 
-    // ЗАГРУЗКА УЧАСТНИКОВ ИЗ ТАБЛИЦЫ
     async function loadParticipants() {
         const tbody = document.getElementById('participantsTableBody');
-        if (tbody) tbody.innerHTML = '<tr><td colspan="4">🔄 Загрузка...<\/td><\/tr>';
+        tbody.innerHTML = '<tr><td colspan="4">🔄 Загрузка...<\/td><\/tr>';
         try {
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-            const res = await fetch(url);
-            const text = await res.text();
-            const json = JSON.parse(text.substring(47, text.length - 2));
-            const rows = json.table.rows;
+            const response = await fetch(url);
+            const text = await response.text();
+            const jsonText = text.substring(47, text.length - 2);
+            const data = JSON.parse(jsonText);
+            const rows = data.table.rows;
 
             if (!rows || rows.length < 2) {
                 participantsList = [];
-                if (tbody) tbody.innerHTML = '<tr><td colspan="4">Нет участников<\/td><\/tr>';
+                tbody.innerHTML = '<tr><td colspan="4">Нет участников<\/td><\/tr>';
+                updateDrawStatus();
                 return;
             }
 
@@ -174,34 +169,31 @@
                 }
             }
 
-            if (tbody) {
-                tbody.innerHTML = '';
-                participantsList.forEach((p, idx) => {
-                    tbody.innerHTML += `<tr><td>${idx + 1}</td><td>${p.firstName}</td><td>${p.lastName}</td><td>${p.phone}</td><\/tr>`;
-                });
-            }
+            tbody.innerHTML = '';
+            participantsList.forEach(p => {
+                tbody.innerHTML += `<tr><td>${p.id}</td><td>${p.firstName}</td><td>${p.lastName}</td><td>${p.phone}<tr>`;
+            });
 
             const winnerIds = winnersList.map(w => w.id);
             remainingForDraw = participantsList.filter(p => !winnerIds.includes(p.id));
             updateDrawStatus();
         } catch (err) {
             console.error(err);
-            if (tbody) tbody.innerHTML = '<tr><td colspan="4">❌ Ошибка загрузки<\/td><\/tr>';
+            tbody.innerHTML = '<tr><td colspan="4">❌ Ошибка загрузки<\/td><\/tr>';
         }
     }
 
     function updateDrawStatus() {
         const total = parseInt(document.getElementById('prizesCountSelect').value);
         const left = total - winnersList.length;
-        const div = document.getElementById('drawInfoArea');
-        if (winnersList.length >= total) div.innerHTML = '✅ Розыгрыш завершён!';
-        else if (remainingForDraw.length === 0) div.innerHTML = '⚠️ Нет участников для розыгрыша';
-        else div.innerHTML = `🎲 Осталось ${left} призов | Доступно ${remainingForDraw.length} участников`;
+        const statusDiv = document.getElementById('drawInfoArea');
+        if (winnersList.length >= total) statusDiv.innerHTML = '✅ Розыгрыш завершён!';
+        else if (remainingForDraw.length === 0) statusDiv.innerHTML = '⚠️ Нет участников для розыгрыша';
+        else statusDiv.innerHTML = `🎲 Осталось ${left} призов | Доступно ${remainingForDraw.length} участников`;
     }
 
     function showWinner(winner, prizeNum) {
-        const winnerDiv = document.getElementById('winnerDisplayArea');
-        winnerDiv.innerHTML = `
+        document.getElementById('winnerDisplayArea').innerHTML = `
             <div class="winner-block">
                 <h2>🏆 ПРИЗ №${prizeNum} 🏆</h2>
                 <div class="winner-name">${winner.firstName} ${winner.lastName}</div>
@@ -217,16 +209,9 @@
 
     function drawWinner() {
         const total = parseInt(document.getElementById('prizesCountSelect').value);
-        if (winnersList.length >= total) {
-            alert('Все призы разыграны');
-            updateDrawStatus();
-            return;
-        }
-        if (remainingForDraw.length === 0) {
-            alert('Нет участников для розыгрыша');
-            updateDrawStatus();
-            return;
-        }
+        if (winnersList.length >= total) { alert('Все призы разыграны'); updateDrawStatus(); return; }
+        if (remainingForDraw.length === 0) { alert('Нет участников для розыгрыша'); updateDrawStatus(); return; }
+
         const randomIndex = Math.floor(Math.random() * remainingForDraw.length);
         const winner = remainingForDraw[randomIndex];
         remainingForDraw.splice(randomIndex, 1);
@@ -235,44 +220,28 @@
         updateDrawStatus();
     }
 
-    // АВТОРИЗАЦИЯ ОРГАНИЗАТОРА
+    // Админка
     document.getElementById('loginToAdminBtn').onclick = () => {
         if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
-            isAdmin = true;
             document.getElementById('organizerLoginCard').classList.add('hidden');
             document.getElementById('adminPanel').classList.remove('hidden');
             loadParticipants();
+            winnersList = [];
+            remainingForDraw = [];
         } else {
             document.getElementById('loginErrorMsg').innerText = 'Неверный пароль';
             setTimeout(() => document.getElementById('loginErrorMsg').innerText = '', 2000);
         }
     };
     document.getElementById('logoutAdminBtn').onclick = () => {
-        isAdmin = false;
         document.getElementById('organizerLoginCard').classList.remove('hidden');
         document.getElementById('adminPanel').classList.add('hidden');
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('loginErrorMsg').innerText = '';
     };
     document.getElementById('startDrawButton').onclick = drawWinner;
     document.getElementById('refreshListButton').onclick = loadParticipants;
-
-    // ЕСЛИ АДМИН УЖЕ БЫЛ ЗАЛОГИНЕН (опционально)
-    if (sessionStorage.getItem('adminLogged') === 'true') {
-        document.getElementById('organizerLoginCard').classList.add('hidden');
-        document.getElementById('adminPanel').classList.remove('hidden');
-        loadParticipants();
-    }
-    document.getElementById('loginToAdminBtn').onclick = () => {
-        if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
-            sessionStorage.setItem('adminLogged', 'true');
-            isAdmin = true;
-            document.getElementById('organizerLoginCard').classList.add('hidden');
-            document.getElementById('adminPanel').classList.remove('hidden');
-            loadParticipants();
-        } else {
-            document.getElementById('loginErrorMsg').innerText = 'Неверный пароль';
-            setTimeout(() => document.getElementById('loginErrorMsg').innerText = '', 2000);
-        }
-    };
+    document.getElementById('prizesCountSelect').onchange = updateDrawStatus;
 </script>
 </body>
 </html>
