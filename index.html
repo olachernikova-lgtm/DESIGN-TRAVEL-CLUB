@@ -90,13 +90,6 @@
         .success { background: #e0f2e9; color: #1a5a48; border-left: 4px solid #2b8c6b; }
         .error { background: #ffe6e5; color: #bc4e4e; border-left: 4px solid #dc5f5f; }
         .info { background: #eef2fa; color: #2c5a6e; }
-        .number-big {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #1a4d3e;
-            text-align: center;
-            margin: 1rem 0;
-        }
         iframe {
             display: none;
         }
@@ -165,10 +158,8 @@
         
         phone = normalizePhone(phone);
         
-        // Подставляем значения в форму
         document.getElementById('timestamp').value = timestamp;
         
-        // Меняем action на URL с параметрами (GET-запрос для обхода CORS)
         const form = document.getElementById('registrationForm');
         const params = new URLSearchParams();
         params.append('firstName', firstName);
@@ -192,16 +183,14 @@
         if (!submissionInProgress) return;
         submissionInProgress = false;
         
-        const statusDiv = document.getElementById('regFormStatus');
         const firstName = document.getElementById('firstName').value.trim();
         const lastName = document.getElementById('lastName').value.trim();
+        const statusDiv = document.getElementById('regFormStatus');
         
-        // Получаем номер участника (будет в ответе, но из-за iframe сложно)
-        // Показываем успех
         statusDiv.innerHTML = `
             <div class="status-message success">
-                ✅ ${firstName} ${lastName}, вы зарегистрированы!
-                <div class="number-big">🎫 Спасибо за регистрацию!</div>
+                ✅ ${firstName} ${lastName}, вы зарегистрированы!<br>
+                Спасибо за участие в розыгрыше!
             </div>
         `;
         
