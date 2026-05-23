@@ -51,7 +51,6 @@
         }
         button:hover { opacity: 0.9; transform: scale(0.98); }
         
-        /* ИСПРАВЛЕННЫЕ РАДИО-КНОПКИ */
         .radio-group {
             display: flex;
             flex-wrap: wrap;
@@ -69,7 +68,6 @@
             border: 1px solid #cde4db;
             cursor: pointer;
             font-size: 0.95rem;
-            transition: all 0.2s;
         }
         .radio-group input {
             width: 18px;
@@ -77,12 +75,10 @@
             accent-color: #5f9e86;
         }
         
-        /* НА МОБИЛЬНЫХ - ВЕРТИКАЛЬНО */
         @media (max-width: 600px) {
             body { padding: 15px; }
             .card { padding: 20px; }
             h2 { font-size: 1.4rem; }
-            
             .radio-group {
                 flex-direction: column;
                 gap: 10px;
@@ -92,9 +88,8 @@
                 justify-content: flex-start;
                 padding: 12px 16px;
             }
-            
             .flex-right { justify-content: center; }
-            .logout-btn, .reset-btn, .big-screen-btn { width: 100%; margin: 5px 0; text-align: center; }
+            .logout-btn, .reset-btn, .big-screen-btn, .export-main-btn { width: 100%; margin: 5px 0; text-align: center; }
             .winner-number { font-size: 3rem; }
             .winner-name { font-size: 1.5rem; }
             .winner-announcement { padding: 25px; }
@@ -129,6 +124,7 @@
         .logout-btn, .reset-btn { width: auto; padding: 8px 24px; margin-left: 0; }
         .reset-btn { background: #ccaa88; }
         .big-screen-btn { background: #4f9e86; width: auto; padding: 8px 24px; margin-left: 0; }
+        .export-main-btn { background: #2c7a5e; width: auto; padding: 8px 24px; margin-left: 0; }
     </style>
 </head>
 <body>
@@ -168,7 +164,8 @@
 
     <div id="adminPanel" class="card hidden">
         <div class="flex-right">
-            <button class="big-screen-btn" id="openBigScreenBtn">🖥️ Открыть большой экран</button>
+            <button class="big-screen-btn" id="openBigScreenBtn">🖥️ Большой экран</button>
+            <button class="export-main-btn" id="exportMainBtn">📥 Скачать таблицу (CSV)</button>
             <button class="reset-btn" id="resetDrawBtn">🔄 Сбросить розыгрыш</button>
             <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
         </div>
@@ -188,13 +185,15 @@
         </div>
         <div class="admin-panel">
             <h3>📋 Список участников</h3>
-            <button id="exportBtn" style="background:#6fae94; margin-bottom:16px;">📎 Скачать CSV</button>
             <div style="overflow-x: auto;">
                 <table style="display: table; width: 100%;">
                     <thead><tr><th>№</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время</th><th>Интерес</th></tr></thead>
                     <tbody id="tableBody"><tr><td colspan="6" style="text-align:center;">Загрузка...<\/td><\/tr><\/tbody>
                 20~
             </div>
+            <p style="font-size: 12px; color: #6a9e8a; margin-top: 15px; text-align: center;">
+                💾 Данные хранятся в вашем браузере. Нажмите «Скачать таблицу», чтобы сохранить копию.
+            </p>
         </div>
     </div>
 </div>
@@ -239,7 +238,18 @@
     }
     
     function updateBigScreen(winner, prize) {
-        localStorage.setItem('winnerDisplay', JSON.stringify({id: winner.id, name: winner.name, prize: prize, time: Date.now()}));
+        const winnerData = {
+            id: winner.id,
+            name: winner.name,
+            prize: prize,
+            time: Date.now()
+        };
+        localStorage.setItem('winnerDisplay', JSON.stringify(winnerData));
+        // Принудительно отправляем событие в ту же вкладку
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'winnerDisplay',
+            newValue: JSON.stringify(winnerData)
+        }));
         document.getElementById('publicWinnerContent').innerHTML = `
             <div class="winner-announcement">
                 <h2>🏆 ПРИЗ №${prize} 🏆</h2>
@@ -261,7 +271,11 @@
         const historyDiv = document.getElementById('winnersHistoryList');
         if (historyDiv) historyDiv.innerHTML = '<div style="color:#8baa9c;">Пока нет победителей</div>';
         document.getElementById('publicWinnerContent').innerHTML = '';
-        localStorage.setItem('winnerDisplay', JSON.stringify({clear: true}));
+        localStorage.setItem('winnerDisplay', JSON.stringify({clear: true, time: Date.now()}));
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'winnerDisplay',
+            newValue: JSON.stringify({clear: true})
+        }));
     }
     
     function updateUI() {
@@ -308,6 +322,27 @@
         const historyDiv = document.getElementById('winnersHistoryList');
         if(historyDiv) historyDiv.innerHTML = html;
         updateUI();
+    }
+    
+    function exportToCSV() {
+        if (participants.length === 0) {
+            alert('Нет данных для экспорта');
+            return;
+        }
+        let csv = "№ участника,ФИО,Email,Телефон,Время регистрации,Интерес\n";
+        participants.forEach(p => {
+            csv += `${p.id},"${p.name}",${p.email},${p.phone},${p.timestamp},"${p.interest || ''}"\n`;
+        });
+        const blob = new Blob(["\uFEFF" + csv], {type: 'text/csv;charset=utf-8;'});
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute('download', 'участники_розыгрыша.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showStatus('✅ Таблица скачана! Теперь её можно импортировать в Google Sheets', false);
     }
     
     document.getElementById('registrationForm').addEventListener('submit', (e) => {
@@ -390,17 +425,7 @@
         window.open('winner-screen.html', '_blank');
     };
     
-    document.getElementById('exportBtn').onclick = () => {
-        if(!participants.length) { alert('Нет данных'); return; }
-        let csv = "№,ФИО,Email,Телефон,Время,Интерес\n";
-        participants.forEach(p => csv += `${p.id},"${p.name}",${p.email},${p.phone},${p.timestamp},"${p.interest}"\n`);
-        const blob = new Blob(["\uFEFF" + csv], {type: 'text/csv'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'travelclub_guests.csv';
-        a.click();
-        URL.revokeObjectURL(a.href);
-    };
+    document.getElementById('exportMainBtn').onclick = exportToCSV;
     
     if (sessionStorage.getItem('admin') === 'true') {
         isAdmin = true;
