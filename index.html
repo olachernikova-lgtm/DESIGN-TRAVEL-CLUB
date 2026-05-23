@@ -221,7 +221,7 @@
                     </thead>
                     <tbody id="tableBody"><tr><td colspan="6" style="text-align: center;">Авторизуйтесь, чтобы увидеть список</td></tr>
                     </tbody>
-                </table>
+                20~
             </div>
         </div>
     </div>
@@ -231,8 +231,8 @@
     // ================= НАСТРОЙКИ =================
     const ADMIN_PASSWORD = "travelclub2025";
     const SPREADSHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
-    // НОВЫЙ URL ВАШЕГО APPS SCRIPT
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbza04CjN3Mu_YDhh7edVSS-2241WDNwUfD6w2dQMzguH9JjzOvBbjmaJPJzX8b4qcOD/exec';
+    // НОВЫЙ URL (ОБНОВЛЁН)
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwv_aOPmeoxfy4BixpjeiX5F9Z6XT8_3KIz4qlIXMwi5IsMgESVOr3jbvmoC3uXkkqS/exec';
     
     let participants = [];
     let isAdmin = false;
@@ -423,7 +423,7 @@
                 setTimeout(() => statusDiv.innerHTML = '', 5000);
                 return false;
             } else {
-                throw new Error('Ошибка сервера');
+                throw new Error(result.message || 'Ошибка сервера');
             }
         } catch(error) {
             console.error('Ошибка:', error);
