@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESIGN TRAVEL CLUB — Розыгрыш | Большой экран</title>
+    <title>Большой экран — DESIGN TRAVEL CLUB</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', 'Roboto', 'Georgia', serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(145deg, #d4e9e2 0%, #c2dfd0 100%);
             min-height: 100vh;
             display: flex;
@@ -20,114 +15,71 @@
             align-items: center;
             padding: 40px;
         }
-
-        .screen-container {
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
         .winner-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(4px);
+            background: rgba(255,255,255,0.95);
             border-radius: 80px;
             padding: 80px 60px;
             text-align: center;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-            border: 3px solid rgba(80, 140, 110, 0.3);
-            animation: fadeIn 0.5s ease;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            border: 3px solid rgba(80,140,110,0.3);
+            max-width: 1200px;
+            width: 100%;
         }
-
-        .winner-card h1 {
-            font-size: 3.5rem;
-            color: #2c5a4a;
-            margin-bottom: 40px;
-            font-weight: 500;
-            letter-spacing: 3px;
-        }
-
-        .prize-badge {
-            font-size: 2.5rem;
-            background: #e2f4ed;
-            display: inline-block;
-            padding: 15px 50px;
-            border-radius: 80px;
-            margin-bottom: 50px;
-            color: #2c5a4a;
-            font-weight: bold;
-        }
-
-        .winner-number {
-            font-size: 14rem;
-            font-weight: bold;
-            color: #2c5a4a;
-            margin: 40px 0;
-            letter-spacing: 15px;
-            line-height: 1;
-        }
-
-        .winner-name {
-            font-size: 4.5rem;
-            margin: 40px 0;
-            color: #3b6e5c;
-            font-weight: 500;
-        }
-
-        .waiting-message {
-            font-size: 3rem;
-            color: #8baa9c;
-            padding: 80px 20px;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .waiting-animation {
-            animation: pulse 2s infinite;
-        }
-
+        h1 { font-size: 3rem; color: #2c5a4a; margin-bottom: 40px; }
+        .prize { font-size: 2rem; background: #e2f4ed; display: inline-block; padding: 15px 40px; border-radius: 60px; margin-bottom: 40px; }
+        .number { font-size: 12rem; font-weight: bold; color: #2c5a4a; margin: 30px 0; }
+        .name { font-size: 3rem; margin: 30px 0; color: #3b6e5c; }
+        .waiting { font-size: 2rem; color: #8baa9c; padding: 60px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
         @media (max-width: 768px) {
-            .winner-number { font-size: 6rem; letter-spacing: 5px; }
-            .winner-name { font-size: 2rem; }
-            .winner-card h1 { font-size: 2rem; }
-            .waiting-message { font-size: 1.8rem; }
-            .winner-card { padding: 40px 25px; border-radius: 40px; }
-            .prize-badge { font-size: 1.5rem; padding: 10px 30px; }
+            .number { font-size: 5rem; }
+            .name { font-size: 1.8rem; }
+            h1 { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
-<div class="screen-container">
-    <div class="winner-card" id="winnerCard">
-        <h1>🍸 DESIGN TRAVEL CLUB</h1>
-        <div id="winnerContent">
-            <div class="waiting-message waiting-animation">
-                🎫 Ожидание розыгрыша...
-            </div>
-        </div>
-    </div>
+<div class="winner-card">
+    <h1>🍸 DESIGN TRAVEL CLUB</h1>
+    <div id="content"><div class="waiting">🎫 Ожидание розыгрыша...</div></div>
 </div>
-
 <script>
-    let lastWinnerId = null;
-    
-    function displayWinner(id, name, prizeNumber) {
-        const prizeText = prizeNumber ? `ПРИЗ №${prizeNumber}` : 'ПОБЕДИТЕЛЬ';
-        document.getElementById('winnerContent').innerHTML = `
-            <div class="prize-badge">🏆 ${prizeText} 🏆</div>
-            <div class="winner-number">🎫 № ${id}</div>
-            <div class="winner-name">${decodeURIComponent(name)}</div>
-            <div style="margin-top: 
+    let lastId = null;
+    function show(id, name, prize) {
+        document.getElementById('content').innerHTML = `
+            <div class="prize">🏆 ПРИЗ №${prize} 🏆</div>
+            <div class="number">🎫 № ${id}</div>
+            <div class="name">${name}</div>
+            <div style="margin-top:40px; font-size:1.5rem;">✨ Поздравляем! ✨</div>
+        `;
+        lastId = id;
+    }
+    function clear() {
+        if(!document.getElementById('content').innerHTML.includes('Ожидание')) {
+            document.getElementById('content').innerHTML = '<div class="waiting">🎫 Ожидание розыгрыша...</div>';
+        }
+    }
+    function check() {
+        let data = localStorage.getItem('winnerDisplay');
+        if(data) {
+            try {
+                let d = JSON.parse(data);
+                if(d.clear) clear();
+                else if(d.id && d.id !== lastId) show(d.id, d.name, d.prize);
+            } catch(e) {}
+        }
+    }
+    window.addEventListener('storage', (e) => {
+        if(e.key === 'winnerDisplay' && e.newValue) {
+            try {
+                let d = JSON.parse(e.newValue);
+                if(d.clear) clear();
+                else if(d.id) show(d.id, d.name, d.prize);
+            } catch(e) {}
+        }
+    });
+    setInterval(check, 500);
+    check();
+</script>
+</body>
+</html>
