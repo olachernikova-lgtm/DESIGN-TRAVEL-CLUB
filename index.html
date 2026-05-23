@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>DESIGN TRAVEL CLUB — Розыгрыш</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,7 +12,7 @@
             min-height: 100vh;
             padding: 30px 20px;
         }
-        .main-container { max-width: 1100px; margin: 0 auto; }
+        .main-container { max-width: 1100px; margin: 0 auto; width: 100%; }
         .card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 32px;
@@ -20,6 +20,8 @@
             margin-bottom: 28px;
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(80, 140, 110, 0.2);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         h2 {
             font-size: 1.8rem;
@@ -27,6 +29,7 @@
             border-left: 5px solid #8bc7b2;
             padding-left: 18px;
             margin-bottom: 25px;
+            line-height: 1.3;
         }
         h3 { font-size: 1.4rem; color: #2c5a4a; margin-bottom: 20px; }
         .form-group { margin-bottom: 20px; }
@@ -50,7 +53,7 @@
         .radio-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 18px;
+            gap: 12px;
             margin-top: 8px;
         }
         .radio-group label {
@@ -58,16 +61,29 @@
             align-items: center;
             gap: 8px;
             background: #f2faf5;
-            padding: 6px 16px;
+            padding: 8px 16px;
             border-radius: 40px;
             border: 1px solid #cde4db;
             cursor: pointer;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+        @media (max-width: 600px) {
+            .radio-group label {
+                white-space: normal;
+                flex: 1 1 auto;
+                justify-content: center;
+            }
+            .radio-group {
+                gap: 10px;
+            }
         }
         .status {
             padding: 12px;
             border-radius: 32px;
             margin-top: 18px;
             text-align: center;
+            word-break: break-word;
         }
         .status.success { background: #dff0e9; color: #2a6b55; border-left: 4px solid #5f9e86; }
         .status.error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
@@ -78,18 +94,31 @@
             padding: 40px;
             text-align: center;
             border: 3px solid #5f9e86;
+            word-break: break-word;
         }
         .winner-number { font-size: 5rem; font-weight: bold; color: #2c5a4a; margin: 20px 0; }
-        .winner-name { font-size: 2rem; margin: 15px 0; }
+        .winner-name { font-size: 2rem; margin: 15px 0; word-break: break-word; }
+        @media (max-width: 600px) {
+            .winner-number { font-size: 3rem; }
+            .winner-name { font-size: 1.5rem; }
+            .winner-announcement { padding: 25px; }
+        }
         .hidden { display: none; }
         .draw-step-btn { font-size: 1.3rem; padding: 15px; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 24px; overflow: hidden; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #d9ece3; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 24px; overflow-x: auto; display: block; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #d9ece3; word-break: break-word; }
         th { background: #eaf5f0; color: #2c5a4a; }
-        .flex-right { text-align: right; margin-bottom: 20px; }
-        .logout-btn, .reset-btn { width: auto; padding: 8px 24px; margin-left: 10px; }
+        .flex-right { text-align: right; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+        .logout-btn, .reset-btn { width: auto; padding: 8px 24px; margin-left: 0; }
         .reset-btn { background: #ccaa88; }
-        .big-screen-btn { background: #4f9e86; width: auto; padding: 8px 24px; margin-left: 10px; }
+        .big-screen-btn { background: #4f9e86; width: auto; padding: 8px 24px; margin-left: 0; }
+        @media (max-width: 600px) {
+            body { padding: 15px; }
+            .card { padding: 20px; }
+            h2 { font-size: 1.4rem; }
+            .flex-right { justify-content: center; }
+            .logout-btn, .reset-btn, .big-screen-btn { width: 100%; margin: 5px 0; text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -136,9 +165,9 @@
         <h2>🌿 Панель организатора</h2>
         <div class="admin-panel">
             <h3>🎁 Розыгрыш</h3>
-            <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                <div style="flex:1"><label>Количество призов:</label><select id="prizeCount"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="5">5</option></select></div>
-                <div style="flex:2"><label>Статус:</label><div id="drawStatus" style="background:#eaf5f0; padding: 10px; border-radius: 30px;">⏳ Ожидание</div></div>
+            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                <div style="flex:1; min-width: 120px;"><label>Количество призов:</label><select id="prizeCount"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="5">5</option></select></div>
+                <div style="flex:2;"><label>Статус:</label><div id="drawStatus" style="background:#eaf5f0; padding: 10px; border-radius: 30px;">⏳ Ожидание</div></div>
             </div>
             <button class="draw-step-btn" id="drawStepBtn" disabled>🎲 Разыграть следующий приз</button>
             <div id="lastWinnerInfo" style="margin-top: 20px;"></div>
@@ -151,9 +180,10 @@
             <h3>📋 Список участников</h3>
             <button id="exportBtn" style="background:#6fae94; margin-bottom:16px;">📎 Скачать CSV</button>
             <div style="overflow-x: auto;">
-                <table><thead><tr><th>№</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время</th><th>Интерес</th></tr></thead>
-                <tbody id="tableBody"><tr><td colspan="6" style="text-align:center;">Загрузка...</td></tr></tbody>
-            20~
+                <table style="display: table; width: 100%;">
+                    <thead><tr><th>№</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время</th><th>Интерес</th></tr></thead>
+                    <tbody id="tableBody"><tr><td colspan="6" style="text-align:center;">Загрузка...<\/td><\/tr><\/tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -162,7 +192,6 @@
 <script>
     const ADMIN_PASSWORD = "travelclub2025";
     
-    // Загрузка участников из localStorage
     let participants = JSON.parse(localStorage.getItem('participants')) || [];
     let isAdmin = false;
     let available = [];
@@ -177,6 +206,10 @@
         const tbody = document.getElementById('tableBody');
         if (!tbody) return;
         tbody.innerHTML = '';
+        if (participants.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Нет участников</td></tr>';
+            return;
+        }
         participants.forEach(p => {
             const row = tbody.insertRow();
             row.insertCell(0).textContent = p.id;
@@ -267,7 +300,6 @@
         updateUI();
     }
     
-    // Регистрация
     document.getElementById('registrationForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const firstName = document.getElementById('first_name').value.trim();
@@ -284,13 +316,11 @@
             return;
         }
         
-        // Проверка на дубликат телефона
         if (participants.some(p => p.phone === phone)) {
             showStatus(`❌ Номер телефона ${phone} уже зарегистрирован!`, true);
             return;
         }
         
-        // Проверка на дубликат ФИО
         if (participants.some(p => p.name === fullName)) {
             showStatus(`❌ Участник с именем ${fullName} уже зарегистрирован!`, true);
             return;
@@ -309,20 +339,16 @@
         participants.push(newParticipant);
         saveParticipants();
         
-        // Показываем номер участника!
         showStatus(`✅ ${fullName}, вы зарегистрированы!<br>🎫 <strong style="font-size:1.3rem;">ВАШ НОМЕР: ${newId}</strong>`, false);
         
-        // Очищаем форму
         e.target.reset();
         document.querySelectorAll('input[name="club_interest"]').forEach(r => r.checked = false);
         
-        // Обновляем таблицу для админа
         if (isAdmin) {
             updateTable();
         }
     });
     
-    // Админ-панель
     document.getElementById('loginBtn').onclick = () => {
         if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
             sessionStorage.setItem('admin', 'true');
@@ -366,7 +392,6 @@
         URL.revokeObjectURL(a.href);
     };
     
-    // Проверка сессии
     if (sessionStorage.getItem('admin') === 'true') {
         isAdmin = true;
         document.getElementById('loginContainer').classList.add('hidden');
@@ -374,24 +399,6 @@
         updateTable();
     }
     
-    // Инициализация таблицы для админа
-    function updateTable() {
-        const tbody = document.getElementById('tableBody');
-        if (!tbody) return;
-        tbody.innerHTML = '';
-        participants.forEach(p => {
-            const row = tbody.insertRow();
-            row.insertCell(0).textContent = p.id;
-            row.insertCell(1).textContent = p.name;
-            row.insertCell(2).textContent = p.email || '';
-            row.insertCell(3).textContent = p.phone;
-            row.insertCell(4).textContent = p.timestamp;
-            row.insertCell(5).textContent = p.interest || '—';
-        });
-        resetDraw();
-    }
-    
-    // Если есть таблица, заполняем её
     if (document.getElementById('tableBody')) {
         updateTable();
     }
