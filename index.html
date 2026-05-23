@@ -3,46 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESIGN TRAVEL CLUB</title>
+    <title>DESIGN TRAVEL CLUB — Розыгрыш</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: Arial, sans-serif;
             background: #d4e9e2;
-            padding: 15px;
+            padding: 20px;
         }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        .block {
+        .container { max-width: 550px; margin: 0 auto; }
+        .card {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         h2 {
             color: #2c5a4a;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             margin-bottom: 15px;
-            padding-left: 10px;
             border-left: 4px solid #5f9e86;
+            padding-left: 12px;
         }
-        h3 {
-            color: #2c5a4a;
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-        }
+        h3 { color: #2c5a4a; font-size: 1.1rem; margin: 15px 0 10px; }
         input, button, select {
             width: 100%;
             padding: 12px;
             margin-bottom: 12px;
-            border-radius: 30px;
+            border-radius: 40px;
             border: 1px solid #ccc;
             font-size: 16px;
         }
@@ -53,185 +42,114 @@
             border: none;
             cursor: pointer;
         }
-        .radio-group {
-            margin: 10px 0;
-        }
         .radio-group label {
             display: block;
             background: #f0f7f3;
-            padding: 10px 15px;
+            padding: 10px;
             margin: 8px 0;
             border-radius: 30px;
             cursor: pointer;
-            border: 1px solid #cde4db;
         }
-        .radio-group input {
-            width: 20px;
-            margin-right: 10px;
-            margin-bottom: 0;
-        }
-        .status {
-            padding: 12px;
-            border-radius: 30px;
-            margin-top: 15px;
-            text-align: center;
-        }
-        .success {
-            background: #d4edda;
-            color: #155724;
-        }
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        .waiting {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .winner-block {
+        .winner-screen {
             background: linear-gradient(135deg, #e2f4ed, #c8e6d9);
             border-radius: 30px;
             padding: 25px;
             text-align: center;
-            border: 2px solid #5f9e86;
         }
-        .winner-number {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #2c5a4a;
-            margin: 15px 0;
-        }
-        .winner-name {
-            font-size: 1.5rem;
-            color: #3b6e5c;
-        }
-        .hidden {
-            display: none;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background: #eaf5f0;
-        }
-        .flex-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        .flex-buttons button {
-            flex: 1;
-            margin-bottom: 0;
-        }
-        .table-wrapper {
-            overflow-x: auto;
-        }
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #5f9e86;
-        }
+        .winner-number { font-size: 3.5rem; font-weight: bold; color: #2c5a4a; margin: 10px 0; }
+        .hidden { display: none; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #eaf5f0; }
+        .flex-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+        .flex-buttons button { flex: 1; margin-bottom: 0; }
+        .status { padding: 10px; border-radius: 25px; margin-top: 10px; text-align: center; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
-<div class="container" id="normalView">
-    <!-- Блок победителя -->
-    <div class="block">
+<div class="container">
+
+    <!-- ЭКРАН ПОБЕДИТЕЛЯ -->
+    <div class="card">
         <h2>🍸 Коктейльный вечер</h2>
-        <div id="winnerDisplay"></div>
+        <div id="winnerDisplay" class="winner-screen">
+            <div style="color:#8baa9c;">🎫 Ожидание розыгрыша</div>
+        </div>
     </div>
 
-    <!-- Форма регистрации -->
-    <div class="block">
+    <!-- ФОРМА РЕГИСТРАЦИИ -->
+    <div class="card">
+        <h2>✨ Регистрация</h2>
         <form id="regForm">
             <input type="text" id="firstName" placeholder="Имя *" required>
             <input type="text" id="lastName" placeholder="Фамилия *" required>
             <input type="tel" id="phone" placeholder="Телефон *" required>
             <input type="email" id="email" placeholder="Email">
-            <label style="display:block; margin-bottom:5px;">✨ Хотите присоединиться к закрытому клубу путешественников?</label>
             <div class="radio-group">
-                <label><input type="radio" name="interest" value="Да"> Да</label>
-                <label><input type="radio" name="interest" value="Безусловно"> Безусловно</label>
-                <label><input type="radio" name="interest" value="Несомненно"> Несомненно</label>
+                <label><input type="radio" name="interest" value="Да"> Хочу в закрытый клуб</label>
+                <label><input type="radio" name="interest" value="Безусловно"> Безусловно, да!</label>
+                <label><input type="radio" name="interest" value="Несомненно"> Несомненно, да</label>
                 <label><input type="radio" name="interest" value="В следующий раз"> В следующий раз</label>
             </div>
-            <button type="submit">✨ Зарегистрироваться</button>
+            <button type="submit">🎫 Зарегистрироваться</button>
         </form>
         <div id="regStatus"></div>
     </div>
 
-    <!-- Вход организатора -->
-    <div class="block" id="loginBlock">
+    <!-- ВХОД ОРГАНИЗАТОРА -->
+    <div class="card" id="loginBlock">
         <h2>🔐 Организатор</h2>
         <input type="password" id="adminPass" placeholder="Пароль">
         <button id="loginBtn">Войти</button>
-        <div id="loginMsg" style="color:red; margin-top:10px;"></div>
+        <div id="loginMsg" style="color:red;"></div>
     </div>
 
-    <!-- Панель организатора (скрыта) -->
-    <div id="adminBlock" class="block hidden">
+    <!-- ПАНЕЛЬ ОРГАНИЗАТОРА -->
+    <div id="adminBlock" class="card hidden">
+        <h2>🎁 Розыгрыш</h2>
+        <select id="prizeCount">
+            <option value="1">1 приз</option>
+            <option value="2" selected>2 приза</option>
+            <option value="3">3 приза</option>
+            <option value="5">5 призов</option>
+        </select>
+        <button id="drawBtn">🎲 Разыграть следующий приз</button>
+        <div id="drawStatus" style="margin-top:10px; padding:10px; background:#eaf5f0; border-radius:20px; text-align:center;"></div>
         <div class="flex-buttons">
-            <button id="refreshBtn">🔄 Обновить</button>
-            <button id="exportBtn">📥 Скачать CSV</button>
+            <button id="resetDrawBtn">🔄 Сбросить</button>
             <button id="logoutBtn">🚪 Выйти</button>
         </div>
-        <h2>🌿 Розыгрыш</h2>
-        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-            <select id="prizeCount" style="width: auto; flex:1;">
-                <option value="1">1 приз</option>
-                <option value="2" selected>2 приза</option>
-                <option value="3">3 приза</option>
-                <option value="5">5 призов</option>
-            </select>
-            <div id="drawStatus" style="background:#eaf5f0; padding: 10px; border-radius: 30px; flex:2; text-align:center;">⏳ Загрузка...</div>
-        </div>
-        <button id="drawBtn" disabled>🎲 Разыграть следующий приз</button>
-        <div id="lastWinner" style="margin-top: 15px;"></div>
-        
-        <h3 style="margin-top: 20px;">📜 Победители</h3>
-        <div id="winnersList" style="background:#f0f7f3; border-radius: 20px; padding: 12px;">Пока нет</div>
-        
-        <h3 style="margin-top: 20px;">📋 Участники</h3>
-        <div class="table-wrapper">
-            <table id="participantsTable">
-                <thead><tr><th>№</th><th>ФИО</th><th>Телефон</th></tr></thead>
-                <tbody id="tableBody"><tr><td colspan="3" class="loading">Загрузка...<\/td><\/tr><\/tbody>
-            20~
-        </div>
+        <h3>📋 Участники</h3>
+        <div style="overflow-x:auto;"><table><thead><tr><th>№</th><th>ФИО</th><th>Телефон</th></tr></thead><tbody id="tableBody"></tbody></table></div>
+        <button id="refreshBtn" style="margin-top:10px; background:#6fae94;">🔄 Обновить список</button>
     </div>
+
 </div>
 
 <script>
     const PASSWORD = "travelclub2025";
-    const SHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwv_aOPmeoxfy4BixpjeiX5F9Z6XT8_3KIz4qlIXMwi5IsMgESVOr3jbvmoC3uXkkqS/exec';
+    // ⚠️ ВСТАВЬТЕ ВАШ URL ИЗ GOOGLE APPS SCRIPT:
+    const SCRIPT_URL = "https://script.google.com/macros/s/ВАШ_УРЛ/exec";
+    const SHEET_ID = "1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE";
     
     let participants = [];
     let winners = [];
     let available = [];
     let isAdmin = false;
     let drawActive = false;
-    
-    // Загрузка из Google Sheets
+
+    // ЗАГРУЗКА ИЗ GOOGLE SHEETS
     async function loadFromSheets() {
         const tbody = document.getElementById('tableBody');
-        if (tbody) tbody.innerHTML = '<tr><td colspan="3" class="loading">Загрузка...<\/td><\/tr>';
-        
+        if (tbody) tbody.innerHTML = '<tr><td colspan="3">Загрузка...<\/td><\/tr>';
         try {
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-            const response = await fetch(url);
-            const text = await response.text();
-            const jsonText = text.substring(47, text.length - 2);
-            const data = JSON.parse(jsonText);
-            const rows = data.table.rows;
+            const res = await fetch(url);
+            const text = await res.text();
+            const json = JSON.parse(text.substring(47, text.length - 2));
+            const rows = json.table.rows;
             
             if (!rows || rows.length < 2) {
                 participants = [];
@@ -241,211 +159,119 @@
             
             participants = [];
             for (let i = 1; i < rows.length; i++) {
-                const row = rows[i].c;
-                if (row && row[0]?.v) {
+                const r = rows[i].c;
+                if (r && r[0]?.v) {
                     participants.push({
-                        id: parseInt(row[0].v),
-                        name: row[1]?.v || '',
-                        email: row[2]?.v || '',
-                        phone: row[3]?.v || '',
-                        timestamp: row[4]?.v || '',
-                        interest: row[5]?.v || ''
+                        id: parseInt(r[0].v),
+                        name: r[1]?.v || '',
+                        phone: r[3]?.v || ''
                     });
                 }
             }
-            
             participants.sort((a,b) => a.id - b.id);
-            
             if (tbody) {
                 tbody.innerHTML = '';
                 participants.forEach(p => {
-                    const row = tbody.insertRow();
-                    row.insertCell(0).textContent = p.id;
-                    row.insertCell(1).textContent = p.name;
-                    row.insertCell(2).textContent = p.phone;
+                    tbody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.phone}<\/td><\/tr>`;
                 });
             }
-            
             resetDraw();
-            
         } catch(err) {
-            console.error(err);
             if (tbody) tbody.innerHTML = '<tr><td colspan="3">Ошибка загрузки<\/td><\/tr>';
         }
     }
-    
-    function resetDraw() {
-        available = [...participants];
-        winners = [];
-        drawActive = true;
-        // Перемешиваем
-        for (let i = available.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
-            [available[i], available[j]] = [available[j], available[i]];
-        }
-        updateDrawUI();
-        updateWinnersDisplay();
-        document.getElementById('winnerDisplay').innerHTML = '';
-        document.getElementById('lastWinner').innerHTML = '';
-    }
-    
-    function updateDrawUI() {
-        const total = parseInt(document.getElementById('prizeCount')?.value || 2);
-        const left = total - winners.length;
-        const btn = document.getElementById('drawBtn');
-        const statusDiv = document.getElementById('drawStatus');
-        if (!statusDiv) return;
-        if (!drawActive) {
-            statusDiv.innerHTML = '⏸️ Нажмите "Сбросить"';
-            if(btn) btn.disabled = true;
-            return;
-        }
-        if (winners.length >= total) {
-            statusDiv.innerHTML = '✅ Розыгрыш завершён';
-            if(btn) btn.disabled = true;
-        } else if (available.length === 0) {
-            statusDiv.innerHTML = '⚠️ Нет участников';
-            if(btn) btn.disabled = true;
-        } else {
-            statusDiv.innerHTML = `🎲 Осталось ${left} призов | Доступно ${available.length} чел`;
-            if(btn) btn.disabled = false;
-        }
-    }
-    
-    function updateWinnersDisplay() {
-        const div = document.getElementById('winnersList');
-        if (!div) return;
-        if (winners.length === 0) {
-            div.innerHTML = 'Пока нет';
-        } else {
-            let html = '';
-            winners.forEach((w, i) => {
-                html += `<div style="background:white; padding:10px; margin:8px 0; border-radius:15px;">🏆 Приз ${i+1} — №${w.id} — ${w.name}</div>`;
-            });
-            div.innerHTML = html;
-        }
-    }
-    
-    function showWinner(winner, prizeNum) {
-        const winnerDiv = document.getElementById('winnerDisplay');
-        if (winnerDiv) {
-            winnerDiv.innerHTML = `
-                <div class="winner-block">
-                    <h2>🏆 ПРИЗ №${prizeNum} 🏆</h2>
-                    <div class="winner-number">🎫 № ${winner.id}</div>
-                    <div class="winner-name">${winner.name}</div>
-                </div>
-            `;
-        }
-    }
-    
-    function drawWinner() {
-        if (!drawActive) { alert('Нажмите "Обновить" в панели организатора'); return; }
-        const total = parseInt(document.getElementById('prizeCount').value);
-        if (winners.length >= total) { alert('Все призы разыграны'); updateDrawUI(); return; }
-        if (available.length === 0) { alert('Нет участников'); updateDrawUI(); return; }
-        
-        const winner = available[0];
-        available = available.filter(p => p.id !== winner.id);
-        winners.push(winner);
-        const prizeNum = winners.length;
-        
-        showWinner(winner, prizeNum);
-        const lastDiv = document.getElementById('lastWinner');
-        if (lastDiv) {
-            lastDiv.innerHTML = `<div style="background:#dff0e9; border-radius:20px; padding:12px; text-align:center;"><strong>✅ Приз №${prizeNum}</strong><br>🏆 ${winner.name} (№${winner.id})</div>`;
-            setTimeout(() => lastDiv.innerHTML = '', 3000);
-        }
-        updateWinnersDisplay();
-        updateDrawUI();
-    }
-    
-    async function registerToSheets(formData) {
+
+    // РЕГИСТРАЦИЯ В GOOGLE SHEETS
+    async function registerToSheet(formData) {
         const statusDiv = document.getElementById('regStatus');
-        statusDiv.innerHTML = '<div class="status waiting">⏳ Отправка...</div>';
-        
+        statusDiv.innerHTML = '<div class="status" style="background:#fff3cd;">⏳ Отправка...</div>';
         try {
-            const response = await fetch(SCRIPT_URL, {
+            await fetch(SCRIPT_URL, {
                 method: 'POST',
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 <strong>ВАШ НОМЕР: ${result.id}</strong></div>`;
-                setTimeout(() => statusDiv.innerHTML = '', 5000);
-                return true;
-            } else if (result.error === "duplicate_phone") {
-                statusDiv.innerHTML = `<div class="status error">❌ Номер телефона ${formData.phone} уже зарегистрирован!</div>`;
-                setTimeout(() => statusDiv.innerHTML = '', 4000);
-                return false;
-            } else if (result.error === "duplicate_name") {
-                statusDiv.innerHTML = `<div class="status error">❌ Имя ${formData.name} уже зарегистрировано!</div>`;
-                setTimeout(() => statusDiv.innerHTML = '', 4000);
-                return false;
-            } else {
-                throw new Error('Ошибка');
-            }
+            statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!</div>`;
+            setTimeout(() => statusDiv.innerHTML = '', 4000);
+            return true;
         } catch(err) {
-            statusDiv.innerHTML = '<div class="status error">❌ Ошибка отправки. Попробуйте ещё раз.</div>';
+            statusDiv.innerHTML = '<div class="status error">❌ Ошибка отправки</div>';
             setTimeout(() => statusDiv.innerHTML = '', 3000);
             return false;
         }
     }
-    
-    function exportCSV() {
-        if (participants.length === 0) { alert('Нет данных'); return; }
-        let csv = "№,ФИО,Телефон,Email,Время,Интерес\n";
-        participants.forEach(p => {
-            csv += `${p.id},"${p.name}",${p.phone},${p.email},${p.timestamp},"${p.interest || ''}"\n`;
-        });
-        const blob = new Blob(["\uFEFF" + csv], {type: 'text/csv'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'participants.csv';
-        a.click();
-        URL.revokeObjectURL(a.href);
+
+    // РОЗЫГРЫШ
+    function resetDraw() {
+        available = [...participants];
+        winners = [];
+        drawActive = true;
+        for (let i = available.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [available[i], available[j]] = [available[j], available[i]];
+        }
+        updateDrawStatus();
     }
-    
-    // Регистрация
+
+    function updateDrawStatus() {
+        const total = parseInt(document.getElementById('prizeCount').value);
+        const left = total - winners.length;
+        const div = document.getElementById('drawStatus');
+        if (!div) return;
+        if (winners.length >= total) div.innerHTML = '✅ Розыгрыш завершён';
+        else if (available.length === 0) div.innerHTML = '⚠️ Нет участников';
+        else div.innerHTML = `🎲 Осталось ${left} призов | Доступно ${available.length} чел`;
+    }
+
+    function showWinner(winner, prizeNum) {
+        document.getElementById('winnerDisplay').innerHTML = `
+            <div class="winner-screen">
+                <h2>🏆 ПРИЗ №${prizeNum} 🏆</h2>
+                <div class="winner-number">🎫 № ${winner.id}</div>
+                <div>${winner.name}</div>
+            </div>
+        `;
+    }
+
+    function drawWinner() {
+        const total = parseInt(document.getElementById('prizeCount').value);
+        if (winners.length >= total) { alert('Все призы разыграны'); updateDrawStatus(); return; }
+        if (available.length === 0) { alert('Нет участников'); updateDrawStatus(); return; }
+        const winner = available[0];
+        available = available.filter(p => p.id !== winner.id);
+        winners.push(winner);
+        showWinner(winner, winners.length);
+        updateDrawStatus();
+    }
+
+    // РЕГИСТРАЦИЯ (ФОРМА)
     document.getElementById('regForm').onsubmit = async (e) => {
         e.preventDefault();
         const firstName = document.getElementById('firstName').value.trim();
         const lastName = document.getElementById('lastName').value.trim();
-        const name = `${firstName} ${lastName}`;
+        const fullName = `${firstName} ${lastName}`;
         const phone = document.getElementById('phone').value.trim();
         const email = document.getElementById('email').value.trim();
-        const interestRadio = document.querySelector('input[name="interest"]:checked');
-        const interest = interestRadio ? interestRadio.value : '';
+        const interest = document.querySelector('input[name="interest"]:checked')?.value || '';
+        if (!firstName || !lastName || !phone) { alert('Заполните имя, фамилию и телефон'); return; }
         
-        if (!firstName || !lastName || !phone) {
-            alert('Заполните имя, фамилию и телефон');
+        // Проверка дубликата
+        if (participants.some(p => p.phone === phone)) {
+            document.getElementById('regStatus').innerHTML = '<div class="status error">❌ Телефон уже зарегистрирован</div>';
+            setTimeout(() => document.getElementById('regStatus').innerHTML = '', 3000);
             return;
         }
         
-        const success = await registerToSheets({
-            name: name,
-            phone: phone,
-            email: email,
-            interest: interest,
-            timestamp: new Date().toLocaleString()
-        });
-        
-        if (success) {
-            e.target.reset();
-            if (isAdmin) {
-                setTimeout(() => loadFromSheets(), 2000);
-            }
-        }
+        await registerToSheet({ name: fullName, phone, email, interest, timestamp: new Date().toLocaleString() });
+        e.target.reset();
+        if (isAdmin) setTimeout(loadFromSheets, 2000);
     };
-    
-    // Админ
+
+    // АДМИН
     document.getElementById('loginBtn').onclick = () => {
         if (document.getElementById('adminPass').value === PASSWORD) {
             isAdmin = true;
-            sessionStorage.setItem('admin', 'true');
             document.getElementById('loginBlock').classList.add('hidden');
             document.getElementById('adminBlock').classList.remove('hidden');
             loadFromSheets();
@@ -454,28 +280,15 @@
             setTimeout(() => document.getElementById('loginMsg').innerText = '', 2000);
         }
     };
-    
     document.getElementById('logoutBtn').onclick = () => {
         isAdmin = false;
-        sessionStorage.removeItem('admin');
         document.getElementById('loginBlock').classList.remove('hidden');
         document.getElementById('adminBlock').classList.add('hidden');
     };
-    
-    document.getElementById('refreshBtn').onclick = () => {
-        loadFromSheets();
-    };
-    
     document.getElementById('drawBtn').onclick = drawWinner;
-    document.getElementById('prizeCount').onchange = updateDrawUI;
-    document.getElementById('exportBtn').onclick = exportCSV;
-    
-    if (sessionStorage.getItem('admin') === 'true') {
-        isAdmin = true;
-        document.getElementById('loginBlock').classList.add('hidden');
-        document.getElementById('adminBlock').classList.remove('hidden');
-        loadFromSheets();
-    }
+    document.getElementById('resetDrawBtn').onclick = () => { if(participants.length) resetDraw(); else alert('Нет участников'); };
+    document.getElementById('prizeCount').onchange = updateDrawStatus;
+    document.getElementById('refreshBtn').onclick = loadFromSheets;
 </script>
 </body>
 </html>
