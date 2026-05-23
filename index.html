@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESIGN TRAVEL CLUB — Коктейльный вечер</title>
+    <title>DESIGN TRAVEL CLUB — Панель организатора</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -239,7 +239,26 @@
     let winnersList = [];
     let drawActive = false;
     
-    // Функция для получения следующего номера из таблицы
+    // Функция для отправки данных на страницу большого экрана
+    function sendToBigScreen(winner, prizeNumber) {
+        // Сохраняем в localStorage для другой страницы
+        localStorage.setItem('winnerDisplay', JSON.stringify({
+            id: winner.id,
+            name: winner.name,
+            prize: prizeNumber,
+            timestamp: Date.now()
+        }));
+        // Также обновляем на этой странице
+        const publicContent = document.getElementById('publicWinnerContent');
+        publicContent.innerHTML = `
+            <div class="winner-announcement">
+                <h2>🏆 ПРИЗ №${prizeNumber} 🏆</h2>
+                <div class="winner-number-display">🎫 № ${winner.id}</div>
+                <div class="winner-name-display">${winner.name}</div>
+            </div>
+        `;
+    }
+    
     async function getNextId() {
         try {
             const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
@@ -248,11 +267,7 @@
             const jsonText = text.substring(47, text.length - 2);
             const data = JSON.parse(jsonText);
             const rows = data.table.rows;
-            
-            if (!rows || rows.length < 2) {
-                return 1;
-            }
-            
+            if (!rows || rows.length < 2) return 1;
             let maxId = 0;
             for (let i = 1; i < rows.length; i++) {
                 const row = rows[i].c;
@@ -263,7 +278,6 @@
             }
             return maxId + 1;
         } catch(err) {
-            console.error('Ошибка получения ID:', err);
             return participants.length + 1;
         }
     }
@@ -394,18 +408,6 @@
         historyDiv.innerHTML = html;
     }
     
-    function publishWinnerToPublic(winner, prizeNumber) {
-        const publicContent = document.getElementById('publicWinnerContent');
-        publicContent.innerHTML = `
-            <div class="winner-announcement">
-                <h2>🏆 ПРИЗ №${prizeNumber} 🏆</h2>
-                <div class="winner-number-display">🎫 № ${winner.id}</div>
-                <div class="winner-name-display">${winner.name}</div>
-            </div>
-        `;
-        document.getElementById('publicWinnerBlock').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    
     function drawOneWinner() {
         if (!drawActive) { alert('Сначала нажмите "Сбросить розыгрыш"'); return false; }
         const prizesCount = parseInt(document.getElementById('prizeCount').value);
@@ -416,7 +418,10 @@
         availableParticipants = availableParticipants.filter(p => p.id !== winner.id);
         winnersList.push(winner);
         const prizeNumber = winnersList.length;
-        publishWinnerToPublic(winner, prizeNumber);
+        
+        // Отправляем на страницу большого экрана
+        sendToBigScreen(winner, prizeNumber);
+        
         const lastWinnerDiv = document.getElementById('lastWinnerInfo');
         lastWinnerDiv.innerHTML = `<div style="background: #dff0e9; border-radius: 20px; padding: 15px; text-align: center;"><strong>✅ Разыгран приз №${prizeNumber}</strong><br>🏆 № участника: ${winner.id} — ${winner.name}</div>`;
         setTimeout(() => { if (lastWinnerDiv.firstChild) lastWinnerDiv.innerHTML = ''; }, 5000);
@@ -425,12 +430,16 @@
         return true;
     }
     
-    // ================= ОТПРАВКА С ПОЛУЧЕНИЕМ НОМЕРА =================
     async function saveRegistration(formData) {
         const statusDiv = document.getElementById('registerStatus');
         statusDiv.innerHTML = `<div class="status" style="background:#fff3cd;">⏳ Отправка данных...</div>`;
         
-        // Получаем следующий номер из таблицы
+        if (participants.some(p => p.phone === formData.phone)) {
+            statusDiv.innerHTML = `<div class="status error">❌ Номер телефона ${formData.phone} уже зарегистрирован!</div>`;
+            setTimeout(() => statusDiv.innerHTML = '', 5000);
+            return false;
+        }
+        
         const newId = await getNextId();
         
         try {
@@ -438,10 +447,7 @@
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...formData,
-                    id: newId
-                })
+                body: JSON.stringify({ ...formData, id: newId })
             });
             
             statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 Ваш номер: <strong>${newId}</strong></div>`;
@@ -451,9 +457,7 @@
                 setTimeout(() => loadFromGoogleSheets(), 2000);
             }
             return true;
-            
         } catch(error) {
-            console.error('Ошибка:', error);
             statusDiv.innerHTML = `<div class="status error">❌ Ошибка отправки. Попробуйте ещё раз.</div>`;
             setTimeout(() => statusDiv.innerHTML = '', 5000);
             return false;
@@ -508,12 +512,6 @@
         if (!firstName || !lastName || !phone) { 
             alert('Заполните имя, фамилию и телефон'); 
             return; 
-        }
-        
-        // Проверка на дубликат телефона (по локальным данным или через запрос)
-        if (participants.some(p => p.phone === phone)) {
-            alert(`❌ Номер телефона ${phone} уже зарегистрирован!`);
-            return;
         }
         
         const success = await saveRegistration({
