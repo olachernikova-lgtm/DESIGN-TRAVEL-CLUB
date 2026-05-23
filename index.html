@@ -221,7 +221,7 @@
                     </thead>
                     <tbody id="tableBody"><tr><td colspan="6" style="text-align: center;">Авторизуйтесь, чтобы увидеть список</td></tr>
                     </tbody>
-                20~
+                </table>
             </div>
         </div>
     </div>
@@ -231,7 +231,8 @@
     // ================= НАСТРОЙКИ =================
     const ADMIN_PASSWORD = "travelclub2025";
     const SPREADSHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1Y_hbwCg9irZ7GwTRBzn5TPljF8yThVfGmamwzceLNlz7WVP0stopxg5aCuVT3HKa/exec';
+    // НОВЫЙ URL ВАШЕГО APPS SCRIPT
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbza04CjN3Mu_YDhh7edVSS-2241WDNwUfD6w2dQMzguH9JjzOvBbjmaJPJzX8b4qcOD/exec';
     
     let participants = [];
     let isAdmin = false;
@@ -263,7 +264,7 @@
     async function loadFromGoogleSheets() {
         if (!isAdmin) return;
         const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">🕊️ Загрузка...<\/td><\/tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">🕊️ Загрузка...</td></tr>';
         
         try {
             const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
@@ -275,7 +276,7 @@
             
             if (!rows || rows.length < 2) {
                 participants = [];
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">✨ Пока нет участников<\/td><\/tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">✨ Пока нет участников</td></tr>';
                 document.getElementById('lastUpdate').innerHTML = `📭 Участников: 0 | ${new Date().toLocaleString()}`;
                 return;
             }
@@ -295,7 +296,6 @@
                 }
             }
             
-            // Сортируем по ID
             participants.sort((a, b) => a.id - b.id);
             
             tbody.innerHTML = '';
@@ -312,12 +312,8 @@
             resetDraw();
         } catch(err) {
             console.error(err);
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#b47c6e;">❌ Ошибка доступа к таблице<\/td><\/tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#b47c6e;">❌ Ошибка доступа к таблице</td></tr>';
         }
-    }
-    
-    function isPhoneDuplicate(phone) {
-        return participants.some(p => p.phone === phone);
     }
     
     function resetDraw() {
@@ -403,13 +399,6 @@
     
     async function saveRegistration(formData) {
         const statusDiv = document.getElementById('registerStatus');
-        
-        if (isPhoneDuplicate(formData.phone)) {
-            statusDiv.innerHTML = `<div class="status error">❌ Номер телефона ${formData.phone} уже зарегистрирован!</div>`;
-            setTimeout(() => statusDiv.innerHTML = '', 5000);
-            return false;
-        }
-        
         statusDiv.innerHTML = `<div class="status" style="background:#fff3cd;">⏳ Отправка данных...</div>`;
         
         try {
@@ -429,6 +418,10 @@
                     setTimeout(() => loadFromGoogleSheets(), 1500);
                 }
                 return true;
+            } else if (result.error === "duplicate") {
+                statusDiv.innerHTML = `<div class="status error">❌ Номер телефона ${formData.phone} уже зарегистрирован!</div>`;
+                setTimeout(() => statusDiv.innerHTML = '', 5000);
+                return false;
             } else {
                 throw new Error('Ошибка сервера');
             }
@@ -490,7 +483,6 @@
             return; 
         }
         
-        // Отправляем данные без ID — скрипт сам назначит правильный номер
         const success = await saveRegistration({
             name: `${firstName} ${lastName}`,
             email: email,
@@ -505,7 +497,6 @@
             btn.textContent = '✓ Готово!';
             setTimeout(() => btn.textContent = '✨ Зарегистрироваться', 2000);
             
-            // Обновляем список если админ
             if (isAdmin) {
                 setTimeout(() => loadFromGoogleSheets(), 2000);
             }
