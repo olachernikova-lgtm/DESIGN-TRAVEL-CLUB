@@ -5,39 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>DESIGN TRAVEL CLUB — Регистрация и розыгрыш</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
             background: linear-gradient(145deg, #dbeae3 0%, #c4d3cb 100%);
             min-height: 100vh;
             padding: 2rem 1rem;
         }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
+        .container { max-width: 600px; margin: 0 auto; }
         .card {
             background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(2px);
             border-radius: 2rem;
             padding: 1.75rem;
             margin-bottom: 1.5rem;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(90, 130, 110, 0.2);
-            transition: transform 0.2s ease;
         }
-
-        .card:hover {
-            transform: translateY(-4px);
-        }
-
         h2 {
             font-size: 1.5rem;
             font-weight: 600;
@@ -46,11 +29,7 @@
             padding-left: 0.75rem;
             border-left: 5px solid #6b9c86;
         }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
+        .form-group { margin-bottom: 1.25rem; }
         label {
             display: block;
             font-weight: 500;
@@ -58,7 +37,6 @@
             margin-bottom: 0.5rem;
             font-size: 0.9rem;
         }
-
         input, button {
             width: 100%;
             padding: 0.8rem 1rem;
@@ -66,35 +44,21 @@
             border: 1px solid #cbdcd3;
             font-size: 1rem;
             background: white;
-            transition: all 0.2s;
         }
-
-        input:focus {
-            outline: none;
-            border-color: #6b9c86;
-            box-shadow: 0 0 0 2px rgba(107, 156, 134, 0.2);
-        }
-
         button {
             background: linear-gradient(95deg, #6b9c86, #4d7963);
             color: white;
             font-weight: 600;
             border: none;
             cursor: pointer;
-            margin-top: 0.25rem;
         }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
+        button:active { transform: scale(0.98); }
         .radio-group {
             display: flex;
             flex-direction: column;
             gap: 0.6rem;
             margin-top: 0.5rem;
         }
-
         .radio-group label {
             display: flex;
             align-items: center;
@@ -106,14 +70,11 @@
             font-weight: normal;
             cursor: pointer;
         }
-
         .radio-group input {
             width: 1.2rem;
             height: 1.2rem;
-            margin: 0;
             accent-color: #4d7963;
         }
-
         .status-message {
             margin-top: 1rem;
             padding: 0.75rem;
@@ -121,51 +82,14 @@
             text-align: center;
             font-size: 0.9rem;
         }
-
-        .success {
-            background: #e0f2e9;
-            color: #1a5a48;
-            border-left: 4px solid #2b8c6b;
-        }
-
-        .error {
-            background: #ffe6e5;
-            color: #bc4e4e;
-            border-left: 4px solid #dc5f5f;
-        }
-
-        .info {
-            background: #eef2fa;
-            color: #2c5a6e;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 1rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-        }
-
-        th, td {
-            padding: 0.6rem 0.4rem;
-            text-align: left;
-            border-bottom: 1px solid #d4e2db;
-        }
-
-        th {
-            background-color: #e4f1eb;
-            color: #2b5b4a;
-            font-weight: 600;
-        }
-
-        .hidden {
-            display: none;
-        }
-
+        .success { background: #e0f2e9; color: #1a5a48; border-left: 4px solid #2b8c6b; }
+        .error { background: #ffe6e5; color: #bc4e4e; border-left: 4px solid #dc5f5f; }
+        .info { background: #eef2fa; color: #2c5a6e; }
+        .table-wrapper { overflow-x: auto; border-radius: 1rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 0.6rem 0.4rem; text-align: left; border-bottom: 1px solid #d4e2db; }
+        th { background-color: #e4f1eb; color: #2b5b4a; }
+        .hidden { display: none; }
         .winner-block {
             background: linear-gradient(125deg, #e2f4ec, #d0e9de);
             border-radius: 2rem;
@@ -174,49 +98,30 @@
             border: 2px solid #4d7963;
             animation: gentlePop 0.4s ease-out;
         }
-
         @keyframes gentlePop {
             0% { transform: scale(0.96); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-
-        .winner-number {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: #1a4d3e;
-            letter-spacing: 4px;
-            margin: 0.5rem 0;
-        }
-        .winner-name {
-            font-size: 1.4rem;
-            font-weight: 500;
-            color: #2f604f;
-        }
-
+        .winner-number { font-size: 3.5rem; font-weight: 800; color: #1a4d3e; letter-spacing: 4px; margin: 0.5rem 0; }
+        .winner-name { font-size: 1.4rem; font-weight: 500; color: #2f604f; }
         @media (max-width: 500px) {
-            .card {
-                padding: 1.25rem;
-            }
-            .winner-number {
-                font-size: 2.5rem;
-            }
-            .winner-name {
-                font-size: 1.2rem;
-            }
+            .card { padding: 1.25rem; }
+            .winner-number { font-size: 2.5rem; }
+            .winner-name { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- Блок, где все видят победителя -->
-    <div class="card" id="publicWinnerCard">
+    <!-- Блок победителя -->
+    <div class="card">
         <h2>🍸 Коктейльный вечер · DESIGN TRAVEL CLUB</h2>
         <div id="winnerDisplayArea">
             <div class="status-message info" style="text-align: center;">✨ Здесь появится имя победителя ✨</div>
         </div>
     </div>
 
-    <!-- ФОРМА РЕГИСТРАЦИИ (видна всем) -->
+    <!-- ФОРМА РЕГИСТРАЦИИ -->
     <div class="card">
         <h2>📝 Регистрация на розыгрыш</h2>
         <form id="registrationForm">
@@ -233,7 +138,7 @@
                 <input type="tel" id="phone" required placeholder="+7 900 123 45 67">
             </div>
             <div class="form-group">
-                <label>✨ Хотите присоединиться к закрытому клубу путешественников?</label>
+                <label>✨ Хотите присоединиться к закрытому клубу путешественников и первыми узнавать о роскошных направлениях, уникальных маршрутах и эксклюзивных предложениях?</label>
                 <div class="radio-group">
                     <label><input type="radio" name="club_interest" value="Да"> Да</label>
                     <label><input type="radio" name="club_interest" value="Безусловно"> Безусловно</label>
@@ -246,15 +151,15 @@
         <div id="regFormStatus"></div>
     </div>
 
-    <!-- БЛОК ОРГАНИЗАТОРА -->
+    <!-- ВХОД ОРГАНИЗАТОРА -->
     <div class="card" id="organizerLoginCard">
         <h2>🔐 Организатор розыгрыша</h2>
         <input type="password" id="adminPassword" placeholder="Введите пароль">
         <button id="loginToAdminBtn">Войти</button>
-        <div id="loginErrorMsg" style="color: #bc4e4e; margin-top: 0.75rem; font-size: 0.85rem;"></div>
+        <div id="loginErrorMsg" style="color: #bc4e4e; margin-top: 0.75rem;"></div>
     </div>
 
-    <!-- ПАНЕЛЬ АДМИНИСТРИРОВАНИЯ (появится после входа) -->
+    <!-- ПАНЕЛЬ ОРГАНИЗАТОРА -->
     <div id="adminPanel" class="card hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
             <h2 style="margin-bottom: 0;">🌿 Управление розыгрышем</h2>
@@ -267,7 +172,6 @@
                 <option value="2" selected>2 приза</option>
                 <option value="3">3 приза</option>
                 <option value="5">5 призов</option>
-                <option value="10">10 призов</option>
             </select>
         </div>
         <button id="startDrawButton" style="background: #3a6d59; margin-bottom: 1rem;">🎲 РАЗЫГРАТЬ СЛЕДУЮЩИЙ ПРИЗ</button>
@@ -277,12 +181,8 @@
         <h3>📋 СПИСОК УЧАСТНИКОВ</h3>
         <div class="table-wrapper">
             <table id="participantsTable">
-                <thead>
-                    <tr><th>№ участника</th><th>Имя</th><th>Фамилия</th><th>Телефон</th></tr>
-                </thead>
-                <tbody id="participantsTableBody">
-                    <tr><td colspan="4">Загрузка списка...</td></tr>
-                </tbody>
+                <thead><tr><th>№</th><th>Имя</th><th>Фамилия</th><th>Телефон</th></tr></thead>
+                <tbody id="participantsTableBody"><tr><td colspan="4">Загрузка...</td></tr></tbody>
             </table>
         </div>
         <button id="refreshListButton" style="margin-top: 1rem; background: #8db3a2;">🔄 Обновить список</button>
@@ -290,89 +190,73 @@
 </div>
 
 <script>
-    // ================= 1. НАСТРОЙКИ =================
     const ADMIN_PASSWORD = "travelclub2025";
-    // ВАШ URL ИЗ APPS SCRIPT (УЖЕ ВСТАВЛЕН)
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwv_aOPmeoxfy4BixpjeiX5F9Z6XT8_3KIz4qlIXMwi5IsMgESVOr3jbvmoC3uXkkqS/exec';
+    const SHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
     
-    // ID таблицы, куда пишутся ответы формы (нужно опубликовать таблицу)
-    // Для корректной загрузки списка участников нужно опубликовать таблицу Google Sheets
-    const SHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE'; // ID из URL вашей таблицы
-
     let participantsList = [];
     let remainingForDraw = [];
     let winnersList = [];
-    let drawActive = false;
     let isAdmin = false;
-
-    // Нормализация телефона (только цифры)
+    
     function normalizePhone(phone) {
         return String(phone).replace(/[\s\-\(\)\+]/g, '');
     }
-
-    // ================= 2. ЗАГРУЗКА СПИСКА УЧАСТНИКОВ ИЗ GOOGLE SHEETS =================
-    async function loadParticipantsFromSheets() {
+    
+    // ЗАГРУЗКА СПИСКА ИЗ ТАБЛИЦЫ
+    async function loadParticipants() {
         const tbody = document.getElementById('participantsTableBody');
-        if (tbody) tbody.innerHTML = '<tr><td colspan="4">🔄 Загрузка...<\/td><\/tr>';
-        
+        if (tbody) tbody.innerHTML = '<tr><td colspan="4">🔄 Загрузка...</td></tr>';
         try {
-            // Используем опубликованный JSON-фид Google Sheets
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-            const response = await fetch(url);
-            const text = await response.text();
-            const jsonText = text.substring(47, text.length - 2);
-            const data = JSON.parse(jsonText);
-            const rows = data.table.rows;
+            const res = await fetch(url);
+            const text = await res.text();
+            const json = JSON.parse(text.substring(47, text.length - 2));
+            const rows = json.table.rows;
             
             if (!rows || rows.length < 2) {
                 participantsList = [];
-                if (tbody) tbody.innerHTML = '<tr><td colspan="4">Нет зарегистрированных участников<\/td><\/tr>';
+                if (tbody) tbody.innerHTML = '<tr><td colspan="4">Нет участников</td></tr>';
                 return;
             }
             
-            const newList = [];
+            participantsList = [];
             for (let i = 1; i < rows.length; i++) {
-                const row = rows[i].c;
-                if (row && row[0] && row[0].v) {
-                    newList.push({
-                        id: parseInt(row[0].v),
-                        firstName: row[1]?.v || '',
-                        lastName: row[2]?.v || '',
-                        phone: row[3]?.v || '',
-                        interest: row[4]?.v || '',
-                        timestamp: row[5]?.v || ''
+                const r = rows[i].c;
+                if (r && r[0] && r[0].v) {
+                    participantsList.push({
+                        id: parseInt(r[0].v),
+                        firstName: r[1]?.v || '',
+                        lastName: r[2]?.v || '',
+                        phone: r[3]?.v || '',
+                        interest: r[4]?.v || '',
+                        timestamp: r[5]?.v || ''
                     });
                 }
             }
-            participantsList = newList.sort((a,b) => a.id - b.id);
+            participantsList.sort((a,b) => a.id - b.id);
             
             if (tbody) {
                 tbody.innerHTML = '';
                 participantsList.forEach(p => {
-                    const row = tbody.insertRow();
-                    row.insertCell(0).textContent = p.id;
-                    row.insertCell(1).textContent = p.firstName;
-                    row.insertCell(2).textContent = p.lastName;
-                    row.insertCell(3).textContent = p.phone;
+                    tbody.innerHTML += `<tr><td>${p.id}</td><td>${p.firstName}</td><td>${p.lastName}</td><td>${p.phone}</td></tr>`;
                 });
             }
             
-            // Подготовка к розыгрышу
+            // Обновляем розыгрыш
             const winnerIds = winnersList.map(w => w.id);
             remainingForDraw = participantsList.filter(p => !winnerIds.includes(p.id));
-            drawActive = true;
             
         } catch(err) {
-            console.error('Ошибка загрузки:', err);
-            if (tbody) tbody.innerHTML = '<tr><td colspan="4">❌ Ошибка загрузки списка</td></tr>';
+            console.error(err);
+            if (tbody) tbody.innerHTML = '<tr><td colspan="4">❌ Ошибка загрузки</td></tr>';
         }
     }
-
-    // ================= 3. РЕГИСТРАЦИЯ (через Apps Script) =================
-    async function sendRegistrationToScript(formData) {
+    
+    // РЕГИСТРАЦИЯ
+    async function register(formData) {
         const statusDiv = document.getElementById('regFormStatus');
-        statusDiv.innerHTML = '<div class="status-message info">⏳ Отправка данных...</div>';
-        
+        statusDiv.innerHTML = '<div class="status-message info">⏳ Отправка...</div>';
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
@@ -382,46 +266,36 @@
             const result = await response.json();
             
             if (result.success) {
-                statusDiv.innerHTML = `<div class="status-message success">✅ ${formData.firstName} ${formData.lastName}, вы зарегистрированы!<br>🎫 <strong>Ваш номер участника: ${result.id}</strong></div>`;
+                statusDiv.innerHTML = `<div class="status-message success">✅ ${formData.firstName} ${formData.lastName}, вы зарегистрированы!<br>🎫 <strong>Ваш номер: ${result.id}</strong></div>`;
                 setTimeout(() => statusDiv.innerHTML = '', 5000);
-                // Обновляем список участников для админа
-                if (isAdmin) {
-                    setTimeout(() => loadParticipantsFromSheets(), 1500);
-                }
+                if (isAdmin) setTimeout(loadParticipants, 1500);
                 return true;
             } else if (result.error === 'duplicate_phone') {
                 statusDiv.innerHTML = '<div class="status-message error">❌ Этот номер телефона уже зарегистрирован.</div>';
                 setTimeout(() => statusDiv.innerHTML = '', 5000);
                 return false;
             } else {
-                throw new Error('Неизвестная ошибка');
+                throw new Error('Ошибка');
             }
-        } catch (err) {
-            console.error(err);
-            statusDiv.innerHTML = '<div class="status-message error">❌ Ошибка соединения. Попробуйте позже.</div>';
+        } catch(err) {
+            statusDiv.innerHTML = '<div class="status-message error">❌ Ошибка отправки. Попробуйте ещё раз.</div>';
             setTimeout(() => statusDiv.innerHTML = '', 5000);
             return false;
         }
     }
-
-    // ================= 4. РОЗЫГРЫШ =================
-    function drawOnePrize() {
-        if (!participantsList.length) {
-            alert("Нет участников для розыгрыша.");
-            return false;
-        }
+    
+    // РОЗЫГРЫШ
+    function drawWinner() {
+        const total = parseInt(document.getElementById('prizesCountSelect').value);
         
-        const totalPrizes = parseInt(document.getElementById('prizesCountSelect').value);
-        
-        if (winnersList.length >= totalPrizes) {
-            document.getElementById('drawInfoArea').innerHTML = '<div class="status-message info">🏆 Все призы разыграны! Поздравляем победителей!</div>';
-            drawActive = false;
-            return false;
+        if (winnersList.length >= total) {
+            document.getElementById('drawInfoArea').innerHTML = '<div class="status-message info">🏆 Все призы разыграны!</div>';
+            return;
         }
         
         if (remainingForDraw.length === 0) {
-            document.getElementById('drawInfoArea').innerHTML = '<div class="status-message info">⚠️ Нет доступных участников для розыгрыша.</div>';
-            return false;
+            document.getElementById('drawInfoArea').innerHTML = '<div class="status-message info">⚠️ Нет доступных участников</div>';
+            return;
         }
         
         const randomIndex = Math.floor(Math.random() * remainingForDraw.length);
@@ -429,96 +303,62 @@
         remainingForDraw.splice(randomIndex, 1);
         winnersList.push(winner);
         
-        const currentPrizeNumber = winnersList.length;
-        
-        // Показываем победителя всем
-        const winnerDisplay = document.getElementById('winnerDisplayArea');
-        winnerDisplay.innerHTML = `
+        // Показываем победителя
+        document.getElementById('winnerDisplayArea').innerHTML = `
             <div class="winner-block">
-                <h2>🏆 ПРИЗ №${currentPrizeNumber} 🏆</h2>
-                <div class="winner-number">🎫 Номер участника: ${winner.id}</div>
+                <h2>🏆 ПРИЗ №${winnersList.length} 🏆</h2>
+                <div class="winner-number">🎫 № ${winner.id}</div>
                 <div class="winner-name">${winner.firstName} ${winner.lastName}</div>
-                <div style="margin-top: 0.75rem;">🎉 Поздравляем! 🎉</div>
+                <div>🎉 Поздравляем! 🎉</div>
             </div>
         `;
         
-        document.getElementById('drawInfoArea').innerHTML = `<div class="status-message success">✅ Разыгран приз №${currentPrizeNumber}. Победитель: ${winner.firstName} ${winner.lastName} (№${winner.id})</div>`;
+        document.getElementById('drawInfoArea').innerHTML = `<div class="status-message success">✅ Приз №${winnersList.length} — ${winner.firstName} ${winner.lastName} (№${winner.id})</div>`;
         
-        if (winnersList.length >= totalPrizes) {
-            document.getElementById('drawInfoArea').innerHTML = '<div class="status-message info">🎊 Розыгрыш завершён! Все призы нашли своих героев! 🎊</div>';
+        if (winnersList.length >= total) {
+            document.getElementById('drawInfoArea').innerHTML = '<div class="status-message info">🎊 Розыгрыш завершён! 🎊</div>';
         }
-        return true;
     }
-
-    // ================= 5. ОБРАБОТЧИКИ ИНТЕРФЕЙСА =================
     
-    // Регистрация
-    document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+    // ОБРАБОТЧИКИ
+    document.getElementById('registrationForm').onsubmit = async (e) => {
         e.preventDefault();
         const firstName = document.getElementById('firstName').value.trim();
         const lastName = document.getElementById('lastName').value.trim();
-        const phoneRaw = document.getElementById('phone').value.trim();
-        const phoneNormalized = normalizePhone(phoneRaw);
+        const phone = normalizePhone(document.getElementById('phone').value.trim());
+        const interest = document.querySelector('input[name="club_interest"]:checked')?.value || '';
         
-        if (!firstName || !lastName || !phoneNormalized) {
-            alert("Заполните все обязательные поля");
+        if (!firstName || !lastName || !phone) {
+            alert('Заполните имя, фамилию и телефон');
             return;
         }
         
-        let interest = '';
-        const selectedRadio = document.querySelector('input[name="club_interest"]:checked');
-        if (selectedRadio) interest = selectedRadio.value;
-        
-        const formData = {
-            firstName: firstName,
-            lastName: lastName,
-            phone: phoneNormalized,
-            interest: interest,
-            timestamp: new Date().toLocaleString()
-        };
-        
-        await sendRegistrationToScript(formData);
+        await register({ firstName, lastName, phone, interest, timestamp: new Date().toLocaleString() });
         document.getElementById('registrationForm').reset();
-    });
+    };
     
-    // Вход админа
-    document.getElementById('loginToAdminBtn').addEventListener('click', () => {
-        const pwd = document.getElementById('adminPassword').value;
-        if (pwd === ADMIN_PASSWORD) {
+    document.getElementById('loginToAdminBtn').onclick = () => {
+        if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
             isAdmin = true;
             document.getElementById('organizerLoginCard').classList.add('hidden');
             document.getElementById('adminPanel').classList.remove('hidden');
-            loadParticipantsFromSheets();
+            loadParticipants();
         } else {
             document.getElementById('loginErrorMsg').innerText = 'Неверный пароль';
             setTimeout(() => document.getElementById('loginErrorMsg').innerText = '', 2000);
         }
-    });
+    };
     
-    // Выход админа
-    document.getElementById('logoutAdminBtn').addEventListener('click', () => {
+    document.getElementById('logoutAdminBtn').onclick = () => {
         isAdmin = false;
         document.getElementById('organizerLoginCard').classList.remove('hidden');
         document.getElementById('adminPanel').classList.add('hidden');
-        document.getElementById('adminPassword').value = '';
-    });
+    };
     
-    // Розыгрыш
-    document.getElementById('startDrawButton').addEventListener('click', () => {
-        if (!participantsList.length) {
-            alert("Сначала зарегистрируйте участников. Нажмите 'Обновить список'.");
-            return;
-        }
-        drawOnePrize();
-    });
+    document.getElementById('startDrawButton').onclick = drawWinner;
+    document.getElementById('refreshListButton').onclick = loadParticipants;
     
-    // Обновление списка
-    document.getElementById('refreshListButton').addEventListener('click', () => {
-        loadParticipantsFromSheets();
-    });
-    
-    // Инициализация
-    loadParticipantsFromSheets();
+    loadParticipants();
 </script>
 </body>
 </html>
