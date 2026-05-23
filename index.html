@@ -85,6 +85,7 @@
             text-align: center;
         }
         .status.success { background: #dff0e9; color: #2a6b55; border-left: 4px solid #5f9e86; }
+        .status.error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
         .admin-panel {
             background: #f4fbf7;
             border-radius: 28px;
@@ -236,7 +237,6 @@
     let isAdmin = false;
     let availableParticipants = [];
     let winnersList = [];
-    let totalPrizes = 2;
     let drawActive = false;
     
     function checkSession() {
@@ -260,10 +260,15 @@
         sessionStorage.removeItem('adminAuthenticated');
     }
     
+    // Проверка на дубликат по телефону
+    function isPhoneDuplicate(phone) {
+        return participants.some(p => p.phone === phone);
+    }
+    
     async function loadFromGoogleSheets() {
         if (!isAdmin) return;
         const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">🕊️ Загрузка...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">🕊️ Загрузка...<\/td><\/tr>';
         
         try {
             const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
@@ -275,7 +280,7 @@
             
             if (!rows || rows.length < 2) {
                 participants = [];
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">✨ Пока нет участников</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">✨ Пока нет участников<\/td><\/tr>';
                 document.getElementById('lastUpdate').innerHTML = `📭 Участников: 0 | ${new Date().toLocaleString()}`;
                 return;
             }
@@ -309,7 +314,7 @@
             resetDraw();
         } catch(err) {
             console.error(err);
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#b47c6e;">❌ Ошибка доступа к таблице</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#b47c6e;">❌ Ошибка доступа к таблице<\/td><\/tr>';
         }
     }
     
@@ -317,6 +322,7 @@
         availableParticipants = [...participants];
         winnersList = [];
         drawActive = true;
+        // Перемешиваем для случайности
         for (let i = availableParticipants.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [availableParticipants[i], availableParticipants[j]] = [availableParticipants[j], availableParticipants[i]];
@@ -394,8 +400,23 @@
         return true;
     }
     
+    // Функция получения следующего ID (из таблицы + 1)
+    function getNextId() {
+        if (participants.length === 0) return 1;
+        const maxId = Math.max(...participants.map(p => parseInt(p.id) || 0));
+        return maxId + 1;
+    }
+    
     async function saveRegistration(formData) {
         const statusDiv = document.getElementById('registerStatus');
+        
+        // Проверка на дубликат телефона
+        if (isPhoneDuplicate(formData.phone)) {
+            statusDiv.innerHTML = `<div class="status error">❌ Ошибка: номер телефона ${formData.phone} уже зарегистрирован!</div>`;
+            setTimeout(() => statusDiv.innerHTML = '', 5000);
+            return false;
+        }
+        
         statusDiv.innerHTML = `<div class="status" style="background:#fff3cd;">⏳ Отправка данных...</div>`;
         
         try {
@@ -412,12 +433,12 @@
             if (isAdmin) {
                 setTimeout(() => loadFromGoogleSheets(), 1500);
             }
+            return true;
         } catch(error) {
             console.error('Ошибка:', error);
-            statusDiv.innerHTML = `<div class="status" style="background:#f8d7da; color:#721c24;">❌ Ошибка отправки. Данные сохранены локально.</div>`;
-            let offline = JSON.parse(localStorage.getItem('offline_registrations')) || [];
-            offline.push(formData);
-            localStorage.setItem('offline_registrations', JSON.stringify(offline));
+            statusDiv.innerHTML = `<div class="status error">❌ Ошибка отправки. Попробуйте ещё раз.</div>`;
+            setTimeout(() => statusDiv.innerHTML = '', 5000);
+            return false;
         }
     }
     
@@ -441,7 +462,7 @@
         alert(`✅ Розыгрыш сброшен. Участников: ${participants.length}, призов: ${document.getElementById('prizeCount').value}`);
     };
     document.getElementById('drawStepBtn').onclick = () => { if (!isAdmin) { alert('Доступ только у организатора'); return; } drawOneWinner(); };
-    document.getElementById('prizeCount').onchange = () => { if (!isAdmin) return; totalPrizes = parseInt(document.getElementById('prizeCount').value); if (participants.length > 0) resetDraw(); updateDrawUI(); };
+    document.getElementById('prizeCount').onchange = () => { if (!isAdmin) return; if (participants.length > 0) resetDraw(); updateDrawUI(); };
     document.getElementById('exportBtn').onclick = () => {
         if (!isAdmin) return;
         if (!participants.length) { alert('Нет данных для экспорта'); return; }
@@ -456,7 +477,7 @@
         alert('✅ CSV файл скачан');
     };
     
-    document.getElementById('registrationForm').onsubmit = (e) => {
+    document.getElementById('registrationForm').onsubmit = async (e) => {
         e.preventDefault();
         const firstName = document.getElementById('first_name').value.trim();
         const lastName = document.getElementById('last_name').value.trim();
@@ -465,9 +486,16 @@
         let interest = '';
         const selected = document.querySelector('input[name="club_interest"]:checked');
         if (selected) interest = selected.value;
-        if (!firstName || !lastName || !phone) { alert('Заполните имя, фамилию и телефон'); return; }
-        const newId = participants.length + 1;
-        saveRegistration({
+        
+        if (!firstName || !lastName || !phone) { 
+            alert('Заполните имя, фамилию и телефон'); 
+            return; 
+        }
+        
+        // Получаем следующий ID из таблицы (через загруженных участников)
+        const newId = getNextId();
+        
+        const success = await saveRegistration({
             id: newId,
             name: `${firstName} ${lastName}`,
             email: email,
@@ -475,10 +503,13 @@
             timestamp: new Date().toLocaleString(),
             interest: interest
         });
-        e.target.reset();
-        const btn = e.target.querySelector('button');
-        btn.textContent = '✓ Готово!';
-        setTimeout(() => btn.textContent = '✨ Зарегистрироваться', 2000);
+        
+        if (success) {
+            e.target.reset();
+            const btn = e.target.querySelector('button');
+            btn.textContent = '✓ Готово!';
+            setTimeout(() => btn.textContent = '✨ Зарегистрироваться', 2000);
+        }
     };
     
     document.getElementById('adminPassword').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('loginBtn').click(); });
