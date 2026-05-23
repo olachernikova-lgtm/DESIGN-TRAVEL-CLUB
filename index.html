@@ -239,6 +239,35 @@
     let winnersList = [];
     let drawActive = false;
     
+    // Функция для получения следующего номера из таблицы
+    async function getNextId() {
+        try {
+            const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+            const response = await fetch(url);
+            const text = await response.text();
+            const jsonText = text.substring(47, text.length - 2);
+            const data = JSON.parse(jsonText);
+            const rows = data.table.rows;
+            
+            if (!rows || rows.length < 2) {
+                return 1;
+            }
+            
+            let maxId = 0;
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i].c;
+                if (row && row[0]?.v) {
+                    const id = parseInt(row[0].v);
+                    if (id > maxId) maxId = id;
+                }
+            }
+            return maxId + 1;
+        } catch(err) {
+            console.error('Ошибка получения ID:', err);
+            return participants.length + 1;
+        }
+    }
+    
     function checkSession() {
         if (sessionStorage.getItem('adminAuthenticated') === 'true') {
             isAdmin = true;
@@ -396,24 +425,25 @@
         return true;
     }
     
-    // ================= ОТПРАВКА (через image для обхода CORS + получение номера) =================
+    // ================= ОТПРАВКА С ПОЛУЧЕНИЕМ НОМЕРА =================
     async function saveRegistration(formData) {
         const statusDiv = document.getElementById('registerStatus');
         statusDiv.innerHTML = `<div class="status" style="background:#fff3cd;">⏳ Отправка данных...</div>`;
         
-        // Получаем следующий номер из таблицы (через отдельный запрос)
-        let newId = participants.length + 1;
+        // Получаем следующий номер из таблицы
+        const newId = await getNextId();
         
         try {
-            // Отправляем данные через fetch с режимом no-cors
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({
+                    ...formData,
+                    id: newId
+                })
             });
             
-            // Показываем успех с предполагаемым номером
             statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 Ваш номер: <strong>${newId}</strong></div>`;
             setTimeout(() => statusDiv.innerHTML = '', 6000);
             
@@ -478,6 +508,12 @@
         if (!firstName || !lastName || !phone) { 
             alert('Заполните имя, фамилию и телефон'); 
             return; 
+        }
+        
+        // Проверка на дубликат телефона (по локальным данным или через запрос)
+        if (participants.some(p => p.phone === phone)) {
+            alert(`❌ Номер телефона ${phone} уже зарегистрирован!`);
+            return;
         }
         
         const success = await saveRegistration({
