@@ -21,16 +21,19 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(90, 130, 110, 0.2);
         }
-        h1, h2 {
-            font-size: 1.5rem;
+        h1 {
+            font-size: 1.8rem;
             font-weight: 600;
             color: #1a4d3e;
-            margin-bottom: 1rem;
-            padding-left: 0.75rem;
-            border-left: 5px solid #6b9c86;
             text-align: center;
-            border-left: none;
-            padding-left: 0;
+            margin-bottom: 0.5rem;
+        }
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #4d7963;
+            text-align: center;
+            margin-bottom: 1.5rem;
         }
         .form-group { margin-bottom: 1.25rem; }
         label {
@@ -133,7 +136,7 @@
 </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/ВАШ_URL_СКРИПТА/exec'; // ЗАМЕНИТЕ!
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwv_aOPmeoxfy4BixpjeiX5F9Z6XT8_3KIz4qlIXMwi5IsMgESVOr3jbvmoC3uXkkqS/exec';
     
     function normalizePhone(phone) {
         return String(phone).replace(/[\s\-\(\)\+]/g, '');
@@ -156,7 +159,7 @@
                 statusDiv.innerHTML = `
                     <div class="status-message success">
                         ✅ ${formData.firstName} ${formData.lastName}, вы зарегистрированы!
-                        <div class="number-big">🎫 Ваш номер: ${result.number}</div>
+                        <div class="number-big">🎫 Ваш номер: ${result.number || result.id}</div>
                     </div>
                 `;
                 setTimeout(() => statusDiv.innerHTML = '', 8000);
@@ -169,6 +172,7 @@
                 throw new Error('Ошибка');
             }
         } catch(err) {
+            console.error(err);
             statusDiv.innerHTML = '<div class="status-message error">❌ Ошибка отправки. Попробуйте ещё раз.</div>';
             setTimeout(() => statusDiv.innerHTML = '', 5000);
             return false;
