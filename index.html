@@ -241,14 +241,20 @@
     
     // Функция для отправки данных на страницу большого экрана
     function sendToBigScreen(winner, prizeNumber) {
-        // Сохраняем в localStorage для другой страницы
-        localStorage.setItem('winnerDisplay', JSON.stringify({
+        const winnerData = {
             id: winner.id,
             name: winner.name,
             prize: prizeNumber,
             timestamp: Date.now()
+        };
+        localStorage.setItem('winnerDisplay', JSON.stringify(winnerData));
+        // Принудительно вызываем событие storage для этой же вкладки
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'winnerDisplay',
+            newValue: JSON.stringify(winnerData)
         }));
-        // Также обновляем на этой странице
+        
+        // Обновляем на этой странице
         const publicContent = document.getElementById('publicWinnerContent');
         publicContent.innerHTML = `
             <div class="winner-announcement">
@@ -370,6 +376,12 @@
         updateWinnersHistory();
         document.getElementById('publicWinnerContent').innerHTML = '';
         document.getElementById('lastWinnerInfo').innerHTML = '';
+        // Очищаем экран победителя
+        localStorage.setItem('winnerDisplay', JSON.stringify({ clear: true, timestamp: Date.now() }));
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'winnerDisplay',
+            newValue: JSON.stringify({ clear: true, timestamp: Date.now() })
+        }));
     }
     
     function updateDrawUI() {
