@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESIGN TRAVEL CLUB — Розыгрыш</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(145deg, #1a3a30 0%, #0d2b22 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .screen-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .winner-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 4rem;
+            padding: 4rem;
+            text-align: center;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 3rem;
+            color: #1a4d3e;
+            margin-bottom: 2rem;
+        }
+        .prize-badge {
+            font-size: 2rem;
+            background: #e2f4ed;
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            border-radius: 4rem;
+            margin-bottom: 2rem;
+        }
+        .winner-number {
+            font-size: 8rem;
+            font-weight: 800;
+            color: #1a4d3e;
+            margin: 1.5rem 0;
+        }
+        .winner-name {
+            font-size: 2.5rem;
+            margin: 1.5rem 0;
+            color: #2f604f;
+        }
+        .waiting {
+            font-size: 2rem;
+            color: #8baa9c;
+            padding: 3rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @media (max-width: 768px) {
+            .winner-number { font-size: 4rem; }
+            .winner-name { font-size: 1.5rem; }
+            h1 { font-size: 2rem; }
+            .winner-card { padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="screen-container">
+    <div class="winner-card">
+        <h1>🍸 DESIGN TRAVEL CLUB</h1>
+        <div id="content">
+            <div class="waiting">🎫 Ожидание розыгрыша...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showWinner(number, name, prize) {
+        document.getElementById('content').innerHTML = `
+            <div class="prize-badge">🏆 ПРИЗ №${prize} 🏆</div>
+            <div class="winner-number">🎫 № ${number}</div>
+            <div class="winner-name">${name}</div>
+            <div style="margin-top: 1rem;">✨ Поздравляем! ✨</div>
+        `;
+    }
+    
+    function checkWinner() {
+        const data = localStorage.getItem('winnerDisplay');
+        if (data) {
+            try {
+                const winner = JSON.parse(data);
+                if (winner.time && Date.now() - winner.time < 60000) {
+                    showWinner(winner.number, winner.name, winner.prize);
+                }
+            } catch(e) {}
+        }
+    }
+    
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'winnerDisplay' && e.newValue) {
+            try {
+                const winner = JSON.parse(e.newValue);
+                showWinner(winner.number, winner.name, winner.prize);
+            } catch(e) {}
+        }
+    });
+    
+    setInterval(checkWinner, 1000);
+    checkWinner();
+</script>
+</body>
+</html>
