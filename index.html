@@ -84,6 +84,10 @@
             background: #f8d7da;
             color: #721c24;
         }
+        .waiting {
+            background: #fff3cd;
+            color: #856404;
+        }
         .winner-block {
             background: linear-gradient(135deg, #e2f4ed, #c8e6d9);
             border-radius: 30px;
@@ -175,6 +179,7 @@
     <!-- Панель организатора (скрыта) -->
     <div id="adminBlock" class="block hidden">
         <div class="flex-buttons">
+            <button id="refreshBtn">🔄 Обновить</button>
             <button id="exportBtn">📥 Скачать CSV</button>
             <button id="logoutBtn">🚪 Выйти</button>
         </div>
@@ -198,7 +203,7 @@
         <div class="table-wrapper">
             <table id="participantsTable">
                 <thead><tr><th>№</th><th>ФИО</th><th>Телефон</th></tr></thead>
-                <tbody id="tableBody"><tr><td colspan="3" class="loading">Загрузка...</td></tr></tbody>
+                <tbody id="tableBody"><tr><td colspan="3" class="loading">Загрузка...<\/td><\/tr><\/tbody>
             20~
         </div>
     </div>
@@ -218,7 +223,7 @@
     // Загрузка из Google Sheets
     async function loadFromSheets() {
         const tbody = document.getElementById('tableBody');
-        if (tbody) tbody.innerHTML = '<tr><td colspan="3" class="loading">Загрузка...</td></tr>';
+        if (tbody) tbody.innerHTML = '<tr><td colspan="3" class="loading">Загрузка...<\/td><\/tr>';
         
         try {
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
@@ -230,7 +235,7 @@
             
             if (!rows || rows.length < 2) {
                 participants = [];
-                if (tbody) tbody.innerHTML = '<tr><td colspan="3">Нет участников</td></tr>';
+                if (tbody) tbody.innerHTML = '<tr><td colspan="3">Нет участников<\/td><\/tr>';
                 return;
             }
             
@@ -265,7 +270,7 @@
             
         } catch(err) {
             console.error(err);
-            if (tbody) tbody.innerHTML = '<tr><td colspan="3">Ошибка загрузки</td></tr>';
+            if (tbody) tbody.innerHTML = '<tr><td colspan="3">Ошибка загрузки<\/td><\/tr>';
         }
     }
     
@@ -273,6 +278,7 @@
         available = [...participants];
         winners = [];
         drawActive = true;
+        // Перемешиваем
         for (let i = available.length - 1; i > 0; i--) {
             let j = Math.floor(Math.random() * (i + 1));
             [available[i], available[j]] = [available[j], available[i]];
@@ -333,8 +339,8 @@
         }
     }
     
-    async function drawWinner() {
-        if (!drawActive) { alert('Нажмите "Сбросить розыгрыш" в панели организатора'); return; }
+    function drawWinner() {
+        if (!drawActive) { alert('Нажмите "Обновить" в панели организатора'); return; }
         const total = parseInt(document.getElementById('prizeCount').value);
         if (winners.length >= total) { alert('Все призы разыграны'); updateDrawUI(); return; }
         if (available.length === 0) { alert('Нет участников'); updateDrawUI(); return; }
@@ -356,21 +362,34 @@
     
     async function registerToSheets(formData) {
         const statusDiv = document.getElementById('regStatus');
-        statusDiv.innerHTML = '<div class="status" style="background:#fff3cd;">⏳ Отправка...</div>';
+        statusDiv.innerHTML = '<div class="status waiting">⏳ Отправка...</div>';
         
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
             
-            statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 <strong>ВАШ НОМЕР: ${formData.id}</strong></div>`;
-            setTimeout(() => statusDiv.innerHTML = '', 5000);
-            return true;
+            const result = await response.json();
+            
+            if (result.success) {
+                statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 <strong>ВАШ НОМЕР: ${result.id}</strong></div>`;
+                setTimeout(() => statusDiv.innerHTML = '', 5000);
+                return true;
+            } else if (result.error === "duplicate_phone") {
+                statusDiv.innerHTML = `<div class="status error">❌ Номер телефона ${formData.phone} уже зарегистрирован!</div>`;
+                setTimeout(() => statusDiv.innerHTML = '', 4000);
+                return false;
+            } else if (result.error === "duplicate_name") {
+                statusDiv.innerHTML = `<div class="status error">❌ Имя ${formData.name} уже зарегистрировано!</div>`;
+                setTimeout(() => statusDiv.innerHTML = '', 4000);
+                return false;
+            } else {
+                throw new Error('Ошибка');
+            }
         } catch(err) {
-            statusDiv.innerHTML = '<div class="status error">❌ Ошибка отправки</div>';
+            statusDiv.innerHTML = '<div class="status error">❌ Ошибка отправки. Попробуйте ещё раз.</div>';
             setTimeout(() => statusDiv.innerHTML = '', 3000);
             return false;
         }
@@ -406,20 +425,19 @@
             return;
         }
         
-        const newId = participants.length + 1;
-        
-        await registerToSheets({
+        const success = await registerToSheets({
             name: name,
             phone: phone,
             email: email,
             interest: interest,
-            timestamp: new Date().toLocaleString(),
-            id: newId
+            timestamp: new Date().toLocaleString()
         });
         
-        e.target.reset();
-        if (isAdmin) {
-            setTimeout(() => loadFromSheets(), 2000);
+        if (success) {
+            e.target.reset();
+            if (isAdmin) {
+                setTimeout(() => loadFromSheets(), 2000);
+            }
         }
     };
     
@@ -427,6 +445,7 @@
     document.getElementById('loginBtn').onclick = () => {
         if (document.getElementById('adminPass').value === PASSWORD) {
             isAdmin = true;
+            sessionStorage.setItem('admin', 'true');
             document.getElementById('loginBlock').classList.add('hidden');
             document.getElementById('adminBlock').classList.remove('hidden');
             loadFromSheets();
@@ -438,8 +457,13 @@
     
     document.getElementById('logoutBtn').onclick = () => {
         isAdmin = false;
+        sessionStorage.removeItem('admin');
         document.getElementById('loginBlock').classList.remove('hidden');
         document.getElementById('adminBlock').classList.add('hidden');
+    };
+    
+    document.getElementById('refreshBtn').onclick = () => {
+        loadFromSheets();
     };
     
     document.getElementById('drawBtn').onclick = drawWinner;
