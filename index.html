@@ -1,242 +1,481 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Регистрация розыгрыша</title>
-
-<style>
-body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #0f766e, #1e3a8a);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
-  padding:20px;
-  color:#fff;
-  box-sizing:border-box;
-}
-
-.card{
-  width:100%;
-  max-width:420px;
-  padding:24px;
-  border-radius:18px;
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(12px);
-  box-shadow:0 10px 40px rgba(0,0,0,0.3);
-}
-
-h1{
-  font-size:18px;
-  text-align:center;
-  margin-bottom:18px;
-}
-
-label{
-  font-size:13px;
-  opacity:0.9;
-  display:block;
-  margin-top:10px;
-}
-
-input, select{
-  width:100%;
-  padding:14px;
-  margin-top:6px;
-  margin-bottom:10px;
-  border-radius:10px;
-  border:none;
-  outline:none;
-  font-size:16px;
-  box-sizing:border-box;
-}
-
-input{
-  background:white;
-  color:black;
-}
-
-select{
-  background:white;
-  color:black;
-}
-
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:10px;
-  background:#10b981;
-  color:white;
-  font-weight:bold;
-  font-size:16px;
-  cursor:pointer;
-  margin-top:10px;
-}
-
-button:disabled{
-  opacity:0.6;
-}
-
-#msg{
-  text-align:center;
-  margin-top:12px;
-  font-size:14px;
-}
-
-/* TICKET */
-.ticket{
-  text-align:center;
-}
-
-.ticket-box{
-  margin-top:20px;
-  padding:25px;
-  border-radius:16px;
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.2);
-}
-
-.number{
-  font-size:52px;
-  font-weight:bold;
-  letter-spacing:6px;
-  margin:10px 0;
-  color:#a7f3d0;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Design Club - Регистрация и розыгрыш</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        /* Карточки */
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Форма регистрации */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        input, button {
+            padding: 12px 15px;
+            width: 100%;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+        
+        /* Кнопки */
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .draw-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            font-size: 18px;
+            padding: 15px;
+        }
+        .export-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            margin-bottom: 20px;
+        }
+        
+        /* Победитель */
+        .winner {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: center;
+            animation: pulse 0.5s ease;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Таблица */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow-x: auto;
+            display: block;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        /* Радио кнопки как на старом сайте */
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            margin-bottom: 0;
+        }
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .status.loading { background: #fff3cd; color: #856404; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: 20px; }
+            .radio-group { flex-direction: column; gap: 10px; }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="card" id="card">
+<!-- БЛОК РЕГИСТРАЦИИ (как на вашем оригинальном сайте) -->
+<div class="container">
+    <h2>🎉 Форма регистрации для участия в розыгрыше</h2>
+    <form id="registrationForm">
+        <div class="form-group">
+            <label>Имя *</label>
+            <input type="text" id="first_name" required placeholder="Введите ваше имя">
+        </div>
+        
+        <div class="form-group">
+            <label>Фамилия *</label>
+            <input type="text" id="last_name" required placeholder="Введите вашу фамилию">
+        </div>
+        
+        <div class="form-group">
+            <label>Телефон *</label>
+            <input type="tel" id="phone" required placeholder="+7 (XXX) XXX-XX-XX">
+        </div>
+        
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="email" placeholder="example@mail.com">
+        </div>
+        
+        <div class="form-group">
+            <label>Хотите присоединиться к закрытому клубу путешественников и первыми узнавать о роскошных направлениях, уникальных маршрутах и эксклюзивных предложениях?</label>
+            <div class="radio-group">
+                <label><input type="radio" name="club_interest" value="Да"> Да</label>
+                <label><input type="radio" name="club_interest" value="Безусловно"> Безусловно</label>
+                <label><input type="radio" name="club_interest" value="Несомненно"> Несомненно</label>
+                <label><input type="radio" name="club_interest" value="В следующий раз"> В следующий раз</label>
+            </div>
+        </div>
+        
+        <button type="submit">✅ Зарегистрироваться</button>
+    </form>
+    <div id="registerStatus"></div>
+</div>
 
-<h1>Форма регистрации для участия в розыгрыше</h1>
+<!-- БЛОК РОЗЫГРЫША -->
+<div class="container">
+    <h2>🎁 Розыгрыш призов среди участников</h2>
+    <button class="draw-btn" id="drawBtn">🎲 Выбрать победителя</button>
+    <div id="winnerResult"></div>
+</div>
 
-<label>Имя *</label>
-<input id="name">
-
-<label>Фамилия *</label>
-<input id="surname">
-
-<label>Телефон *</label>
-<input id="phone">
-
-<label>Email</label>
-<input id="email">
-
-<label>
-Хотите присоединиться к закрытому клубу путешественников и первыми узнавать о роскошных направлениях, уникальных маршрутах и эксклюзивных предложениях?
-</label>
-
-<select id="club">
-  <option>Да</option>
-  <option>Безусловно</option>
-  <option>Несомненно</option>
-  <option>В следующий раз</option>
-</select>
-
-<button id="btn" onclick="send()">Зарегистрироваться</button>
-
-<p id="msg"></p>
-
+<!-- БЛОК СПИСКА УЧАСТНИКОВ (из GOOGLE SHEETS) -->
+<div class="container">
+    <h2>📋 Список участников (из Google Sheets)</h2>
+    <button class="export-btn" id="exportBtn">📥 Скачать таблицу (CSV для Excel)</button>
+    <div id="lastUpdate" style="font-size: 12px; color: #666; margin-bottom: 10px;"></div>
+    <div style="overflow-x: auto;">
+        <table id="participantsTable">
+            <thead>
+                <tr><th>№</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время регистрации</th><th>Интерес</th></tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="6" style="text-align: center;">Загрузка данных из Google Sheets...</td></tr>
+            </tbody>
+         </table>
+    </div>
 </div>
 
 <script>
-
-const API_URL = "https://script.google.com/macros/s/AKfycby1wgwq3Ii6LZkHbv8O6tI97O-PBr2ci4ik9VsTtFc0RajqOm_NfiR-ajmp6vXGAgw_9g/exec";
-
-function showTicket(number, name, surname, phone, club){
-  document.getElementById("card").innerHTML = `
-    <div class="ticket">
-
-      <h2>🎟 Travel Pass</h2>
-      <p>Design Travel Club</p>
-
-      <div class="ticket-box">
-
-        <div class="number">${number}</div>
-
-        <p><b>${name} ${surname}</b></p>
-        <p>${phone}</p>
+    // === НАСТРОЙКИ ===
+    // ВАШ ID GOOGLE SHEETS (новый, который вы прислали)
+    const SPREADSHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
+    
+    // Глобальный массив участников
+    let participants = [];
+    
+    // === 1. ЗАГРУЗКА ДАННЫХ ИЗ GOOGLE SHEETS ===
+    async function loadFromGoogleSheets() {
+        const tbody = document.getElementById('tableBody');
+        const lastUpdateSpan = document.getElementById('lastUpdate');
         
-
-        <div style="
-          margin-top:15px;
-          font-size:12px;
-          opacity:0.6;
-          letter-spacing:1px;
-        ">
- 
-        </div>
-
-      </div>
-
-      <p style="margin-top:15px;opacity:0.7">
-        Ваш номер участника сохранён
-      </p>
-
-    </div>
-  `;
-}
-
-async function send(){
-
-  const btn = document.getElementById("btn");
-  btn.disabled = true;
-  btn.innerText = "Отправка...";
-
-  const data = {
-    name: document.getElementById("name").value.trim(),
-    surname: document.getElementById("surname").value.trim(),
-    phone: document.getElementById("phone").value.trim(),
-    email: document.getElementById("email").value.trim(),
-    club: document.getElementById("club").value
-  };
-
-  if(!data.name || !data.surname || !data.phone){
-    msg.innerText = "Заполните обязательные поля";
-    btn.disabled = false;
-    btn.innerText = "Зарегистрироваться";
-    return;
-  }
-
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify(data)
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">🔄 Синхронизация с Google Sheets...</td></tr>';
+        lastUpdateSpan.textContent = 'Обновление...';
+        
+        try {
+            // Публичный API Google Sheets для чтения (если таблица открыта на просмотр)
+            const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+            const response = await fetch(url);
+            const text = await response.text();
+            
+            // Парсим JSONP ответ
+            const jsonText = text.substring(47, text.length - 2);
+            const data = JSON.parse(jsonText);
+            
+            const rows = data.table.rows;
+            if (!rows || rows.length < 2) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">📭 В таблице пока нет данных. Зарегистрируйтесь первым!</td></tr>';
+                lastUpdateSpan.textContent = `Последнее обновление: ${new Date().toLocaleString()} | Данных нет`;
+                return [];
+            }
+            
+            // Преобразуем строки в объекты
+            const loadedParticipants = [];
+            for (let i = 1; i < rows.length; i++) { // i=1 пропускаем заголовок
+                const row = rows[i].c;
+                if (row && row[0] && row[0].v) {
+                    loadedParticipants.push({
+                        id: row[0]?.v || i,
+                        name: row[1]?.v || '',
+                        email: row[2]?.v || '',
+                        phone: row[3]?.v || '',
+                        timestamp: row[4]?.v || '',
+                        interest: row[5]?.v || ''
+                    });
+                }
+            }
+            
+            // Отображаем в таблице
+            tbody.innerHTML = '';
+            loadedParticipants.forEach(p => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = p.id;
+                row.insertCell(1).textContent = p.name;
+                row.insertCell(2).textContent = p.email;
+                row.insertCell(3).textContent = p.phone;
+                row.insertCell(4).textContent = p.timestamp;
+                row.insertCell(5).textContent = p.interest || '—';
+            });
+            
+            lastUpdateSpan.textContent = `✅ Последнее обновление: ${new Date().toLocaleString()} | Всего участников: ${loadedParticipants.length}`;
+            return loadedParticipants;
+            
+        } catch (error) {
+            console.error('Ошибка загрузки из Google Sheets:', error);
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">❌ Ошибка подключения к Google Sheets. Проверьте доступ к таблице.</td></tr>';
+            lastUpdateSpan.textContent = `⚠️ Ошибка синхронизации: ${error.message}`;
+            return [];
+        }
+    }
+    
+    // === 2. СОХРАНЕНИЕ НОВОГО УЧАСТНИКА В GOOGLE SHEETS (через редирект на форму) ===
+    // Простой способ: открываем Google Forms для добавления строки
+    // Если у вас нет формы, показываем инструкцию
+    function addParticipantToSheet(formData) {
+        // ВАРИАНТ 1: Если у вас есть Google Forms, вставьте ссылку сюда
+        // const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/.../viewform?usp=pp_url';
+        // И затем открыть её с параметрами
+        
+        // ВАРИАНТ 2: Сохраняем в localStorage и показываем инструкцию для ручного импорта
+        let offlineParticipants = JSON.parse(localStorage.getItem('offline_registrations')) || [];
+        offlineParticipants.push(formData);
+        localStorage.setItem('offline_registrations', JSON.stringify(offlineParticipants));
+        
+        // Показываем сообщение с инструкцией
+        const statusDiv = document.getElementById('registerStatus');
+        statusDiv.innerHTML = `
+            <div class="status success">
+                ✅ ${formData.name}, вы успешно зарегистрированы!<br>
+                📊 Данные сохранены локально. Чтобы добавить их в Google Sheets:<br>
+                1. Скачайте список участников через кнопку "Скачать таблицу"<br>
+                2. Импортируйте CSV файл в вашу Google таблицу<br>
+                🎯 Вы автоматически участвуете в розыгрыше!
+            </div>
+        `;
+        
+        // Обновляем локальный список для розыгрыша
+        participants.push(formData);
+        updateLocalTableDisplay();
+        
+        // Автоматически скрываем сообщение через 5 секунд
+        setTimeout(() => {
+            if (statusDiv.firstChild) statusDiv.innerHTML = '';
+        }, 5000);
+    }
+    
+    // Вспомогательная функция для отображения локальных данных
+    function updateLocalTableDisplay() {
+        const tbody = document.getElementById('tableBody');
+        if (tbody && participants.length > 0 && !tbody.innerHTML.includes('Google Sheets')) {
+            // Показываем объединённые данные (из Google Sheets + локальные)
+            const allParticipants = [...participants];
+            tbody.innerHTML = '';
+            allParticipants.forEach(p => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = p.id;
+                row.insertCell(1).textContent = p.name;
+                row.insertCell(2).textContent = p.email;
+                row.insertCell(3).textContent = p.phone;
+                row.insertCell(4).textContent = p.timestamp;
+                row.insertCell(5).textContent = p.interest || '—';
+            });
+        }
+    }
+    
+    // === 3. ОБРАБОТКА ФОРМЫ РЕГИСТРАЦИИ ===
+    document.getElementById('registrationForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Собираем данные
+        const firstName = document.getElementById('first_name').value.trim();
+        const lastName = document.getElementById('last_name').value.trim();
+        const fullName = `${firstName} ${lastName}`;
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('email').value.trim();
+        
+        // Получаем выбранный вариант из radio
+        let interest = '';
+        const radioSelected = document.querySelector('input[name="club_interest"]:checked');
+        if (radioSelected) interest = radioSelected.value;
+        
+        // Валидация
+        if (!firstName || !lastName || !phone) {
+            alert('Пожалуйста, заполните обязательные поля: Имя, Фамилия, Телефон');
+            return;
+        }
+        
+        // Создаём ID и временную метку
+        const newId = participants.length + 1;
+        const now = new Date();
+        const timestamp = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+        
+        const newParticipant = {
+            id: newId,
+            name: fullName,
+            email: email,
+            phone: phone,
+            timestamp: timestamp,
+            interest: interest
+        };
+        
+        // Сохраняем
+        addParticipantToSheet(newParticipant);
+        
+        // Очищаем форму (кроме radio)
+        e.target.reset();
+        if (radioSelected) radioSelected.checked = false;
+        
+        // Небольшая анимация
+        const btn = e.target.querySelector('button');
+        btn.textContent = '✅ Зарегистрировано!';
+        setTimeout(() => {
+            btn.textContent = '✅ Зарегистрироваться';
+        }, 2000);
     });
-
-    const result = await res.json();
-
-    if(result.status === "duplicate"){
-      msg.innerText = "Вы уже зарегистрированы";
-      btn.disabled = false;
-      btn.innerText = "Зарегистрироваться";
-      return;
+    
+    // === 4. РОЗЫГРЫШ ПОБЕДИТЕЛЯ ===
+    document.getElementById('drawBtn').addEventListener('click', () => {
+        // Берём актуальных участников (из загруженных + локальных)
+        let currentParticipants = [...participants];
+        
+        // Если ещё не загружены из Google Sheets, пробуем загрузить сейчас
+        if (currentParticipants.length === 0) {
+            alert('📭 Список участников загружается... Подождите секунду и попробуйте снова.');
+            loadFromGoogleSheets().then(loaded => {
+                if (loaded.length > 0) {
+                    participants = loaded;
+                    alert(`✅ Загружено ${loaded.length} участников! Нажмите "Выбрать победителя" ещё раз.`);
+                } else {
+                    alert('❌ Нет зарегистрированных участников. Будьте первым!');
+                }
+            });
+            return;
+        }
+        
+        // Выбираем случайного
+        const randomIndex = Math.floor(Math.random() * currentParticipants.length);
+        const winner = currentParticipants[randomIndex];
+        
+        const winnerDiv = document.getElementById('winnerResult');
+        winnerDiv.innerHTML = `
+            <div class="winner">
+                <h2>🏆 ПОБЕДИТЕЛЬ РОЗЫГРЫША 🏆</h2>
+                <p>🎯 Номер участника: <strong>${winner.id}</strong></p>
+                <p>👤 ФИО: ${winner.name}</p>
+                <p>📧 Email: ${winner.email || 'не указан'}</p>
+                <p>📞 Телефон: ${winner.phone}</p>
+                <p>⏰ Зарегистрирован: ${winner.timestamp}</p>
+                ${winner.interest ? `<p>💎 Интерес к клубу: ${winner.interest}</p>` : ''}
+                <p style="font-size: 20px; margin-top: 15px;">🎉 Поздравляем! 🎉</p>
+            </div>
+        `;
+        
+        // Прокручиваем к победителю
+        winnerDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    
+    // === 5. ЭКСПОРТ В CSV ===
+    document.getElementById('exportBtn').addEventListener('click', () => {
+        if (participants.length === 0) {
+            alert('Нет данных для экспорта. Зарегистрируйте участников или загрузите из Google Sheets.');
+            return;
+        }
+        
+        let csvContent = "№ участника,ФИО,Email,Телефон,Время регистрации,Интерес к клубу\n";
+        participants.forEach(p => {
+            csvContent += `${p.id},"${p.name}",${p.email},${p.phone},${p.timestamp},"${p.interest || ''}"\n`;
+        });
+        
+        const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' }); // \uFEFF для поддержки кириллицы
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute('download', 'участники_розыгрыша_travel_club.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        alert('✅ CSV файл скачан! Его можно импортировать в Google Sheets (Файл → Импорт)');
+    });
+    
+    // === 6. ЗАГРУЗКА ПРИ СТАРТЕ ===
+    async function init() {
+        const loadedData = await loadFromGoogleSheets();
+        if (loadedData.length > 0) {
+            participants = loadedData;
+        } else {
+            // Пробуем загрузить из localStorage (оффлайн-регистрации)
+            const offlineData = JSON.parse(localStorage.getItem('offline_registrations')) || [];
+            if (offlineData.length > 0) {
+                participants = offlineData;
+                updateLocalTableDisplay();
+                document.getElementById('lastUpdate').innerHTML += ' | Показаны локальные данные. Для синхронизации с Google Sheets нажмите F5.';
+            }
+        }
     }
-
-    if(result.status === "full"){
-      msg.innerText = "Регистрация закрыта (100/100)";
-      btn.disabled = false;
-      btn.innerText = "Зарегистрироваться";
-      return;
-    }
-
-    showTicket(result.number, data.name, data.surname, data.phone, data.club);
-
-  } catch(e){
-    msg.innerText = "Ошибка сервера";
-    btn.disabled = false;
-    btn.innerText = "Зарегистрироваться";
-  }
-}
-
+    
+    init();
 </script>
-
 </body>
 </html>
