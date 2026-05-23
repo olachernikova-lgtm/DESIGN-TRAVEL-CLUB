@@ -239,8 +239,9 @@
     let winnersList = [];
     let drawActive = false;
     
-    // Функция для отправки данных на страницу большого экрана
-    function sendToBigScreen(winner, prizeNumber) {
+    // Функция для обновления большого экрана через URL параметры
+    function updateBigScreen(winner, prizeNumber) {
+        // Сохраняем в localStorage как резервный вариант
         const winnerData = {
             id: winner.id,
             name: winner.name,
@@ -248,11 +249,15 @@
             timestamp: Date.now()
         };
         localStorage.setItem('winnerDisplay', JSON.stringify(winnerData));
-        // Принудительно вызываем событие storage для этой же вкладки
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: 'winnerDisplay',
-            newValue: JSON.stringify(winnerData)
-        }));
+        
+        // Также отправляем через BroadcastChannel (если поддерживается)
+        if (typeof BroadcastChannel !== 'undefined') {
+            try {
+                const channel = new BroadcastChannel('winner_channel');
+                channel.postMessage(winnerData);
+                channel.close();
+            } catch(e) {}
+        }
         
         // Обновляем на этой странице
         const publicContent = document.getElementById('publicWinnerContent');
@@ -263,6 +268,18 @@
                 <div class="winner-name-display">${winner.name}</div>
             </div>
         `;
+    }
+    
+    // Функция для очистки большого экрана
+    function clearBigScreen() {
+        localStorage.setItem('winnerDisplay', JSON.stringify({ clear: true, timestamp: Date.now() }));
+        if (typeof BroadcastChannel !== 'undefined') {
+            try {
+                const channel = new BroadcastChannel('winner_channel');
+                channel.postMessage({ clear: true });
+                channel.close();
+            } catch(e) {}
+        }
     }
     
     async function getNextId() {
@@ -376,12 +393,7 @@
         updateWinnersHistory();
         document.getElementById('publicWinnerContent').innerHTML = '';
         document.getElementById('lastWinnerInfo').innerHTML = '';
-        // Очищаем экран победителя
-        localStorage.setItem('winnerDisplay', JSON.stringify({ clear: true, timestamp: Date.now() }));
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: 'winnerDisplay',
-            newValue: JSON.stringify({ clear: true, timestamp: Date.now() })
-        }));
+        clearBigScreen();
     }
     
     function updateDrawUI() {
@@ -431,8 +443,7 @@
         winnersList.push(winner);
         const prizeNumber = winnersList.length;
         
-        // Отправляем на страницу большого экрана
-        sendToBigScreen(winner, prizeNumber);
+        updateBigScreen(winner, prizeNumber);
         
         const lastWinnerDiv = document.getElementById('lastWinnerInfo');
         lastWinnerDiv.innerHTML = `<div style="background: #dff0e9; border-radius: 20px; padding: 15px; text-align: center;"><strong>✅ Разыгран приз №${prizeNumber}</strong><br>🏆 № участника: ${winner.id} — ${winner.name}</div>`;
