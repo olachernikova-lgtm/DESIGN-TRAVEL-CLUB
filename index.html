@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Design Club - Регистрация и розыгрыш</title>
+    <title>Travel Design Club - Регистрация</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -11,7 +11,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
             min-height: 100vh;
         }
         
@@ -36,25 +36,25 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: #2c5f2d;
         }
         input, button {
             padding: 12px 15px;
             width: 100%;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #c8e6c9;
             border-radius: 10px;
             font-size: 16px;
             transition: all 0.3s ease;
         }
         input:focus {
             outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
         }
         
         /* Кнопки */
         button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
             border: none;
             cursor: pointer;
@@ -67,23 +67,28 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         .draw-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #00897b 0%, #004d40 100%);
             font-size: 18px;
             padding: 15px;
         }
         .export-btn {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #26a69a 0%, #00695c 100%);
             margin-bottom: 20px;
+        }
+        .login-btn {
+            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+            margin-top: 0;
         }
         
         /* Победитель */
         .winner {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            background: linear-gradient(135deg, #a5d6a7 0%, #81c784 100%);
             padding: 25px;
             border-radius: 15px;
             margin-top: 20px;
             text-align: center;
             animation: pulse 0.5s ease;
+            border: 2px solid #2e7d32;
         }
         @keyframes pulse {
             0% { transform: scale(0.95); opacity: 0; }
@@ -99,19 +104,19 @@
             display: block;
         }
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid #c8e6c9;
             padding: 12px;
             text-align: left;
         }
         th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
         }
         tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #e8f5e9;
         }
         
-        /* Радио кнопки как на старом сайте */
+        /* Радио кнопки */
         .radio-group {
             display: flex;
             gap: 20px;
@@ -123,6 +128,7 @@
             align-items: center;
             font-weight: normal;
             margin-bottom: 0;
+            color: #2c5f2d;
         }
         .radio-group input[type="radio"] {
             width: auto;
@@ -131,7 +137,7 @@
         
         h2 {
             margin-top: 0;
-            color: #333;
+            color: #1b5e20;
         }
         
         .status {
@@ -144,18 +150,51 @@
         .status.success { background: #d4edda; color: #155724; }
         .status.error { background: #f8d7da; color: #721c24; }
         
+        /* Панель администратора */
+        .admin-panel {
+            background: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        .password-form {
+            background: #f1f8e9;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .logout-btn {
+            background: #ef5350;
+            margin-top: 10px;
+            width: auto;
+            padding: 8px 20px;
+            display: inline-block;
+        }
+        .logout-btn:hover {
+            background: #c62828;
+        }
+        .flex-right {
+            text-align: right;
+        }
+        
         @media (max-width: 768px) {
             body { padding: 10px; }
             .container { padding: 20px; }
             .radio-group { flex-direction: column; gap: 10px; }
         }
+        
+        /* Скрытые элементы */
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-<!-- БЛОК РЕГИСТРАЦИИ (как на вашем оригинальном сайте) -->
+<!-- БЛОК РЕГИСТРАЦИИ (виден всем) -->
 <div class="container">
-    <h2>🎉 Форма регистрации для участия в розыгрыше</h2>
+    <h2>🌿 Форма регистрации для участия в розыгрыше</h2>
     <form id="registrationForm">
         <div class="form-group">
             <label>Имя *</label>
@@ -178,7 +217,7 @@
         </div>
         
         <div class="form-group">
-            <label>Хотите присоединиться к закрытому клубу путешественников и первыми узнавать о роскошных направлениях, уникальных маршрутах и эксклюзивных предложениях?</label>
+            <label>✨ Хотите присоединиться к закрытому клубу путешественников и первыми узнавать о роскошных направлениях, уникальных маршрутах и эксклюзивных предложениях?</label>
             <div class="radio-group">
                 <label><input type="radio" name="club_interest" value="Да"> Да</label>
                 <label><input type="radio" name="club_interest" value="Безусловно"> Безусловно</label>
@@ -192,40 +231,91 @@
     <div id="registerStatus"></div>
 </div>
 
-<!-- БЛОК РОЗЫГРЫША -->
-<div class="container">
-    <h2>🎁 Розыгрыш призов среди участников</h2>
-    <button class="draw-btn" id="drawBtn">🎲 Выбрать победителя</button>
-    <div id="winnerResult"></div>
-</div>
-
-<!-- БЛОК СПИСКА УЧАСТНИКОВ (из GOOGLE SHEETS) -->
-<div class="container">
-    <h2>📋 Список участников (из Google Sheets)</h2>
-    <button class="export-btn" id="exportBtn">📥 Скачать таблицу (CSV для Excel)</button>
-    <div id="lastUpdate" style="font-size: 12px; color: #666; margin-bottom: 10px;"></div>
-    <div style="overflow-x: auto;">
-        <table id="participantsTable">
-            <thead>
-                <tr><th>№</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время регистрации</th><th>Интерес</th></tr>
-            </thead>
-            <tbody id="tableBody">
-                <tr><td colspan="6" style="text-align: center;">Загрузка данных из Google Sheets...</td></tr>
-            </tbody>
-         </table>
+<!-- ПАНЕЛЬ АДМИНИСТРАТОРА (появляется только после ввода пароля) -->
+<div id="adminPanel" class="container hidden">
+    <div class="flex-right">
+        <button class="logout-btn" id="logoutBtn">🚪 Выйти из панели</button>
+    </div>
+    
+    <h2>🔐 Панель организатора</h2>
+    
+    <!-- БЛОК РОЗЫГРЫША -->
+    <div class="admin-panel">
+        <h3>🎁 Розыгрыш призов</h3>
+        <button class="draw-btn" id="drawBtn">🎲 Выбрать победителя</button>
+        <div id="winnerResult"></div>
+    </div>
+    
+    <!-- БЛОК СПИСКА УЧАСТНИКОВ -->
+    <div class="admin-panel">
+        <h3>📋 Список участников (из Google Sheets)</h3>
+        <button class="export-btn" id="exportBtn">📥 Скачать таблицу (CSV для Excel)</button>
+        <div id="lastUpdate" style="font-size: 12px; color: #2e7d32; margin-bottom: 10px;"></div>
+        <div style="overflow-x: auto;">
+            <table id="participantsTable">
+                <thead>
+                    <tr><th>№</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время регистрации</th><th>Интерес</th></tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="6" style="text-align: center;">Войдите в панель организатора, чтобы увидеть список участников</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
+<!-- ФОРМА ВВОДА ПАРОЛЯ -->
+<div id="loginContainer" class="container password-form">
+    <h2>🔒 Вход для организатора</h2>
+    <p>Введите пароль, чтобы получить доступ к розыгрышу и списку участников</p>
+    <input type="password" id="adminPassword" placeholder="Введите пароль">
+    <button class="login-btn" id="loginBtn">Войти</button>
+    <div id="loginError" style="color: red; margin-top: 10px;"></div>
+</div>
+
 <script>
-    // === НАСТРОЙКИ ===
-    // ВАШ ID GOOGLE SHEETS (новый, который вы прислали)
+    // ================= НАСТРОЙКИ =================
+    // ⚠️ УСТАНОВИТЕ СВОЙ ПАРОЛЬ ЗДЕСЬ (измените "ваш_пароль" на нужный)
+    const ADMIN_PASSWORD = "travelclub2025";  // <- ИЗМЕНИТЕ ЭТОТ ПАРОЛЬ НА СВОЙ!
+    
+    // ВАШ ID GOOGLE SHEETS
     const SPREADSHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
     
-    // Глобальный массив участников
+    // Глобальные переменные
     let participants = [];
+    let isAdmin = false;
     
-    // === 1. ЗАГРУЗКА ДАННЫХ ИЗ GOOGLE SHEETS ===
+    // ================= ФУНКЦИИ =================
+    
+    // Проверка сессии при загрузке
+    function checkSession() {
+        const savedSession = sessionStorage.getItem('adminAuthenticated');
+        if (savedSession === 'true') {
+            isAdmin = true;
+            showAdminPanel();
+            loadFromGoogleSheets();
+        }
+    }
+    
+    // Показать панель администратора
+    function showAdminPanel() {
+        document.getElementById('loginContainer').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+        isAdmin = true;
+    }
+    
+    // Скрыть панель администратора
+    function hideAdminPanel() {
+        document.getElementById('loginContainer').classList.remove('hidden');
+        document.getElementById('adminPanel').classList.add('hidden');
+        isAdmin = false;
+        sessionStorage.removeItem('adminAuthenticated');
+    }
+    
+    // Загрузка из Google Sheets
     async function loadFromGoogleSheets() {
+        if (!isAdmin) return;
+        
         const tbody = document.getElementById('tableBody');
         const lastUpdateSpan = document.getElementById('lastUpdate');
         
@@ -233,25 +323,22 @@
         lastUpdateSpan.textContent = 'Обновление...';
         
         try {
-            // Публичный API Google Sheets для чтения (если таблица открыта на просмотр)
             const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
             const response = await fetch(url);
             const text = await response.text();
-            
-            // Парсим JSONP ответ
             const jsonText = text.substring(47, text.length - 2);
             const data = JSON.parse(jsonText);
             
             const rows = data.table.rows;
             if (!rows || rows.length < 2) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">📭 В таблице пока нет данных. Зарегистрируйтесь первым!</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">📭 В таблице пока нет данных</td></tr>';
                 lastUpdateSpan.textContent = `Последнее обновление: ${new Date().toLocaleString()} | Данных нет`;
-                return [];
+                participants = [];
+                return;
             }
             
-            // Преобразуем строки в объекты
             const loadedParticipants = [];
-            for (let i = 1; i < rows.length; i++) { // i=1 пропускаем заголовок
+            for (let i = 1; i < rows.length; i++) {
                 const row = rows[i].c;
                 if (row && row[0] && row[0].v) {
                     loadedParticipants.push({
@@ -265,9 +352,10 @@
                 }
             }
             
-            // Отображаем в таблице
+            participants = loadedParticipants;
+            
             tbody.innerHTML = '';
-            loadedParticipants.forEach(p => {
+            participants.forEach(p => {
                 const row = tbody.insertRow();
                 row.insertCell(0).textContent = p.id;
                 row.insertCell(1).textContent = p.name;
@@ -277,60 +365,47 @@
                 row.insertCell(5).textContent = p.interest || '—';
             });
             
-            lastUpdateSpan.textContent = `✅ Последнее обновление: ${new Date().toLocaleString()} | Всего участников: ${loadedParticipants.length}`;
-            return loadedParticipants;
+            lastUpdateSpan.textContent = `✅ Последнее обновление: ${new Date().toLocaleString()} | Всего участников: ${participants.length}`;
             
         } catch (error) {
-            console.error('Ошибка загрузки из Google Sheets:', error);
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">❌ Ошибка подключения к Google Sheets. Проверьте доступ к таблице.</td></tr>';
-            lastUpdateSpan.textContent = `⚠️ Ошибка синхронизации: ${error.message}`;
-            return [];
+            console.error('Ошибка:', error);
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">❌ Ошибка подключения к Google Sheets</td></tr>';
+            lastUpdateSpan.textContent = `⚠️ Ошибка синхронизации`;
         }
     }
     
-    // === 2. СОХРАНЕНИЕ НОВОГО УЧАСТНИКА В GOOGLE SHEETS (через редирект на форму) ===
-    // Простой способ: открываем Google Forms для добавления строки
-    // Если у вас нет формы, показываем инструкцию
+    // Сохранение регистрации
     function addParticipantToSheet(formData) {
-        // ВАРИАНТ 1: Если у вас есть Google Forms, вставьте ссылку сюда
-        // const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/.../viewform?usp=pp_url';
-        // И затем открыть её с параметрами
-        
-        // ВАРИАНТ 2: Сохраняем в localStorage и показываем инструкцию для ручного импорта
         let offlineParticipants = JSON.parse(localStorage.getItem('offline_registrations')) || [];
         offlineParticipants.push(formData);
         localStorage.setItem('offline_registrations', JSON.stringify(offlineParticipants));
         
-        // Показываем сообщение с инструкцией
         const statusDiv = document.getElementById('registerStatus');
         statusDiv.innerHTML = `
             <div class="status success">
                 ✅ ${formData.name}, вы успешно зарегистрированы!<br>
-                📊 Данные сохранены локально. Чтобы добавить их в Google Sheets:<br>
-                1. Скачайте список участников через кнопку "Скачать таблицу"<br>
-                2. Импортируйте CSV файл в вашу Google таблицу<br>
-                🎯 Вы автоматически участвуете в розыгрыше!
+                📊 Вы автоматически участвуете в розыгрыше!<br>
+                🎯 Результаты будут объявлены организатором.
             </div>
         `;
         
-        // Обновляем локальный список для розыгрыша
-        participants.push(formData);
-        updateLocalTableDisplay();
+        if (isAdmin) {
+            participants.push(formData);
+            updateAdminTableDisplay();
+        }
         
-        // Автоматически скрываем сообщение через 5 секунд
         setTimeout(() => {
             if (statusDiv.firstChild) statusDiv.innerHTML = '';
         }, 5000);
     }
     
-    // Вспомогательная функция для отображения локальных данных
-    function updateLocalTableDisplay() {
+    // Обновление таблицы для админа
+    function updateAdminTableDisplay() {
+        if (!isAdmin) return;
         const tbody = document.getElementById('tableBody');
-        if (tbody && participants.length > 0 && !tbody.innerHTML.includes('Google Sheets')) {
-            // Показываем объединённые данные (из Google Sheets + локальные)
-            const allParticipants = [...participants];
+        if (tbody && participants.length > 0) {
             tbody.innerHTML = '';
-            allParticipants.forEach(p => {
+            participants.forEach(p => {
                 const row = tbody.insertRow();
                 row.insertCell(0).textContent = p.id;
                 row.insertCell(1).textContent = p.name;
@@ -342,29 +417,49 @@
         }
     }
     
-    // === 3. ОБРАБОТКА ФОРМЫ РЕГИСТРАЦИИ ===
+    // ================= ОБРАБОТЧИКИ =================
+    
+    // Вход администратора
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        const password = document.getElementById('adminPassword').value;
+        const errorDiv = document.getElementById('loginError');
+        
+        if (password === ADMIN_PASSWORD) {
+            sessionStorage.setItem('adminAuthenticated', 'true');
+            isAdmin = true;
+            showAdminPanel();
+            loadFromGoogleSheets();
+            errorDiv.textContent = '';
+            document.getElementById('adminPassword').value = '';
+        } else {
+            errorDiv.textContent = '❌ Неверный пароль! Доступ запрещён.';
+        }
+    });
+    
+    // Выход
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        hideAdminPanel();
+    });
+    
+    // Регистрация
     document.getElementById('registrationForm').addEventListener('submit', (e) => {
         e.preventDefault();
         
-        // Собираем данные
         const firstName = document.getElementById('first_name').value.trim();
         const lastName = document.getElementById('last_name').value.trim();
         const fullName = `${firstName} ${lastName}`;
         const phone = document.getElementById('phone').value.trim();
         const email = document.getElementById('email').value.trim();
         
-        // Получаем выбранный вариант из radio
         let interest = '';
         const radioSelected = document.querySelector('input[name="club_interest"]:checked');
         if (radioSelected) interest = radioSelected.value;
         
-        // Валидация
         if (!firstName || !lastName || !phone) {
             alert('Пожалуйста, заполните обязательные поля: Имя, Фамилия, Телефон');
             return;
         }
         
-        // Создаём ID и временную метку
         const newId = participants.length + 1;
         const now = new Date();
         const timestamp = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
@@ -378,14 +473,11 @@
             interest: interest
         };
         
-        // Сохраняем
         addParticipantToSheet(newParticipant);
-        
-        // Очищаем форму (кроме radio)
         e.target.reset();
-        if (radioSelected) radioSelected.checked = false;
+        const radioGroup = document.querySelectorAll('input[name="club_interest"]');
+        radioGroup.forEach(radio => radio.checked = false);
         
-        // Небольшая анимация
         const btn = e.target.querySelector('button');
         btn.textContent = '✅ Зарегистрировано!';
         setTimeout(() => {
@@ -393,28 +485,20 @@
         }, 2000);
     });
     
-    // === 4. РОЗЫГРЫШ ПОБЕДИТЕЛЯ ===
+    // Розыгрыш (только для админа)
     document.getElementById('drawBtn').addEventListener('click', () => {
-        // Берём актуальных участников (из загруженных + локальных)
-        let currentParticipants = [...participants];
-        
-        // Если ещё не загружены из Google Sheets, пробуем загрузить сейчас
-        if (currentParticipants.length === 0) {
-            alert('📭 Список участников загружается... Подождите секунду и попробуйте снова.');
-            loadFromGoogleSheets().then(loaded => {
-                if (loaded.length > 0) {
-                    participants = loaded;
-                    alert(`✅ Загружено ${loaded.length} участников! Нажмите "Выбрать победителя" ещё раз.`);
-                } else {
-                    alert('❌ Нет зарегистрированных участников. Будьте первым!');
-                }
-            });
+        if (!isAdmin) {
+            alert('Доступ запрещён. Только организатор может проводить розыгрыш.');
             return;
         }
         
-        // Выбираем случайного
-        const randomIndex = Math.floor(Math.random() * currentParticipants.length);
-        const winner = currentParticipants[randomIndex];
+        if (participants.length === 0) {
+            alert('📭 Нет зарегистрированных участников.');
+            return;
+        }
+        
+        const randomIndex = Math.floor(Math.random() * participants.length);
+        const winner = participants[randomIndex];
         
         const winnerDiv = document.getElementById('winnerResult');
         winnerDiv.innerHTML = `
@@ -430,14 +514,18 @@
             </div>
         `;
         
-        // Прокручиваем к победителю
         winnerDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
     
-    // === 5. ЭКСПОРТ В CSV ===
+    // Экспорт (только для админа)
     document.getElementById('exportBtn').addEventListener('click', () => {
+        if (!isAdmin) {
+            alert('Доступ запрещён. Только организатор может скачать список участников.');
+            return;
+        }
+        
         if (participants.length === 0) {
-            alert('Нет данных для экспорта. Зарегистрируйте участников или загрузите из Google Sheets.');
+            alert('Нет данных для экспорта.');
             return;
         }
         
@@ -446,7 +534,7 @@
             csvContent += `${p.id},"${p.name}",${p.email},${p.phone},${p.timestamp},"${p.interest || ''}"\n`;
         });
         
-        const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' }); // \uFEFF для поддержки кириллицы
+        const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.href = url;
@@ -456,26 +544,18 @@
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
         
-        alert('✅ CSV файл скачан! Его можно импортировать в Google Sheets (Файл → Импорт)');
+        alert('✅ CSV файл скачан!');
     });
     
-    // === 6. ЗАГРУЗКА ПРИ СТАРТЕ ===
-    async function init() {
-        const loadedData = await loadFromGoogleSheets();
-        if (loadedData.length > 0) {
-            participants = loadedData;
-        } else {
-            // Пробуем загрузить из localStorage (оффлайн-регистрации)
-            const offlineData = JSON.parse(localStorage.getItem('offline_registrations')) || [];
-            if (offlineData.length > 0) {
-                participants = offlineData;
-                updateLocalTableDisplay();
-                document.getElementById('lastUpdate').innerHTML += ' | Показаны локальные данные. Для синхронизации с Google Sheets нажмите F5.';
-            }
+    // Разрешить Enter в поле пароля
+    document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('loginBtn').click();
         }
-    }
+    });
     
-    init();
+    // Проверка сессии при загрузке
+    checkSession();
 </script>
 </body>
 </html>
