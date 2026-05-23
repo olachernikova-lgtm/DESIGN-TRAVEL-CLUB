@@ -215,13 +215,13 @@
             <button id="exportBtn" style="background: #6fae94; margin-bottom: 16px;">📎 Скачать CSV</button>
             <div id="lastUpdate" style="font-size: 12px; color: #548e78; margin-bottom: 12px;"></div>
             <div style="overflow-x: auto;">
-                <table>
+                 <table>
                     <thead>
                         <tr><th>№ участника</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время</th><th>Интерес</th></tr>
                     </thead>
                     <tbody id="tableBody"><tr><td colspan="6" style="text-align: center;">Авторизуйтесь, чтобы увидеть список</td></tr>
                     </tbody>
-                20~
+                 </table>
             </div>
         </div>
     </div>
@@ -260,7 +260,7 @@
         sessionStorage.removeItem('adminAuthenticated');
     }
     
-    // Проверка на дубликат по телефону
+    // Проверка на дубликат по телефону (точное совпадение)
     function isPhoneDuplicate(phone) {
         return participants.some(p => p.phone === phone);
     }
@@ -268,7 +268,7 @@
     async function loadFromGoogleSheets() {
         if (!isAdmin) return;
         const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">🕊️ Загрузка...<\/td><\/tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">🕊️ Загрузка...</td></tr>';
         
         try {
             const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
@@ -280,7 +280,7 @@
             
             if (!rows || rows.length < 2) {
                 participants = [];
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">✨ Пока нет участников<\/td><\/tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">✨ Пока нет участников</td></tr>';
                 document.getElementById('lastUpdate').innerHTML = `📭 Участников: 0 | ${new Date().toLocaleString()}`;
                 return;
             }
@@ -314,7 +314,7 @@
             resetDraw();
         } catch(err) {
             console.error(err);
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#b47c6e;">❌ Ошибка доступа к таблице<\/td><\/tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#b47c6e;">❌ Ошибка доступа к таблице</td></tr>';
         }
     }
     
@@ -322,7 +322,6 @@
         availableParticipants = [...participants];
         winnersList = [];
         drawActive = true;
-        // Перемешиваем для случайности
         for (let i = availableParticipants.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [availableParticipants[i], availableParticipants[j]] = [availableParticipants[j], availableParticipants[i]];
@@ -400,7 +399,6 @@
         return true;
     }
     
-    // Функция получения следующего ID (из таблицы + 1)
     function getNextId() {
         if (participants.length === 0) return 1;
         const maxId = Math.max(...participants.map(p => parseInt(p.id) || 0));
@@ -410,9 +408,9 @@
     async function saveRegistration(formData) {
         const statusDiv = document.getElementById('registerStatus');
         
-        // Проверка на дубликат телефона
+        // ПРОВЕРКА НА ДУБЛИКАТ ТЕЛЕФОНА
         if (isPhoneDuplicate(formData.phone)) {
-            statusDiv.innerHTML = `<div class="status error">❌ Ошибка: номер телефона ${formData.phone} уже зарегистрирован!</div>`;
+            statusDiv.innerHTML = `<div class="status error">❌ Номер телефона ${formData.phone} уже зарегистрирован!</div>`;
             setTimeout(() => statusDiv.innerHTML = '', 5000);
             return false;
         }
@@ -492,7 +490,7 @@
             return; 
         }
         
-        // Получаем следующий ID из таблицы (через загруженных участников)
+        // Получаем следующий ID ТОЛЬКО если телефон не дубликат
         const newId = getNextId();
         
         const success = await saveRegistration({
