@@ -155,27 +155,12 @@
                 if (data.clear) {
                     clearDisplay();
                 } else if (data.id && data.id !== lastWinnerId) {
-                    // Показываем только если данные не старше 1 минуты
                     if (Date.now() - data.timestamp < 60000) {
                         displayWinner(data.id, data.name, data.prize);
                     }
                 }
             } catch(e) {}
         }
-    }
-    
-    // Слушаем BroadcastChannel (мгновенная связь между вкладками)
-    if (typeof BroadcastChannel !== 'undefined') {
-        try {
-            const channel = new BroadcastChannel('winner_channel');
-            channel.onmessage = (event) => {
-                if (event.data && event.data.clear) {
-                    clearDisplay();
-                } else if (event.data && event.data.id) {
-                    displayWinner(event.data.id, event.data.name, event.data.prize);
-                }
-            };
-        } catch(e) {}
     }
     
     // Слушаем storage события
@@ -192,8 +177,8 @@
         }
     });
     
-    // Проверяем каждые 1 секунду (polling для надёжности)
-    setInterval(checkForUpdate, 1000);
+    // Проверяем каждые 0.5 секунды (для надёжности)
+    setInterval(checkForUpdate, 500);
     
     // Проверяем сразу при загрузке
     checkForUpdate();
