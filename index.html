@@ -239,9 +239,8 @@
     let winnersList = [];
     let drawActive = false;
     
-    // Функция для обновления большого экрана через URL параметры
+    // Функция для обновления большого экрана
     function updateBigScreen(winner, prizeNumber) {
-        // Сохраняем в localStorage как резервный вариант
         const winnerData = {
             id: winner.id,
             name: winner.name,
@@ -249,15 +248,6 @@
             timestamp: Date.now()
         };
         localStorage.setItem('winnerDisplay', JSON.stringify(winnerData));
-        
-        // Также отправляем через BroadcastChannel (если поддерживается)
-        if (typeof BroadcastChannel !== 'undefined') {
-            try {
-                const channel = new BroadcastChannel('winner_channel');
-                channel.postMessage(winnerData);
-                channel.close();
-            } catch(e) {}
-        }
         
         // Обновляем на этой странице
         const publicContent = document.getElementById('publicWinnerContent');
@@ -270,15 +260,33 @@
         `;
     }
     
-    // Функция для очистки большого экрана
     function clearBigScreen() {
         localStorage.setItem('winnerDisplay', JSON.stringify({ clear: true, timestamp: Date.now() }));
-        if (typeof BroadcastChannel !== 'undefined') {
-            try {
-                const channel = new BroadcastChannel('winner_channel');
-                channel.postMessage({ clear: true });
-                channel.close();
-            } catch(e) {}
+        document.getElementById('publicWinnerContent').innerHTML = '';
+    }
+    
+    // Функция проверки дубликата по телефону
+    async function checkDuplicatePhone(phone) {
+        try {
+            const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+            const response = await fetch(url);
+            const text = await response.text();
+            const jsonText = text.substring(47, text.length - 2);
+            const data = JSON.parse(jsonText);
+            const rows = data.table.rows;
+            
+            if (!rows || rows.length < 2) return false;
+            
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i].c;
+                if (row && row[3] && row[3].v === phone) {
+                    return true;
+                }
+            }
+            return false;
+        } catch(err) {
+            console.error('Ошибка проверки дубликата:', err);
+            return false;
         }
     }
     
@@ -455,13 +463,16 @@
     
     async function saveRegistration(formData) {
         const statusDiv = document.getElementById('registerStatus');
-        statusDiv.innerHTML = `<div class="status" style="background:#fff3cd;">⏳ Отправка данных...</div>`;
         
-        if (participants.some(p => p.phone === formData.phone)) {
+        // Проверка на дубликат телефона (обязательная!)
+        const isDuplicate = await checkDuplicatePhone(formData.phone);
+        if (isDuplicate) {
             statusDiv.innerHTML = `<div class="status error">❌ Номер телефона ${formData.phone} уже зарегистрирован!</div>`;
             setTimeout(() => statusDiv.innerHTML = '', 5000);
             return false;
         }
+        
+        statusDiv.innerHTML = `<div class="status" style="background:#fff3cd;">⏳ Отправка данных...</div>`;
         
         const newId = await getNextId();
         
