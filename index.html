@@ -97,6 +97,9 @@
             text-align: center;
             margin: 1rem 0;
         }
+        iframe {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -107,93 +110,104 @@
     </div>
 
     <div class="card">
-        <form id="registrationForm">
+        <form id="registrationForm" target="hiddenFrame" method="POST" action="https://script.google.com/macros/s/AKfycbwv_aOPmeoxfy4BixpjeiX5F9Z6XT8_3KIz4qlIXMwi5IsMgESVOr3jbvmoC3uXkkqS/exec">
             <div class="form-group">
                 <label>Имя *</label>
-                <input type="text" id="firstName" required placeholder="Анна">
+                <input type="text" id="firstName" name="firstName" required placeholder="Анна">
             </div>
             <div class="form-group">
                 <label>Фамилия *</label>
-                <input type="text" id="lastName" required placeholder="Андреева">
+                <input type="text" id="lastName" name="lastName" required placeholder="Андреева">
             </div>
             <div class="form-group">
                 <label>Телефон *</label>
-                <input type="tel" id="phone" required placeholder="+7 900 123 45 67">
+                <input type="tel" id="phone" name="phone" required placeholder="+7 900 123 45 67">
             </div>
             <div class="form-group">
                 <label>✨ Хотите присоединиться к закрытому клубу путешественников?</label>
                 <div class="radio-group">
-                    <label><input type="radio" name="club_interest" value="Да"> Да</label>
-                    <label><input type="radio" name="club_interest" value="Безусловно"> Безусловно</label>
-                    <label><input type="radio" name="club_interest" value="Несомненно"> Несомненно</label>
-                    <label><input type="radio" name="club_interest" value="В следующий раз"> В следующий раз</label>
+                    <label><input type="radio" name="interest" value="Да"> Да</label>
+                    <label><input type="radio" name="interest" value="Безусловно"> Безусловно</label>
+                    <label><input type="radio" name="interest" value="Несомненно"> Несомненно</label>
+                    <label><input type="radio" name="interest" value="В следующий раз"> В следующий раз</label>
                 </div>
             </div>
+            <input type="hidden" name="timestamp" id="timestamp">
             <button type="submit">✨ Зарегистрироваться</button>
         </form>
         <div id="regFormStatus"></div>
     </div>
 </div>
 
+<iframe name="hiddenFrame" style="display:none;" onload="handleResponse()"></iframe>
+
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwv_aOPmeoxfy4BixpjeiX5F9Z6XT8_3KIz4qlIXMwi5IsMgESVOr3jbvmoC3uXkkqS/exec';
+    let submissionInProgress = false;
     
     function normalizePhone(phone) {
         return String(phone).replace(/[\s\-\(\)\+]/g, '');
     }
     
-    async function register(formData) {
-        const statusDiv = document.getElementById('regFormStatus');
-        statusDiv.innerHTML = '<div class="status-message info">⏳ Отправка...</div>';
-        
-        try {
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                statusDiv.innerHTML = `
-                    <div class="status-message success">
-                        ✅ ${formData.firstName} ${formData.lastName}, вы зарегистрированы!
-                        <div class="number-big">🎫 Ваш номер: ${result.number || result.id}</div>
-                    </div>
-                `;
-                setTimeout(() => statusDiv.innerHTML = '', 8000);
-                return true;
-            } else if (result.error === 'duplicate_phone') {
-                statusDiv.innerHTML = '<div class="status-message error">❌ Этот номер телефона уже зарегистрирован.</div>';
-                setTimeout(() => statusDiv.innerHTML = '', 5000);
-                return false;
-            } else {
-                throw new Error('Ошибка');
-            }
-        } catch(err) {
-            console.error(err);
-            statusDiv.innerHTML = '<div class="status-message error">❌ Ошибка отправки. Попробуйте ещё раз.</div>';
-            setTimeout(() => statusDiv.innerHTML = '', 5000);
-            return false;
-        }
-    }
-    
-    document.getElementById('registrationForm').onsubmit = async (e) => {
+    document.getElementById('registrationForm').onsubmit = function(e) {
         e.preventDefault();
+        
         const firstName = document.getElementById('firstName').value.trim();
         const lastName = document.getElementById('lastName').value.trim();
-        const phone = normalizePhone(document.getElementById('phone').value.trim());
-        const interest = document.querySelector('input[name="club_interest"]:checked')?.value || '';
+        let phone = document.getElementById('phone').value.trim();
+        const interest = document.querySelector('input[name="interest"]:checked')?.value || '';
+        const timestamp = new Date().toLocaleString();
         
         if (!firstName || !lastName || !phone) {
             alert('Заполните имя, фамилию и телефон');
-            return;
+            return false;
         }
         
-        await register({ firstName, lastName, phone, interest, timestamp: new Date().toLocaleString() });
-        document.getElementById('registrationForm').reset();
+        phone = normalizePhone(phone);
+        
+        // Подставляем значения в форму
+        document.getElementById('timestamp').value = timestamp;
+        
+        // Меняем action на URL с параметрами (GET-запрос для обхода CORS)
+        const form = document.getElementById('registrationForm');
+        const params = new URLSearchParams();
+        params.append('firstName', firstName);
+        params.append('lastName', lastName);
+        params.append('phone', phone);
+        params.append('interest', interest);
+        params.append('timestamp', timestamp);
+        
+        form.action = `${SCRIPT_URL}?${params.toString()}`;
+        form.method = 'GET';
+        
+        const statusDiv = document.getElementById('regFormStatus');
+        statusDiv.innerHTML = '<div class="status-message info">⏳ Отправка...</div>';
+        submissionInProgress = true;
+        
+        form.submit();
+        return true;
     };
+    
+    function handleResponse() {
+        if (!submissionInProgress) return;
+        submissionInProgress = false;
+        
+        const statusDiv = document.getElementById('regFormStatus');
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        
+        // Получаем номер участника (будет в ответе, но из-за iframe сложно)
+        // Показываем успех
+        statusDiv.innerHTML = `
+            <div class="status-message success">
+                ✅ ${firstName} ${lastName}, вы зарегистрированы!
+                <div class="number-big">🎫 Спасибо за регистрацию!</div>
+            </div>
+        `;
+        
+        setTimeout(() => statusDiv.innerHTML = '', 8000);
+        document.getElementById('registrationForm').reset();
+    }
 </script>
 </body>
 </html>
