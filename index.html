@@ -140,7 +140,6 @@
             border: 1px solid #cbdfd6;
         }
 
-        /* Стили для победителя — крупно, красиво, для всех */
         .winner-announcement {
             background: linear-gradient(125deg, #e2f4ed 0%, #d1e9df 100%);
             border-radius: 48px;
@@ -159,10 +158,11 @@
         }
 
         .winner-number-display {
-            font-size: 4rem;
+            font-size: 5rem;
             font-weight: bold;
             color: #2c5a4a;
             margin: 20px 0;
+            letter-spacing: 4px;
         }
 
         .winner-name-display {
@@ -242,7 +242,7 @@
         @media (max-width: 680px) {
             .card { padding: 20px; }
             h2 { font-size: 1.5rem; }
-            .winner-number-display { font-size: 2.5rem; }
+            .winner-number-display { font-size: 3rem; }
             .winner-name-display { font-size: 1.3rem; }
             .winner-announcement { padding: 25px; }
         }
@@ -251,34 +251,34 @@
 <body>
 <div class="main-container">
 
-    <!-- БЛОК ДЛЯ ВСЕХ УЧАСТНИКОВ — здесь появляется победитель -->
+    <!-- БЛОК ДЛЯ ВСЕХ ГОСТЕЙ — здесь появляется номер победителя -->
     <div id="publicWinnerBlock" class="card">
         <h2>🍸 Коктейльный вечер DESIGN TRAVEL CLUB</h2>
         <div id="publicWinnerContent">
-            <div style="text-align: center; padding: 30px; color: #5f9e86;">
-                ✨ Здесь появится имя победителя ✨
+            <div style="text-align: center; padding: 30px; color: #5f9e86; font-size: 1.2rem;">
+                🎫 Здесь появится номер победителя
             </div>
         </div>
     </div>
 
-    <!-- КАРТОЧКА РЕГИСТРАЦИИ (видна всем) -->
+    <!-- КАРТОЧКА РЕГИСТРАЦИИ (гости регистрируются на месте) -->
     <div class="card">
         <form id="registrationForm">
             <div class="form-group">
                 <label>Имя *</label>
-                <input type="text" id="first_name" required placeholder="Александра">
+                <input type="text" id="first_name" required>
             </div>
             <div class="form-group">
                 <label>Фамилия *</label>
-                <input type="text" id="last_name" required placeholder="Черникова">
+                <input type="text" id="last_name" required>
             </div>
             <div class="form-group">
                 <label>Телефон *</label>
-                <input type="tel" id="phone" required placeholder="+7 9XX XXX-XX-XX">
+                <input type="tel" id="phone" required>
             </div>
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" id="email" placeholder="example@mail.com">
+                <input type="email" id="email">
             </div>
             <div class="form-group">
                 <label>✨ Хотите присоединиться к закрытому клубу путешественников и первыми узнавать о роскошных направлениях, уникальных маршрутах и эксклюзивных предложениях?</label>
@@ -289,7 +289,7 @@
                     <label><input type="radio" name="club_interest" value="В следующий раз"> В следующий раз</label>
                 </div>
             </div>
-            <button type="submit">✨ Зарегистрироваться на вечер</button>
+            <button type="submit">✨ Зарегистрироваться</button>
         </form>
         <div id="registerStatus"></div>
     </div>
@@ -303,7 +303,7 @@
         <div id="loginError" style="color: #c2706e; margin-top: 12px;"></div>
     </div>
 
-    <!-- ПАНЕЛЬ ОРГАНИЗАТОРА (видна только после входа) -->
+    <!-- ПАНЕЛЬ ОРГАНИЗАТОРА -->
     <div id="adminPanel" class="card hidden">
         <div class="flex-right">
             <button class="reset-btn" id="resetDrawBtn">🔄 Сбросить розыгрыш</button>
@@ -313,7 +313,7 @@
 
         <div class="admin-panel">
             <h3>🎁 Пошаговый розыгрыш призов</h3>
-            <p style="margin-bottom: 15px; color: #548e78;">Нажимайте кнопку для каждого следующего приза. Победители не повторяются.</p>
+            <p style="margin-bottom: 15px; color: #548e78;">Нажимайте кнопку для каждого приза. Победители не повторяются.</p>
             
             <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
                 <div style="flex: 1; min-width: 150px;">
@@ -334,20 +334,20 @@
                 </div>
             </div>
             
-            <button class="draw-step-btn" id="drawStepBtn" disabled>🎲 Розыграть следующий приз</button>
+            <button class="draw-step-btn" id="drawStepBtn" disabled>🎲 Разыграть следующий приз</button>
             
             <div id="lastWinnerInfo" style="margin-top: 20px;"></div>
         </div>
 
         <div class="admin-panel">
-            <h3>📜 История победителей</h3>
+            <h3>📜 История победителей (номера)</h3>
             <div id="winnersHistoryList" class="winners-history">
                 <div style="color: #8baa9c; text-align: center;">Пока нет победителей</div>
             </div>
         </div>
 
         <div class="admin-panel">
-            <h3>📋 Список участников (Google Sheets)</h3>
+            <h3>📋 Список участников</h3>
             <button id="exportBtn" style="background: #6fae94; margin-bottom: 16px;">📎 Скачать CSV</button>
             <div id="lastUpdate" style="font-size: 12px; color: #548e78; margin-bottom: 12px;"></div>
             <div style="overflow-x: auto;">
@@ -358,7 +358,7 @@
                     <tbody id="tableBody">
                         <tr><td colspan="6" style="text-align: center;">Авторизуйтесь, чтобы увидеть список</td></tr>
                     </tbody>
-                20~
+                </table>
             </div>
         </div>
     </div>
@@ -366,17 +366,15 @@
 
 <script>
     // ================= НАСТРОЙКИ =================
-    const ADMIN_PASSWORD = "travelclub2025";  // ⚠️ ИЗМЕНИТЕ НА СВОЙ ПАРОЛЬ
+    const ADMIN_PASSWORD = "travelclub2025";
     const SPREADSHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
     
     let participants = [];
     let isAdmin = false;
-    let availableParticipants = [];     // Участники, которые ещё не выиграли
-    let winnersList = [];               // Список победителей (по порядку)
-    let totalPrizes = 2;               // Общее количество призов
-    let drawActive = false;             // Активен ли розыгрыш
-    
-    // ================= ФУНКЦИИ =================
+    let availableParticipants = [];
+    let winnersList = [];
+    let totalPrizes = 2;
+    let drawActive = false;
     
     function checkSession() {
         if (sessionStorage.getItem('adminAuthenticated') === 'true') {
@@ -399,7 +397,6 @@
         sessionStorage.removeItem('adminAuthenticated');
     }
     
-    // Загрузка из Google Sheets
     async function loadFromGoogleSheets() {
         if (!isAdmin) return;
         const tbody = document.getElementById('tableBody');
@@ -447,7 +444,6 @@
             });
             document.getElementById('lastUpdate').innerHTML = `🕊️ Участников: ${participants.length} | ${new Date().toLocaleString()}`;
             
-            // Обновляем доступных участников после загрузки
             resetDraw();
             
         } catch(err) {
@@ -456,13 +452,11 @@
         }
     }
     
-    // Сброс розыгрыша
     function resetDraw() {
         availableParticipants = [...participants];
         winnersList = [];
         drawActive = true;
         
-        // Перемешиваем доступных участников для случайности
         for (let i = availableParticipants.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [availableParticipants[i], availableParticipants[j]] = [availableParticipants[j], availableParticipants[i]];
@@ -471,12 +465,10 @@
         updateDrawUI();
         updateWinnersHistory();
         
-        // Очищаем публичный блок
-        document.getElementById('publicWinnerContent').innerHTML = '<div style="text-align: center; padding: 30px; color: #5f9e86;">✨ Здесь появится имя победителя ✨</div>';
+        document.getElementById('publicWinnerContent').innerHTML = '<div style="text-align: center; padding: 30px; color: #5f9e86; font-size: 1.2rem;">🎫 Здесь появится номер победителя</div>';
         document.getElementById('lastWinnerInfo').innerHTML = '';
     }
     
-    // Обновление UI статуса розыгрыша
     function updateDrawUI() {
         const statusDiv = document.getElementById('drawStatus');
         const drawBtn = document.getElementById('drawStepBtn');
@@ -498,12 +490,11 @@
             statusDiv.innerHTML = `⚠️ Нет доступных участников для розыгрыша оставшихся ${remaining} призов.`;
             drawBtn.disabled = true;
         } else {
-            statusDiv.innerHTML = `🎲 Осталось разыграть: ${remaining} из ${prizesCount} призов | Доступно участников: ${availableParticipants.length}`;
+            statusDiv.innerHTML = `🎲 Осталось разыграть: ${remaining} из ${prizesCount} призов | Доступно: ${availableParticipants.length} участников`;
             drawBtn.disabled = false;
         }
     }
     
-    // Обновление истории победителей
     function updateWinnersHistory() {
         const historyDiv = document.getElementById('winnersHistoryList');
         if (winnersList.length === 0) {
@@ -515,36 +506,30 @@
         winnersList.forEach((w, idx) => {
             html += `
                 <div class="winner-history-item">
-                    🏆 <strong>Приз №${idx+1}</strong> — ${w.name} (№ участника: ${w.id})
+                    🏆 <strong>Приз №${idx+1}</strong> — № участника: <strong style="font-size: 1.2rem;">${w.id}</strong> — ${w.name}
                 </div>
             `;
         });
         historyDiv.innerHTML = html;
     }
     
-    // Публикация победителя для всех
     function publishWinnerToPublic(winner, prizeNumber) {
         const publicContent = document.getElementById('publicWinnerContent');
         publicContent.innerHTML = `
             <div class="winner-announcement">
                 <h2>🏆 ПРИЗ №${prizeNumber} 🏆</h2>
                 <div class="winner-number-display">
-                    🎫 Номер участника: ${winner.id}
+                    🎫 № ${winner.id}
                 </div>
                 <div class="winner-name-display">
                     ${winner.name}
                 </div>
-                <div style="margin-top: 20px; font-size: 1.2rem;">
-                    ✨ Поздравляем! ✨
-                </div>
             </div>
         `;
         
-        // Прокручиваем к победителю
         document.getElementById('publicWinnerBlock').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     
-    // Розыгрыш одного победителя
     function drawOneWinner() {
         if (!drawActive) {
             alert('Сначала нажмите "Сбросить розыгрыш"');
@@ -566,23 +551,19 @@
             return false;
         }
         
-        // Берём первого из перемешанного массива (уже случайный порядок)
         const winner = availableParticipants[0];
-        // Удаляем его из доступных
         availableParticipants = availableParticipants.filter(p => p.id !== winner.id);
         
         winnersList.push(winner);
         const prizeNumber = winnersList.length;
         
-        // Показываем всем
         publishWinnerToPublic(winner, prizeNumber);
         
-        // Показываем организатору информацию
         const lastWinnerDiv = document.getElementById('lastWinnerInfo');
         lastWinnerDiv.innerHTML = `
             <div style="background: #dff0e9; border-radius: 20px; padding: 15px; text-align: center;">
-                <strong>✅ Только что разыгран приз №${prizeNumber}</strong><br>
-                🏆 ${winner.name} | № участника: ${winner.id}
+                <strong>✅ Разыгран приз №${prizeNumber}</strong><br>
+                🏆 № участника: ${winner.id} — ${winner.name}
             </div>
         `;
         setTimeout(() => {
@@ -595,15 +576,14 @@
         return true;
     }
     
-    // Сохранение регистрации
     function saveRegistration(formData) {
         let offline = JSON.parse(localStorage.getItem('offline_registrations')) || [];
         offline.push(formData);
         localStorage.setItem('offline_registrations', JSON.stringify(offline));
         
         const statusDiv = document.getElementById('registerStatus');
-        statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 Ваш номер участника: <strong>${formData.id}</strong><br>🍸 Ждём вас на коктейльном вечере!</div>`;
-        setTimeout(() => statusDiv.innerHTML = '', 8000);
+        statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 Ваш номер: <strong>${formData.id}</strong></div>`;
+        setTimeout(() => statusDiv.innerHTML = '', 6000);
         
         if (isAdmin) {
             participants.push(formData);
@@ -633,7 +613,7 @@
             return;
         }
         resetDraw();
-        alert(`✅ Розыгрыш сброшен. Всего участников: ${participants.length}, призов: ${document.getElementById('prizeCount').value}`);
+        alert(`✅ Розыгрыш сброшен. Участников: ${participants.length}, призов: ${document.getElementById('prizeCount').value}`);
     };
     
     document.getElementById('drawStepBtn').onclick = () => {
@@ -667,7 +647,6 @@
         alert('✅ CSV файл скачан');
     };
     
-    // Регистрация
     document.getElementById('registrationForm').onsubmit = (e) => {
         e.preventDefault();
         const firstName = document.getElementById('first_name').value.trim();
@@ -679,7 +658,7 @@
         if (selected) interest = selected.value;
         
         if (!firstName || !lastName || !phone) {
-            alert('Пожалуйста, заполните имя, фамилию и телефон');
+            alert('Заполните имя, фамилию и телефон');
             return;
         }
         
@@ -696,8 +675,8 @@
         
         e.target.reset();
         const btn = e.target.querySelector('button');
-        btn.textContent = '✓ Зарегистрировано!';
-        setTimeout(() => btn.textContent = '✨ Зарегистрироваться на вечер', 3000);
+        btn.textContent = '✓ Готово!';
+        setTimeout(() => btn.textContent = '✨ Зарегистрироваться', 2000);
     };
     
     document.getElementById('adminPassword').addEventListener('keypress', (e) => {
