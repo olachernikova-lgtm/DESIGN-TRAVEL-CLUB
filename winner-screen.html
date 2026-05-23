@@ -122,6 +122,8 @@
 </div>
 
 <script>
+    let lastWinnerId = null;
+    
     function displayWinner(id, name, prizeNumber) {
         const prizeText = prizeNumber ? `ПРИЗ №${prizeNumber}` : 'ПОБЕДИТЕЛЬ';
         document.getElementById('winnerContent').innerHTML = `
@@ -130,66 +132,71 @@
             <div class="winner-name">${decodeURIComponent(name)}</div>
             <div style="margin-top: 50px; font-size: 2rem; color: #8baa9c;">✨ Поздравляем! ✨</div>
         `;
+        lastWinnerId = id;
     }
 
     function clearDisplay() {
-        document.getElementById('winnerContent').innerHTML = `
-            <div class="waiting-message waiting-animation">
-                🎫 Ожидание розыгрыша...
-            </div>
-        `;
+        const currentContent = document.getElementById('winnerContent').innerHTML;
+        if (!currentContent.includes('Ожидание')) {
+            document.getElementById('winnerContent').innerHTML = `
+                <div class="waiting-message waiting-animation">
+                    🎫 Ожидание розыгрыша...
+                </div>
+            `;
+            lastWinnerId = null;
+        }
     }
-
-    // Слушаем изменения в localStorage
-    function startListening() {
-        // Проверяем при загрузке
+    
+    function checkForUpdate() {
         const saved = localStorage.getItem('winnerDisplay');
         if (saved) {
             try {
                 const data = JSON.parse(saved);
-                if (!data.clear && Date.now() - data.timestamp < 60000) {
-                    displayWinner(data.id, data.name, data.prize);
-                } else if (data.clear) {
+                if (data.clear) {
                     clearDisplay();
+                } else if (data.id && data.id !== lastWinnerId) {
+                    // Показываем только если данные не старше 1 минуты
+                    if (Date.now() - data.timestamp < 60000) {
+                        displayWinner(data.id, data.name, data.prize);
+                    }
                 }
             } catch(e) {}
         }
-        
-        // Слушаем изменения (это сработает для ДРУГИХ вкладок)
-        window.addEventListener('storage', (event) => {
-            if (event.key === 'winnerDisplay' && event.newValue) {
-                try {
-                    const data = JSON.parse(event.newValue);
-                    if (!data.clear) {
-                        displayWinner(data.id, data.name, data.prize);
-                    } else {
-                        clearDisplay();
-                    }
-                } catch(e) {}
-            }
-        });
-        
-        // Дополнительно: проверяем каждые 2 секунды (для надёжности)
-        setInterval(() => {
-            const saved = localStorage.getItem('winnerDisplay');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    const currentContent = document.getElementById('winnerContent').innerHTML;
-                    const isWaiting = currentContent.includes('Ожидание');
-                    
-                    if (!data.clear && !isWaiting) return;
-                    if (!data.clear && isWaiting) {
-                        displayWinner(data.id, data.name, data.prize);
-                    } else if (data.clear && !isWaiting) {
-                        clearDisplay();
-                    }
-                } catch(e) {}
-            }
-        }, 2000);
     }
     
-    startListening();
+    // Слушаем BroadcastChannel (мгновенная связь между вкладками)
+    if (typeof BroadcastChannel !== 'undefined') {
+        try {
+            const channel = new BroadcastChannel('winner_channel');
+            channel.onmessage = (event) => {
+                if (event.data && event.data.clear) {
+                    clearDisplay();
+                } else if (event.data && event.data.id) {
+                    displayWinner(event.data.id, event.data.name, event.data.prize);
+                }
+            };
+        } catch(e) {}
+    }
+    
+    // Слушаем storage события
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'winnerDisplay' && event.newValue) {
+            try {
+                const data = JSON.parse(event.newValue);
+                if (data.clear) {
+                    clearDisplay();
+                } else if (data.id && data.id !== lastWinnerId) {
+                    displayWinner(data.id, data.name, data.prize);
+                }
+            } catch(e) {}
+        }
+    });
+    
+    // Проверяем каждые 1 секунду (polling для надёжности)
+    setInterval(checkForUpdate, 1000);
+    
+    // Проверяем сразу при загрузке
+    checkForUpdate();
 </script>
 </body>
 </html>
