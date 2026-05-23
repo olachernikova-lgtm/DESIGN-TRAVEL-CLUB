@@ -23,15 +23,12 @@
             color: #1a4d3e;
             margin-bottom: 1rem;
         }
-        input, button, select {
+        button {
             width: 100%;
             padding: 0.8rem 1rem;
             border-radius: 2rem;
             border: 1px solid #ccc;
             font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        button {
             background: #4d7963;
             color: white;
             font-weight: bold;
@@ -42,7 +39,6 @@
         th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
         th { background: #eaf5f0; }
         .hidden { display: none; }
-        .error { color: #bc4e4e; margin-top: 0.5rem; }
         .winner-area {
             background: linear-gradient(135deg, #e2f4ed, #c8e6d9);
             border-radius: 1.5rem;
@@ -50,45 +46,59 @@
             text-align: center;
             margin-top: 1rem;
         }
-        .winner-number { font-size: 2.5rem; font-weight: bold; color: #1a4d3e; }
-        .flex-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .flex-buttons button { flex: 1; }
+        .winner-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1a4d3e;
+            margin: 0.5rem 0;
+        }
+        .flex-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .flex-buttons button {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="card" id="loginCard">
         <h2>🔐 Вход организатора</h2>
-        <input type="password" id="adminPassword" placeholder="Пароль">
+        <input type="password" id="adminPassword" placeholder="Пароль" style="width:100%; padding:0.8rem; border-radius:2rem; margin-bottom:0.5rem;">
         <button id="loginBtn">Войти</button>
-        <div id="loginError" class="error"></div>
+        <div id="loginError" style="color: #bc4e4e; margin-top:0.5rem;"></div>
     </div>
 
     <div id="adminPanel" class="card hidden">
-        <h2>🌿 Управление розыгрышем</h2>
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
-            <select id="prizeCount" style="width: auto; flex:1;">
+        <h2>🌿 Розыгрыш</h2>
+        <div style="margin-bottom: 1rem;">
+            <label style="display: inline-block; margin-right: 1rem;">🎁 Призов:</label>
+            <select id="prizeCount" style="width: auto; padding: 0.5rem 1rem;">
                 <option value="1">1 приз</option>
                 <option value="2" selected>2 приза</option>
                 <option value="3">3 приза</option>
                 <option value="5">5 призов</option>
             </select>
-            <button id="drawBtn" style="flex:2;">🎲 РАЗЫГРАТЬ СЛЕДУЮЩИЙ ПРИЗ</button>
         </div>
-        <div id="drawStatus" style="background:#eaf5f0; padding:0.75rem; border-radius:2rem; margin-top:0.5rem;">Статус: ожидание</div>
-        <div id="winnerAnnouncement" class="winner-area hidden"></div>
-
-        <h3 style="margin-top: 1.5rem;">📋 Участники</h3>
-        <button id="refreshBtn" style="margin-bottom: 1rem; background:#8db3a2;">🔄 Обновить список</button>
+        <button id="drawBtn">🎲 РАЗЫГРАТЬ СЛЕДУЮЩИЙ ПРИЗ</button>
+        <div id="drawStatus" style="background:#eaf5f0; padding:0.75rem; border-radius:2rem; margin-top:0.5rem; text-align:center;">Статус: ожидание</div>
+        <div id="winnerArea" class="winner-area hidden"></div>
+        
+        <div class="flex-buttons">
+            <button id="resetDrawBtn">🔄 Сбросить розыгрыш</button>
+            <button id="refreshBtn">🔄 Обновить список</button>
+            <button id="logoutBtn">🚪 Выйти</button>
+        </div>
+        
+        <h3 style="margin-top:1rem;">📋 Участники</h3>
         <div style="overflow-x:auto;">
             <table id="participantsTable">
                 <thead><tr><th>№</th><th>Имя</th><th>Фамилия</th><th>Телефон</th></tr></thead>
-                <tbody id="userTable"><tr><td colspan="4">Загрузка...</td></tr></tbody>
-            </table>
-        </div>
-        
-        <div class="flex-buttons">
-            <button id="logoutBtn" style="background:#b1c5bb; color:#2b4b3e;">🚪 Выйти</button>
+                <tbody id="userTable"><tr><td colspan="4">Загрузка...<\/td><\/tr><\/tbody>
+            20~
         </div>
     </div>
 </div>
@@ -97,14 +107,14 @@
     const PASSWORD = "travelclub2025";
     const SHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
     
-    let users = [];
+    let participants = [];
     let winners = [];
     let available = [];
     let isAdmin = false;
     
     async function loadUsers() {
         const tbody = document.getElementById('userTable');
-        if (tbody) tbody.innerHTML = '<tr><td colspan="4">Загрузка...</td></tr>';
+        if (tbody) tbody.innerHTML = '<tr><td colspan="4">Загрузка...<\/td><\/tr>';
         try {
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
             const res = await fetch(url);
@@ -113,39 +123,37 @@
             const rows = json.table.rows;
             
             if (!rows || rows.length < 2) {
-                users = [];
-                if (tbody) tbody.innerHTML = '<tr><td colspan="4">Нет участников</td></tr>';
+                participants = [];
+                if (tbody) tbody.innerHTML = '<tr><td colspan="4">Нет участников<\/td><\/tr>';
                 return;
             }
             
-            users = [];
+            participants = [];
             for (let i = 1; i < rows.length; i++) {
                 const r = rows[i].c;
                 if (r && r[0] && r[0].v) {
-                    users.push({
-                        id: parseInt(r[0].v),
-                        number: parseInt(r[6]?.v) || parseInt(r[0].v),
+                    participants.push({
+                        id: i,
                         firstName: r[1]?.v || '',
                         lastName: r[2]?.v || '',
                         phone: r[3]?.v || ''
                     });
                 }
             }
-            users.sort((a,b) => a.number - b.number);
             
             if (tbody) {
                 tbody.innerHTML = '';
-                users.forEach(u => {
-                    tbody.innerHTML += `<tr><td>${u.number}</td><td>${u.firstName}</td><td>${u.lastName}</td><td>${u.phone}</td></tr>`;
+                participants.forEach((p, idx) => {
+                    tbody.innerHTML += `<tr><td>${idx + 1}</td><td>${p.firstName}</td><td>${p.lastName}</td><td>${p.phone}</td></tr>`;
                 });
             }
             
-            const winnerNumbers = winners.map(w => w.number);
-            available = users.filter(u => !winnerNumbers.includes(u.number));
+            const winnerIds = winners.map(w => w.id);
+            available = participants.filter(p => !winnerIds.includes(p.id));
             updateStatus();
         } catch(err) {
             console.error(err);
-            if (tbody) tbody.innerHTML = '<tr><td colspan="4">Ошибка загрузки</td></tr>';
+            if (tbody) tbody.innerHTML = '<tr><td colspan="4">Ошибка загрузки<\/td><\/tr>';
         }
     }
     
@@ -159,18 +167,18 @@
     }
     
     function showWinner(winner, prizeNum) {
-        const winnerDiv = document.getElementById('winnerAnnouncement');
+        const winnerDiv = document.getElementById('winnerArea');
         winnerDiv.innerHTML = `
-            <h2>🏆 ПРИЗ №${prizeNum} 🏆</h2>
-            <div class="winner-number">🎫 Номер участника: ${winner.number}</div>
-            <div style="font-size:1.2rem;">${winner.firstName} ${winner.lastName}</div>
-            <div style="margin-top:0.5rem;">✨ Поздравляем! ✨</div>
+            <div style="background:linear-gradient(135deg,#e2f4ed,#c8e6d9); border-radius:1.5rem; padding:1.5rem; text-align:center;">
+                <h2>🏆 ПРИЗ №${prizeNum} 🏆</h2>
+                <div class="winner-name">${winner.firstName} ${winner.lastName}</div>
+                <div style="margin-top:0.5rem;">✨ Поздравляем! ✨</div>
+            </div>
         `;
         winnerDiv.classList.remove('hidden');
         
         // Отправляем на экран зрителей
         localStorage.setItem('winnerDisplay', JSON.stringify({
-            number: winner.number,
             name: `${winner.firstName} ${winner.lastName}`,
             prize: prizeNum,
             time: Date.now()
@@ -216,7 +224,10 @@
     };
     
     document.getElementById('drawBtn').onclick = drawWinner;
-    document.getElementById('prizeCount').onchange = updateStatus;
+    document.getElementById('resetDrawBtn').onclick = () => {
+        winners = [];
+        loadUsers();
+    };
     document.getElementById('refreshBtn').onclick = loadUsers;
 </script>
 </body>
