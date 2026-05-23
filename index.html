@@ -2,293 +2,523 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESIGN TRAVEL CLUB — Розыгрыш</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>DESIGN TRAVEL CLUB — Регистрация и розыгрыш</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #d4e9e2;
-            padding: 20px;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(145deg, #dbeae3 0%, #c4d3cb 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
         }
-        .container { max-width: 550px; margin: 0 auto; }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
         .card {
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(90, 130, 110, 0.2);
+            transition: transform 0.2s ease;
         }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
         h2 {
-            color: #2c5a4a;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            border-left: 4px solid #5f9e86;
-            padding-left: 12px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a4d3e;
+            margin-bottom: 1rem;
+            padding-left: 0.75rem;
+            border-left: 5px solid #6b9c86;
         }
-        h3 { color: #2c5a4a; font-size: 1.1rem; margin: 15px 0 10px; }
-        input, button, select {
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            color: #2b5b4a;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        input, button {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            border-radius: 40px;
-            border: 1px solid #ccc;
-            font-size: 16px;
+            padding: 0.8rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid #cbdcd3;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.2s;
         }
+
+        input:focus {
+            outline: none;
+            border-color: #6b9c86;
+            box-shadow: 0 0 0 2px rgba(107, 156, 134, 0.2);
+        }
+
         button {
-            background: #5f9e86;
+            background: linear-gradient(95deg, #6b9c86, #4d7963);
             color: white;
-            font-weight: bold;
+            font-weight: 600;
             border: none;
             cursor: pointer;
+            margin-top: 0.25rem;
         }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
+
         .radio-group label {
-            display: block;
-            background: #f0f7f3;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #edf6f1;
+            padding: 0.7rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid #d0e0d7;
+            font-weight: normal;
             cursor: pointer;
         }
-        .winner-screen {
-            background: linear-gradient(135deg, #e2f4ed, #c8e6d9);
-            border-radius: 30px;
-            padding: 25px;
-            text-align: center;
+
+        .radio-group input {
+            width: 1.2rem;
+            height: 1.2rem;
+            margin: 0;
+            accent-color: #4d7963;
         }
-        .winner-number { font-size: 3.5rem; font-weight: bold; color: #2c5a4a; margin: 10px 0; }
-        .hidden { display: none; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #eaf5f0; }
-        .flex-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
-        .flex-buttons button { flex: 1; margin-bottom: 0; }
-        .status { padding: 10px; border-radius: 25px; margin-top: 10px; text-align: center; }
-        .status.success { background: #d4edda; color: #155724; }
-        .status.error { background: #f8d7da; color: #721c24; }
+
+        .status-message {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .success {
+            background: #e0f2e9;
+            color: #1a5a48;
+            border-left: 4px solid #2b8c6b;
+        }
+
+        .error {
+            background: #ffe6e5;
+            color: #bc4e4e;
+            border-left: 4px solid #dc5f5f;
+        }
+
+        .info {
+            background: #eef2fa;
+            color: #2c5a6e;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th, td {
+            padding: 0.6rem 0.4rem;
+            text-align: left;
+            border-bottom: 1px solid #d4e2db;
+        }
+
+        th {
+            background-color: #e4f1eb;
+            color: #2b5b4a;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .winner-block {
+            background: linear-gradient(125deg, #e2f4ec, #d0e9de);
+            border-radius: 2rem;
+            padding: 2rem 1rem;
+            text-align: center;
+            border: 2px solid #4d7963;
+            animation: gentlePop 0.4s ease-out;
+        }
+
+        @keyframes gentlePop {
+            0% { transform: scale(0.96); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .winner-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #1a4d3e;
+            letter-spacing: 4px;
+            margin: 0.5rem 0;
+        }
+        .winner-name {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #2f604f;
+        }
+
+        @media (max-width: 500px) {
+            .card {
+                padding: 1.25rem;
+            }
+            .winner-number {
+                font-size: 2.5rem;
+            }
+            .winner-name {
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="container">
-
-    <!-- ЭКРАН ПОБЕДИТЕЛЯ -->
-    <div class="card">
-        <h2>🍸 Коктейльный вечер</h2>
-        <div id="winnerDisplay" class="winner-screen">
-            <div style="color:#8baa9c;">🎫 Ожидание розыгрыша</div>
+    <!-- Блок, где все видят победителя -->
+    <div class="card" id="publicWinnerCard">
+        <h2>🍸 Коктейльный вечер · DESIGN TRAVEL CLUB</h2>
+        <div id="winnerDisplayArea">
+            <div class="status-message info" style="text-align: center;">✨ Здесь появится имя победителя ✨</div>
         </div>
     </div>
 
-    <!-- ФОРМА РЕГИСТРАЦИИ -->
+    <!-- ФОРМА РЕГИСТРАЦИИ (видна всем) -->
     <div class="card">
-        <h2>✨ Регистрация</h2>
-        <form id="regForm">
-            <input type="text" id="firstName" placeholder="Имя *" required>
-            <input type="text" id="lastName" placeholder="Фамилия *" required>
-            <input type="tel" id="phone" placeholder="Телефон *" required>
-            <input type="email" id="email" placeholder="Email">
-            <div class="radio-group">
-                <label><input type="radio" name="interest" value="Да"> Хочу в закрытый клуб</label>
-                <label><input type="radio" name="interest" value="Безусловно"> Безусловно, да!</label>
-                <label><input type="radio" name="interest" value="Несомненно"> Несомненно, да</label>
-                <label><input type="radio" name="interest" value="В следующий раз"> В следующий раз</label>
+        <h2>📝 Регистрация на розыгрыш</h2>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label>Имя *</label>
+                <input type="text" id="firstName" required placeholder="Например, Анна">
             </div>
-            <button type="submit">🎫 Зарегистрироваться</button>
+            <div class="form-group">
+                <label>Фамилия *</label>
+                <input type="text" id="lastName" required placeholder="Например, Андреева">
+            </div>
+            <div class="form-group">
+                <label>Телефон *</label>
+                <input type="tel" id="phone" required placeholder="+7 900 123 45 67">
+            </div>
+            <div class="form-group">
+                <label>✨ Хотите присоединиться к закрытому клубу путешественников?</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="club_interest" value="Да"> Да</label>
+                    <label><input type="radio" name="club_interest" value="Безусловно"> Безусловно</label>
+                    <label><input type="radio" name="club_interest" value="Несомненно"> Несомненно</label>
+                    <label><input type="radio" name="club_interest" value="В следующий раз"> В следующий раз</label>
+                </div>
+            </div>
+            <button type="submit">✨ Зарегистрироваться</button>
         </form>
-        <div id="regStatus"></div>
+        <div id="regFormStatus"></div>
     </div>
 
-    <!-- ВХОД ОРГАНИЗАТОРА -->
-    <div class="card" id="loginBlock">
-        <h2>🔐 Организатор</h2>
-        <input type="password" id="adminPass" placeholder="Пароль">
-        <button id="loginBtn">Войти</button>
-        <div id="loginMsg" style="color:red;"></div>
+    <!-- БЛОК ОРГАНИЗАТОРА -->
+    <div class="card" id="organizerLoginCard">
+        <h2>🔐 Организатор розыгрыша</h2>
+        <input type="password" id="adminPassword" placeholder="Введите пароль">
+        <button id="loginToAdminBtn">Войти</button>
+        <div id="loginErrorMsg" style="color: #bc4e4e; margin-top: 0.75rem; font-size: 0.85rem;"></div>
     </div>
 
-    <!-- ПАНЕЛЬ ОРГАНИЗАТОРА -->
-    <div id="adminBlock" class="card hidden">
-        <h2>🎁 Розыгрыш</h2>
-        <select id="prizeCount">
-            <option value="1">1 приз</option>
-            <option value="2" selected>2 приза</option>
-            <option value="3">3 приза</option>
-            <option value="5">5 призов</option>
-        </select>
-        <button id="drawBtn">🎲 Разыграть следующий приз</button>
-        <div id="drawStatus" style="margin-top:10px; padding:10px; background:#eaf5f0; border-radius:20px; text-align:center;"></div>
-        <div class="flex-buttons">
-            <button id="resetDrawBtn">🔄 Сбросить</button>
-            <button id="logoutBtn">🚪 Выйти</button>
+    <!-- ПАНЕЛЬ АДМИНИСТРИРОВАНИЯ (появится после входа) -->
+    <div id="adminPanel" class="card hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <h2 style="margin-bottom: 0;">🌿 Управление розыгрышем</h2>
+            <button id="logoutAdminBtn" style="width: auto; background: #b1c5bb; color: #2b4b3e; padding: 0.4rem 1rem;">Выйти</button>
         </div>
-        <h3>📋 Участники</h3>
-        <div style="overflow-x:auto;"><table><thead><tr><th>№</th><th>ФИО</th><th>Телефон</th></tr></thead><tbody id="tableBody"></tbody></table></div>
-        <button id="refreshBtn" style="margin-top:10px; background:#6fae94;">🔄 Обновить список</button>
-    </div>
+        <div style="margin: 1.5rem 0 1rem 0;">
+            <label style="display: inline-block; margin-right: 1rem;">🎁 Количество призов:</label>
+            <select id="prizesCountSelect" style="width: auto; padding: 0.5rem 1rem;">
+                <option value="1">1 приз</option>
+                <option value="2" selected>2 приза</option>
+                <option value="3">3 приза</option>
+                <option value="5">5 призов</option>
+                <option value="10">10 призов</option>
+            </select>
+        </div>
+        <button id="startDrawButton" style="background: #3a6d59; margin-bottom: 1rem;">🎲 РАЗЫГРАТЬ СЛЕДУЮЩИЙ ПРИЗ</button>
+        <div id="drawInfoArea" class="status-message info">Статус: ожидание розыгрыша</div>
 
+        <hr style="margin: 1.5rem 0; border-color: #d0dfd7;">
+        <h3>📋 СПИСОК УЧАСТНИКОВ</h3>
+        <div class="table-wrapper">
+            <table id="participantsTable">
+                <thead>
+                    <tr><th>№ участника</th><th>Имя</th><th>Фамилия</th><th>Телефон</th></tr>
+                </thead>
+                <tbody id="participantsTableBody">
+                    <tr><td colspan="4">Загрузка списка...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <button id="refreshListButton" style="margin-top: 1rem; background: #8db3a2;">🔄 Обновить список</button>
+    </div>
 </div>
 
 <script>
-    const PASSWORD = "travelclub2025";
-    // ⚠️ ВСТАВЬТЕ ВАШ URL ИЗ GOOGLE APPS SCRIPT:
-    const SCRIPT_URL = "https://script.google.com/macros/s/ВАШ_УРЛ/exec";
-    const SHEET_ID = "1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE";
+    // ================= 1. НАСТРОЙКИ =================
+    const ADMIN_PASSWORD = "travelclub2025";
+    // ВАШ URL ИЗ APPS SCRIPT (УЖЕ ВСТАВЛЕН)
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwv_aOPmeoxfy4BixpjeiX5F9Z6XT8_3KIz4qlIXMwi5IsMgESVOr3jbvmoC3uXkkqS/exec';
     
-    let participants = [];
-    let winners = [];
-    let available = [];
-    let isAdmin = false;
-    let drawActive = false;
+    // ID таблицы, куда пишутся ответы формы (нужно опубликовать таблицу)
+    // Для корректной загрузки списка участников нужно опубликовать таблицу Google Sheets
+    const SHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE'; // ID из URL вашей таблицы
 
-    // ЗАГРУЗКА ИЗ GOOGLE SHEETS
-    async function loadFromSheets() {
-        const tbody = document.getElementById('tableBody');
-        if (tbody) tbody.innerHTML = '<tr><td colspan="3">Загрузка...<\/td><\/tr>';
+    let participantsList = [];
+    let remainingForDraw = [];
+    let winnersList = [];
+    let drawActive = false;
+    let isAdmin = false;
+
+    // Нормализация телефона (только цифры)
+    function normalizePhone(phone) {
+        return String(phone).replace(/[\s\-\(\)\+]/g, '');
+    }
+
+    // ================= 2. ЗАГРУЗКА СПИСКА УЧАСТНИКОВ ИЗ GOOGLE SHEETS =================
+    async function loadParticipantsFromSheets() {
+        const tbody = document.getElementById('participantsTableBody');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="4">🔄 Загрузка...<\/td><\/tr>';
+        
         try {
+            // Используем опубликованный JSON-фид Google Sheets
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-            const res = await fetch(url);
-            const text = await res.text();
-            const json = JSON.parse(text.substring(47, text.length - 2));
-            const rows = json.table.rows;
+            const response = await fetch(url);
+            const text = await response.text();
+            const jsonText = text.substring(47, text.length - 2);
+            const data = JSON.parse(jsonText);
+            const rows = data.table.rows;
             
             if (!rows || rows.length < 2) {
-                participants = [];
-                if (tbody) tbody.innerHTML = '<tr><td colspan="3">Нет участников<\/td><\/tr>';
+                participantsList = [];
+                if (tbody) tbody.innerHTML = '<tr><td colspan="4">Нет зарегистрированных участников<\/td><\/tr>';
                 return;
             }
             
-            participants = [];
+            const newList = [];
             for (let i = 1; i < rows.length; i++) {
-                const r = rows[i].c;
-                if (r && r[0]?.v) {
-                    participants.push({
-                        id: parseInt(r[0].v),
-                        name: r[1]?.v || '',
-                        phone: r[3]?.v || ''
+                const row = rows[i].c;
+                if (row && row[0] && row[0].v) {
+                    newList.push({
+                        id: parseInt(row[0].v),
+                        firstName: row[1]?.v || '',
+                        lastName: row[2]?.v || '',
+                        phone: row[3]?.v || '',
+                        interest: row[4]?.v || '',
+                        timestamp: row[5]?.v || ''
                     });
                 }
             }
-            participants.sort((a,b) => a.id - b.id);
+            participantsList = newList.sort((a,b) => a.id - b.id);
+            
             if (tbody) {
                 tbody.innerHTML = '';
-                participants.forEach(p => {
-                    tbody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.phone}<\/td><\/tr>`;
+                participantsList.forEach(p => {
+                    const row = tbody.insertRow();
+                    row.insertCell(0).textContent = p.id;
+                    row.insertCell(1).textContent = p.firstName;
+                    row.insertCell(2).textContent = p.lastName;
+                    row.insertCell(3).textContent = p.phone;
                 });
             }
-            resetDraw();
+            
+            // Подготовка к розыгрышу
+            const winnerIds = winnersList.map(w => w.id);
+            remainingForDraw = participantsList.filter(p => !winnerIds.includes(p.id));
+            drawActive = true;
+            
         } catch(err) {
-            if (tbody) tbody.innerHTML = '<tr><td colspan="3">Ошибка загрузки<\/td><\/tr>';
+            console.error('Ошибка загрузки:', err);
+            if (tbody) tbody.innerHTML = '<tr><td colspan="4">❌ Ошибка загрузки списка</td></tr>';
         }
     }
 
-    // РЕГИСТРАЦИЯ В GOOGLE SHEETS
-    async function registerToSheet(formData) {
-        const statusDiv = document.getElementById('regStatus');
-        statusDiv.innerHTML = '<div class="status" style="background:#fff3cd;">⏳ Отправка...</div>';
+    // ================= 3. РЕГИСТРАЦИЯ (через Apps Script) =================
+    async function sendRegistrationToScript(formData) {
+        const statusDiv = document.getElementById('regFormStatus');
+        statusDiv.innerHTML = '<div class="status-message info">⏳ Отправка данных...</div>';
+        
         try {
-            await fetch(SCRIPT_URL, {
+            const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
-            statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!</div>`;
-            setTimeout(() => statusDiv.innerHTML = '', 4000);
-            return true;
-        } catch(err) {
-            statusDiv.innerHTML = '<div class="status error">❌ Ошибка отправки</div>';
-            setTimeout(() => statusDiv.innerHTML = '', 3000);
+            const result = await response.json();
+            
+            if (result.success) {
+                statusDiv.innerHTML = `<div class="status-message success">✅ ${formData.firstName} ${formData.lastName}, вы зарегистрированы!<br>🎫 <strong>Ваш номер участника: ${result.id}</strong></div>`;
+                setTimeout(() => statusDiv.innerHTML = '', 5000);
+                // Обновляем список участников для админа
+                if (isAdmin) {
+                    setTimeout(() => loadParticipantsFromSheets(), 1500);
+                }
+                return true;
+            } else if (result.error === 'duplicate_phone') {
+                statusDiv.innerHTML = '<div class="status-message error">❌ Этот номер телефона уже зарегистрирован.</div>';
+                setTimeout(() => statusDiv.innerHTML = '', 5000);
+                return false;
+            } else {
+                throw new Error('Неизвестная ошибка');
+            }
+        } catch (err) {
+            console.error(err);
+            statusDiv.innerHTML = '<div class="status-message error">❌ Ошибка соединения. Попробуйте позже.</div>';
+            setTimeout(() => statusDiv.innerHTML = '', 5000);
             return false;
         }
     }
 
-    // РОЗЫГРЫШ
-    function resetDraw() {
-        available = [...participants];
-        winners = [];
-        drawActive = true;
-        for (let i = available.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
-            [available[i], available[j]] = [available[j], available[i]];
+    // ================= 4. РОЗЫГРЫШ =================
+    function drawOnePrize() {
+        if (!participantsList.length) {
+            alert("Нет участников для розыгрыша.");
+            return false;
         }
-        updateDrawStatus();
-    }
-
-    function updateDrawStatus() {
-        const total = parseInt(document.getElementById('prizeCount').value);
-        const left = total - winners.length;
-        const div = document.getElementById('drawStatus');
-        if (!div) return;
-        if (winners.length >= total) div.innerHTML = '✅ Розыгрыш завершён';
-        else if (available.length === 0) div.innerHTML = '⚠️ Нет участников';
-        else div.innerHTML = `🎲 Осталось ${left} призов | Доступно ${available.length} чел`;
-    }
-
-    function showWinner(winner, prizeNum) {
-        document.getElementById('winnerDisplay').innerHTML = `
-            <div class="winner-screen">
-                <h2>🏆 ПРИЗ №${prizeNum} 🏆</h2>
-                <div class="winner-number">🎫 № ${winner.id}</div>
-                <div>${winner.name}</div>
+        
+        const totalPrizes = parseInt(document.getElementById('prizesCountSelect').value);
+        
+        if (winnersList.length >= totalPrizes) {
+            document.getElementById('drawInfoArea').innerHTML = '<div class="status-message info">🏆 Все призы разыграны! Поздравляем победителей!</div>';
+            drawActive = false;
+            return false;
+        }
+        
+        if (remainingForDraw.length === 0) {
+            document.getElementById('drawInfoArea').innerHTML = '<div class="status-message info">⚠️ Нет доступных участников для розыгрыша.</div>';
+            return false;
+        }
+        
+        const randomIndex = Math.floor(Math.random() * remainingForDraw.length);
+        const winner = remainingForDraw[randomIndex];
+        remainingForDraw.splice(randomIndex, 1);
+        winnersList.push(winner);
+        
+        const currentPrizeNumber = winnersList.length;
+        
+        // Показываем победителя всем
+        const winnerDisplay = document.getElementById('winnerDisplayArea');
+        winnerDisplay.innerHTML = `
+            <div class="winner-block">
+                <h2>🏆 ПРИЗ №${currentPrizeNumber} 🏆</h2>
+                <div class="winner-number">🎫 Номер участника: ${winner.id}</div>
+                <div class="winner-name">${winner.firstName} ${winner.lastName}</div>
+                <div style="margin-top: 0.75rem;">🎉 Поздравляем! 🎉</div>
             </div>
         `;
+        
+        document.getElementById('drawInfoArea').innerHTML = `<div class="status-message success">✅ Разыгран приз №${currentPrizeNumber}. Победитель: ${winner.firstName} ${winner.lastName} (№${winner.id})</div>`;
+        
+        if (winnersList.length >= totalPrizes) {
+            document.getElementById('drawInfoArea').innerHTML = '<div class="status-message info">🎊 Розыгрыш завершён! Все призы нашли своих героев! 🎊</div>';
+        }
+        return true;
     }
 
-    function drawWinner() {
-        const total = parseInt(document.getElementById('prizeCount').value);
-        if (winners.length >= total) { alert('Все призы разыграны'); updateDrawStatus(); return; }
-        if (available.length === 0) { alert('Нет участников'); updateDrawStatus(); return; }
-        const winner = available[0];
-        available = available.filter(p => p.id !== winner.id);
-        winners.push(winner);
-        showWinner(winner, winners.length);
-        updateDrawStatus();
-    }
-
-    // РЕГИСТРАЦИЯ (ФОРМА)
-    document.getElementById('regForm').onsubmit = async (e) => {
+    // ================= 5. ОБРАБОТЧИКИ ИНТЕРФЕЙСА =================
+    
+    // Регистрация
+    document.getElementById('registrationForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const firstName = document.getElementById('firstName').value.trim();
         const lastName = document.getElementById('lastName').value.trim();
-        const fullName = `${firstName} ${lastName}`;
-        const phone = document.getElementById('phone').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const interest = document.querySelector('input[name="interest"]:checked')?.value || '';
-        if (!firstName || !lastName || !phone) { alert('Заполните имя, фамилию и телефон'); return; }
+        const phoneRaw = document.getElementById('phone').value.trim();
+        const phoneNormalized = normalizePhone(phoneRaw);
         
-        // Проверка дубликата
-        if (participants.some(p => p.phone === phone)) {
-            document.getElementById('regStatus').innerHTML = '<div class="status error">❌ Телефон уже зарегистрирован</div>';
-            setTimeout(() => document.getElementById('regStatus').innerHTML = '', 3000);
+        if (!firstName || !lastName || !phoneNormalized) {
+            alert("Заполните все обязательные поля");
             return;
         }
         
-        await registerToSheet({ name: fullName, phone, email, interest, timestamp: new Date().toLocaleString() });
-        e.target.reset();
-        if (isAdmin) setTimeout(loadFromSheets, 2000);
-    };
-
-    // АДМИН
-    document.getElementById('loginBtn').onclick = () => {
-        if (document.getElementById('adminPass').value === PASSWORD) {
+        let interest = '';
+        const selectedRadio = document.querySelector('input[name="club_interest"]:checked');
+        if (selectedRadio) interest = selectedRadio.value;
+        
+        const formData = {
+            firstName: firstName,
+            lastName: lastName,
+            phone: phoneNormalized,
+            interest: interest,
+            timestamp: new Date().toLocaleString()
+        };
+        
+        await sendRegistrationToScript(formData);
+        document.getElementById('registrationForm').reset();
+    });
+    
+    // Вход админа
+    document.getElementById('loginToAdminBtn').addEventListener('click', () => {
+        const pwd = document.getElementById('adminPassword').value;
+        if (pwd === ADMIN_PASSWORD) {
             isAdmin = true;
-            document.getElementById('loginBlock').classList.add('hidden');
-            document.getElementById('adminBlock').classList.remove('hidden');
-            loadFromSheets();
+            document.getElementById('organizerLoginCard').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            loadParticipantsFromSheets();
         } else {
-            document.getElementById('loginMsg').innerText = 'Неверный пароль';
-            setTimeout(() => document.getElementById('loginMsg').innerText = '', 2000);
+            document.getElementById('loginErrorMsg').innerText = 'Неверный пароль';
+            setTimeout(() => document.getElementById('loginErrorMsg').innerText = '', 2000);
         }
-    };
-    document.getElementById('logoutBtn').onclick = () => {
+    });
+    
+    // Выход админа
+    document.getElementById('logoutAdminBtn').addEventListener('click', () => {
         isAdmin = false;
-        document.getElementById('loginBlock').classList.remove('hidden');
-        document.getElementById('adminBlock').classList.add('hidden');
-    };
-    document.getElementById('drawBtn').onclick = drawWinner;
-    document.getElementById('resetDrawBtn').onclick = () => { if(participants.length) resetDraw(); else alert('Нет участников'); };
-    document.getElementById('prizeCount').onchange = updateDrawStatus;
-    document.getElementById('refreshBtn').onclick = loadFromSheets;
+        document.getElementById('organizerLoginCard').classList.remove('hidden');
+        document.getElementById('adminPanel').classList.add('hidden');
+        document.getElementById('adminPassword').value = '';
+    });
+    
+    // Розыгрыш
+    document.getElementById('startDrawButton').addEventListener('click', () => {
+        if (!participantsList.length) {
+            alert("Сначала зарегистрируйте участников. Нажмите 'Обновить список'.");
+            return;
+        }
+        drawOnePrize();
+    });
+    
+    // Обновление списка
+    document.getElementById('refreshListButton').addEventListener('click', () => {
+        loadParticipantsFromSheets();
+    });
+    
+    // Инициализация
+    loadParticipantsFromSheets();
 </script>
 </body>
 </html>
