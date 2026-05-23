@@ -215,13 +215,13 @@
             <button id="exportBtn" style="background: #6fae94; margin-bottom: 16px;">📎 Скачать CSV</button>
             <div id="lastUpdate" style="font-size: 12px; color: #548e78; margin-bottom: 12px;"></div>
             <div style="overflow-x: auto;">
-                 <table>
+                <table>
                     <thead>
                         <tr><th>№ участника</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время</th><th>Интерес</th></tr>
                     </thead>
                     <tbody id="tableBody"><tr><td colspan="6" style="text-align: center;">Авторизуйтесь, чтобы увидеть список</td></tr>
                     </tbody>
-                 </table>
+                20~
             </div>
         </div>
     </div>
@@ -260,15 +260,10 @@
         sessionStorage.removeItem('adminAuthenticated');
     }
     
-    // Проверка на дубликат по телефону (точное совпадение)
-    function isPhoneDuplicate(phone) {
-        return participants.some(p => p.phone === phone);
-    }
-    
     async function loadFromGoogleSheets() {
         if (!isAdmin) return;
         const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">🕊️ Загрузка...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">🕊️ Загрузка...<\/td><\/tr>';
         
         try {
             const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
@@ -280,7 +275,7 @@
             
             if (!rows || rows.length < 2) {
                 participants = [];
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">✨ Пока нет участников</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">✨ Пока нет участников<\/td><\/tr>';
                 document.getElementById('lastUpdate').innerHTML = `📭 Участников: 0 | ${new Date().toLocaleString()}`;
                 return;
             }
@@ -290,7 +285,7 @@
                 const row = rows[i].c;
                 if (row && row[0]?.v) {
                     participants.push({
-                        id: row[0]?.v || i,
+                        id: parseInt(row[0]?.v) || i,
                         name: row[1]?.v || '',
                         email: row[2]?.v || '',
                         phone: row[3]?.v || '',
@@ -299,6 +294,9 @@
                     });
                 }
             }
+            
+            // Сортируем по ID
+            participants.sort((a, b) => a.id - b.id);
             
             tbody.innerHTML = '';
             participants.forEach(p => {
@@ -314,8 +312,12 @@
             resetDraw();
         } catch(err) {
             console.error(err);
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#b47c6e;">❌ Ошибка доступа к таблице</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#b47c6e;">❌ Ошибка доступа к таблице<\/td><\/tr>';
         }
+    }
+    
+    function isPhoneDuplicate(phone) {
+        return participants.some(p => p.phone === phone);
     }
     
     function resetDraw() {
@@ -399,16 +401,9 @@
         return true;
     }
     
-    function getNextId() {
-        if (participants.length === 0) return 1;
-        const maxId = Math.max(...participants.map(p => parseInt(p.id) || 0));
-        return maxId + 1;
-    }
-    
     async function saveRegistration(formData) {
         const statusDiv = document.getElementById('registerStatus');
         
-        // ПРОВЕРКА НА ДУБЛИКАТ ТЕЛЕФОНА
         if (isPhoneDuplicate(formData.phone)) {
             statusDiv.innerHTML = `<div class="status error">❌ Номер телефона ${formData.phone} уже зарегистрирован!</div>`;
             setTimeout(() => statusDiv.innerHTML = '', 5000);
@@ -418,20 +413,25 @@
         statusDiv.innerHTML = `<div class="status" style="background:#fff3cd;">⏳ Отправка данных...</div>`;
         
         try {
-            await fetch(GOOGLE_SCRIPT_URL, {
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
             
-            statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 Ваш номер: <strong>${formData.id}</strong></div>`;
-            setTimeout(() => statusDiv.innerHTML = '', 6000);
+            const result = await response.json();
             
-            if (isAdmin) {
-                setTimeout(() => loadFromGoogleSheets(), 1500);
+            if (result.success) {
+                statusDiv.innerHTML = `<div class="status success">✅ ${formData.name}, вы зарегистрированы!<br>🎫 Ваш номер: <strong>${result.id}</strong></div>`;
+                setTimeout(() => statusDiv.innerHTML = '', 6000);
+                
+                if (isAdmin) {
+                    setTimeout(() => loadFromGoogleSheets(), 1500);
+                }
+                return true;
+            } else {
+                throw new Error('Ошибка сервера');
             }
-            return true;
         } catch(error) {
             console.error('Ошибка:', error);
             statusDiv.innerHTML = `<div class="status error">❌ Ошибка отправки. Попробуйте ещё раз.</div>`;
@@ -490,11 +490,8 @@
             return; 
         }
         
-        // Получаем следующий ID ТОЛЬКО если телефон не дубликат
-        const newId = getNextId();
-        
+        // Отправляем данные без ID — скрипт сам назначит правильный номер
         const success = await saveRegistration({
-            id: newId,
             name: `${firstName} ${lastName}`,
             email: email,
             phone: phone,
@@ -507,6 +504,11 @@
             const btn = e.target.querySelector('button');
             btn.textContent = '✓ Готово!';
             setTimeout(() => btn.textContent = '✨ Зарегистрироваться', 2000);
+            
+            // Обновляем список если админ
+            if (isAdmin) {
+                setTimeout(() => loadFromGoogleSheets(), 2000);
+            }
         }
     };
     
