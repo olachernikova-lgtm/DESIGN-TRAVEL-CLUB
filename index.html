@@ -10,9 +10,101 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(145deg, #d4e9e2 0%, #c2dfd0 100%);
             min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        /* Обычный режим */
+        body.normal-mode {
             padding: 30px 20px;
         }
-        .main-container { max-width: 1100px; margin: 0 auto; width: 100%; }
+        body.normal-mode .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        body.normal-mode .kiosk-container {
+            display: none;
+        }
+        
+        /* Режим киоска (только победитель) */
+        body.kiosk-mode {
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(145deg, #d4e9e2 0%, #c2dfd0 100%);
+        }
+        body.kiosk-mode .main-container {
+            display: none;
+        }
+        body.kiosk-mode .kiosk-container {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #d4e9e2 0%, #c2dfd0 100%);
+            z-index: 1000;
+        }
+        body.kiosk-mode .kiosk-winner-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 80px;
+            padding: 80px 60px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            border: 3px solid rgba(80,140,110,0.3);
+            max-width: 1200px;
+            width: 90%;
+            animation: fadeIn 0.5s ease;
+        }
+        body.kiosk-mode .kiosk-winner-card h1 {
+            font-size: 3.5rem;
+            color: #2c5a4a;
+            margin-bottom: 50px;
+        }
+        body.kiosk-mode .kiosk-prize {
+            font-size: 2.5rem;
+            background: #e2f4ed;
+            display: inline-block;
+            padding: 15px 50px;
+            border-radius: 80px;
+            margin-bottom: 50px;
+            color: #2c5a4a;
+            font-weight: bold;
+        }
+        body.kiosk-mode .kiosk-number {
+            font-size: 14rem;
+            font-weight: bold;
+            color: #2c5a4a;
+            margin: 40px 0;
+            letter-spacing: 15px;
+            line-height: 1;
+        }
+        body.kiosk-mode .kiosk-name {
+            font-size: 4rem;
+            margin: 40px 0;
+            color: #3b6e5c;
+            font-weight: 500;
+            word-break: break-word;
+        }
+        body.kiosk-mode .kiosk-waiting {
+            font-size: 2.5rem;
+            color: #8baa9c;
+            padding: 80px 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes pulse {
+            0%,100%{ opacity: 1; }
+            50%{ opacity: 0.5; }
+        }
+        
+        /* Общие стили для обычного режима */
         .card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 32px;
@@ -20,8 +112,6 @@
             margin-bottom: 28px;
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(80, 140, 110, 0.2);
-            word-wrap: break-word;
-            overflow-wrap: break-word;
         }
         h2 {
             font-size: 1.8rem;
@@ -29,7 +119,6 @@
             border-left: 5px solid #8bc7b2;
             padding-left: 18px;
             margin-bottom: 25px;
-            line-height: 1.3;
         }
         h3 { font-size: 1.4rem; color: #2c5a4a; margin-bottom: 20px; }
         .form-group { margin-bottom: 20px; }
@@ -56,7 +145,6 @@
             flex-wrap: wrap;
             gap: 12px;
             margin-top: 8px;
-            justify-content: flex-start;
         }
         .radio-group label {
             display: inline-flex;
@@ -67,32 +155,21 @@
             border-radius: 40px;
             border: 1px solid #cde4db;
             cursor: pointer;
-            font-size: 0.95rem;
         }
-        .radio-group input {
-            width: 18px;
-            margin: 0;
-            accent-color: #5f9e86;
-        }
-        
         @media (max-width: 600px) {
-            body { padding: 15px; }
+            body.normal-mode { padding: 15px; }
             .card { padding: 20px; }
             h2 { font-size: 1.4rem; }
-            .radio-group {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .radio-group label {
-                width: 100%;
-                justify-content: flex-start;
-                padding: 12px 16px;
-            }
-            .flex-right { justify-content: center; }
-            .logout-btn, .reset-btn, .big-screen-btn, .export-main-btn { width: 100%; margin: 5px 0; text-align: center; }
-            .winner-number { font-size: 3rem; }
-            .winner-name { font-size: 1.5rem; }
-            .winner-announcement { padding: 25px; }
+            .radio-group { flex-direction: column; }
+            .radio-group label { width: 100%; }
+            .flex-right { flex-direction: column; }
+            .flex-right button { width: 100%; margin: 5px 0; }
+            body.kiosk-mode .kiosk-winner-card { padding: 30px 20px; border-radius: 40px; }
+            body.kiosk-mode .kiosk-winner-card h1 { font-size: 1.8rem; margin-bottom: 20px; }
+            body.kiosk-mode .kiosk-prize { font-size: 1.2rem; padding: 10px 20px; margin-bottom: 20px; }
+            body.kiosk-mode .kiosk-number { font-size: 4rem; letter-spacing: 8px; margin: 20px 0; }
+            body.kiosk-mode .kiosk-name { font-size: 1.5rem; margin: 20px 0; }
+            body.kiosk-mode .kiosk-waiting { font-size: 1.2rem; padding: 40px 15px; }
         }
         
         .status {
@@ -100,7 +177,6 @@
             border-radius: 32px;
             margin-top: 18px;
             text-align: center;
-            word-break: break-word;
         }
         .status.success { background: #dff0e9; color: #2a6b55; border-left: 4px solid #5f9e86; }
         .status.error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
@@ -111,66 +187,28 @@
             padding: 40px;
             text-align: center;
             border: 3px solid #5f9e86;
-            word-break: break-word;
         }
         .winner-number { font-size: 5rem; font-weight: bold; color: #2c5a4a; margin: 20px 0; }
-        .winner-name { font-size: 2rem; margin: 15px 0; word-break: break-word; }
+        .winner-name { font-size: 2rem; margin: 15px 0; }
         .hidden { display: none; }
         .draw-step-btn { font-size: 1.3rem; padding: 15px; }
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 24px; overflow-x: auto; display: block; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #d9ece3; word-break: break-word; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #d9ece3; }
         th { background: #eaf5f0; color: #2c5a4a; }
-        .flex-right { text-align: right; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
-        .logout-btn, .reset-btn { width: auto; padding: 8px 24px; margin-left: 0; }
+        .flex-right { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-bottom: 20px; }
+        .logout-btn, .reset-btn, .kiosk-mode-btn, .export-main-btn { width: auto; padding: 8px 24px; }
         .reset-btn { background: #ccaa88; }
-        .big-screen-btn { background: #4f9e86; width: auto; padding: 8px 24px; margin-left: 0; }
-        .export-main-btn { background: #2c7a5e; width: auto; padding: 8px 24px; margin-left: 0; }
-        
-        /* Стили для режима киоска (только победитель) */
-        body.kiosk-mode {
-            padding: 0;
-            overflow: hidden;
-        }
-        body.kiosk-mode .main-container {
-            max-width: 100%;
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-        }
-        body.kiosk-mode .card:not(.winner-card-full) {
-            display: none;
-        }
-        body.kiosk-mode .winner-card-full {
-            display: block !important;
-            margin: 0;
-            background: transparent;
-            box-shadow: none;
-            border: none;
-            padding: 0;
-        }
-        body.kiosk-mode .winner-announcement {
-            transform: scale(1.1);
-            margin: 0 40px;
-        }
-        .winner-card-full {
-            display: none;
-        }
+        .kiosk-mode-btn { background: #4f9e86; }
+        .export-main-btn { background: #2c7a5e; }
     </style>
 </head>
-<body>
-<div class="main-container">
+<body class="normal-mode">
 
+<!-- Обычный режим -->
+<div class="main-container">
     <div class="card">
         <h2>🍸 Коктейльный вечер DESIGN TRAVEL CLUB</h2>
         <div id="publicWinnerContent"></div>
-    </div>
-
-    <!-- Скрытый блок для полноэкранного режима -->
-    <div id="fullscreenWinnerBlock" class="winner-card-full">
-        <div id="fullscreenWinnerContent"></div>
     </div>
 
     <div class="card">
@@ -202,8 +240,8 @@
 
     <div id="adminPanel" class="card hidden">
         <div class="flex-right">
-            <button class="big-screen-btn" id="openBigScreenBtn">🖥️ Большой экран</button>
-            <button class="export-main-btn" id="exportMainBtn">📥 Скачать таблицу (CSV)</button>
+            <button class="kiosk-mode-btn" id="kioskModeBtn">🖥️ Режим большого экрана</button>
+            <button class="export-main-btn" id="exportMainBtn">📥 Скачать CSV</button>
             <button class="reset-btn" id="resetDrawBtn">🔄 Сбросить розыгрыш</button>
             <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
         </div>
@@ -224,21 +262,26 @@
         <div class="admin-panel">
             <h3>📋 Список участников</h3>
             <div style="overflow-x: auto;">
-                <table style="display: table; width: 100%;">
-                    <thead><tr><th>№</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время</th><th>Интерес</th></tr></thead>
-                    <tbody id="tableBody"><tr><td colspan="6" style="text-align:center;">Загрузка...<\/td><\/tr><\/tbody>
-                20~
+                </table><thead><tr><th>№</th><th>ФИО</th><th>Email</th><th>Телефон</th><th>Время</th><th>Интерес</th></tr></thead>
+                <tbody id="tableBody"><tr><td colspan="6">Загрузка...<\/td><\/tr><\/tbody>
+            20~
             </div>
-            <p style="font-size: 12px; color: #6a9e8a; margin-top: 15px; text-align: center;">
-                💾 Данные хранятся в вашем браузере. Нажмите «Скачать таблицу», чтобы сохранить копию.
-            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Режим киоска (большой экран) -->
+<div class="kiosk-container" style="display: none;">
+    <div class="kiosk-winner-card">
+        <h1>🍸 DESIGN TRAVEL CLUB</h1>
+        <div id="kioskContent">
+            <div class="kiosk-waiting">🎫 Ожидание розыгрыша...</div>
         </div>
     </div>
 </div>
 
 <script>
     const ADMIN_PASSWORD = "travelclub2025";
-    
     let participants = JSON.parse(localStorage.getItem('participants')) || [];
     let isAdmin = false;
     let available = [];
@@ -246,18 +289,42 @@
     let drawActive = false;
     let isKioskMode = false;
     
-    function saveParticipants() {
-        localStorage.setItem('participants', JSON.stringify(participants));
+    function saveParticipants() { localStorage.setItem('participants', JSON.stringify(participants)); }
+    
+    function updateKioskDisplay(winner, prizeNum) {
+        const kioskContent = document.getElementById('kioskContent');
+        if (winner) {
+            kioskContent.innerHTML = `
+                <div class="kiosk-prize">🏆 ПРИЗ №${prizeNum} 🏆</div>
+                <div class="kiosk-number">🎫 № ${winner.id}</div>
+                <div class="kiosk-name">${winner.name}</div>
+                <div style="margin-top: 40px; font-size: 1.8rem;">✨ Поздравляем! ✨</div>
+            `;
+        } else {
+            kioskContent.innerHTML = '<div class="kiosk-waiting">🎫 Ожидание розыгрыша...</div>';
+        }
+    }
+    
+    function updateNormalDisplay(winner, prizeNum) {
+        const publicContent = document.getElementById('publicWinnerContent');
+        if (winner) {
+            publicContent.innerHTML = `
+                <div class="winner-announcement">
+                    <h2>🏆 ПРИЗ №${prizeNum} 🏆</h2>
+                    <div class="winner-number">🎫 № ${winner.id}</div>
+                    <div class="winner-name">${winner.name}</div>
+                </div>
+            `;
+        } else {
+            publicContent.innerHTML = '';
+        }
     }
     
     function updateTable() {
         const tbody = document.getElementById('tableBody');
         if (!tbody) return;
         tbody.innerHTML = '';
-        if (participants.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Нет участников</td></tr>';
-            return;
-        }
+        if (participants.length === 0) { tbody.innerHTML = '<tr><td colspan="6">Нет участников<\/td><\/tr>'; return; }
         participants.forEach(p => {
             const row = tbody.insertRow();
             row.insertCell(0).textContent = p.id;
@@ -276,36 +343,6 @@
         setTimeout(() => div.innerHTML = '', 5000);
     }
     
-    function updateBothScreens(winner, prize) {
-        // Обычный экран
-        const publicContent = document.getElementById('publicWinnerContent');
-        publicContent.innerHTML = `
-            <div class="winner-announcement">
-                <h2>🏆 ПРИЗ №${prize} 🏆</h2>
-                <div class="winner-number">🎫 № ${winner.id}</div>
-                <div class="winner-name">${winner.name}</div>
-            </div>
-        `;
-        
-        // Полноэкранный режим
-        const fullscreenContent = document.getElementById('fullscreenWinnerContent');
-        fullscreenContent.innerHTML = `
-            <div class="winner-announcement">
-                <h2>🏆 ПРИЗ №${prize} 🏆</h2>
-                <div class="winner-number">🎫 № ${winner.id}</div>
-                <div class="winner-name">${winner.name}</div>
-            </div>
-        `;
-        
-        // Сохраняем в localStorage для синхронизации
-        localStorage.setItem('winnerDisplay', JSON.stringify({
-            id: winner.id,
-            name: winner.name,
-            prize: prize,
-            time: Date.now()
-        }));
-    }
-    
     function resetDraw() {
         available = [...participants];
         winners = [];
@@ -315,11 +352,9 @@
             [available[i], available[j]] = [available[j], available[i]]; 
         }
         updateUI();
-        const historyDiv = document.getElementById('winnersHistoryList');
-        if (historyDiv) historyDiv.innerHTML = '<div style="color:#8baa9c;">Пока нет победителей</div>';
-        document.getElementById('publicWinnerContent').innerHTML = '';
-        document.getElementById('fullscreenWinnerContent').innerHTML = '';
-        localStorage.setItem('winnerDisplay', JSON.stringify({clear: true, time: Date.now()}));
+        document.getElementById('winnersHistoryList').innerHTML = '<div style="color:#8baa9c;">Пока нет победителей</div>';
+        updateNormalDisplay(null, null);
+        if (isKioskMode) updateKioskDisplay(null, null);
     }
     
     function updateUI() {
@@ -327,23 +362,10 @@
         const left = count - winners.length;
         const btn = document.getElementById('drawStepBtn');
         const statusDiv = document.getElementById('drawStatus');
-        if (!drawActive) { 
-            if(statusDiv) statusDiv.innerHTML = '⏸️ Нажмите "Сбросить"'; 
-            if(btn) btn.disabled = true; 
-            return; 
-        }
-        if (winners.length >= count) { 
-            if(statusDiv) statusDiv.innerHTML = '✅ Розыгрыш завершён'; 
-            if(btn) btn.disabled = true; 
-        }
-        else if (available.length === 0) { 
-            if(statusDiv) statusDiv.innerHTML = '⚠️ Нет участников'; 
-            if(btn) btn.disabled = true; 
-        }
-        else { 
-            if(statusDiv) statusDiv.innerHTML = `🎲 Осталось ${left} призов | Доступно ${available.length} чел`; 
-            if(btn) btn.disabled = false; 
-        }
+        if (!drawActive) { statusDiv.innerHTML = '⏸️ Нажмите "Сбросить"'; btn.disabled = true; return; }
+        if (winners.length >= count) { statusDiv.innerHTML = '✅ Розыгрыш завершён'; btn.disabled = true; }
+        else if (available.length === 0) { statusDiv.innerHTML = '⚠️ Нет участников'; btn.disabled = true; }
+        else { statusDiv.innerHTML = `🎲 Осталось ${left} призов | Доступно ${available.length} чел`; btn.disabled = false; }
     }
     
     function drawWinner() {
@@ -355,98 +377,68 @@
         available = available.filter(p => p.id !== winner.id);
         winners.push(winner);
         const prizeNum = winners.length;
-        updateBothScreens(winner, prizeNum);
-        const lastDiv = document.getElementById('lastWinnerInfo');
-        if(lastDiv) {
-            lastDiv.innerHTML = `<div style="background:#dff0e9; border-radius:20px; padding:15px; text-align:center;"><strong>✅ Приз №${prizeNum}</strong><br>🏆 ${winner.name} (№${winner.id})</div>`;
-            setTimeout(() => lastDiv.innerHTML = '', 4000);
-        }
+        
+        // Обновляем оба режима
+        updateNormalDisplay(winner, prizeNum);
+        if (isKioskMode) updateKioskDisplay(winner, prizeNum);
+        
+        document.getElementById('lastWinnerInfo').innerHTML = `<div style="background:#dff0e9; border-radius:20px; padding:15px; text-align:center;"><strong>✅ Приз №${prizeNum}</strong><br>🏆 ${winner.name} (№${winner.id})</div>`;
+        setTimeout(() => document.getElementById('lastWinnerInfo').innerHTML = '', 4000);
         let html = '';
         winners.forEach((w,i) => { html += `<div style="background:white; margin:8px 0; padding:10px; border-radius:15px;">🏆 Приз ${i+1} — №${w.id} — ${w.name}</div>`; });
-        const historyDiv = document.getElementById('winnersHistoryList');
-        if(historyDiv) historyDiv.innerHTML = html;
+        document.getElementById('winnersHistoryList').innerHTML = html;
         updateUI();
     }
     
     function exportToCSV() {
-        if (participants.length === 0) {
-            alert('Нет данных для экспорта');
-            return;
-        }
-        let csv = "№ участника,ФИО,Email,Телефон,Время регистрации,Интерес\n";
-        participants.forEach(p => {
-            csv += `${p.id},"${p.name}",${p.email},${p.phone},${p.timestamp},"${p.interest || ''}"\n`;
-        });
-        const blob = new Blob(["\uFEFF" + csv], {type: 'text/csv;charset=utf-8;'});
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.href = url;
-        link.setAttribute('download', 'участники_розыгрыша.csv');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        showStatus('✅ Таблица скачана!', false);
+        if (participants.length === 0) { alert('Нет данных'); return; }
+        let csv = "№,ФИО,Email,Телефон,Время,Интерес\n";
+        participants.forEach(p => csv += `${p.id},"${p.name}",${p.email},${p.phone},${p.timestamp},"${p.interest || ''}"\n`);
+        const blob = new Blob(["\uFEFF" + csv], {type: 'text/csv'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'participants.csv';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        showStatus('✅ CSV скачан', false);
     }
     
     function toggleKioskMode() {
+        const body = document.body;
         if (!isKioskMode) {
-            document.body.classList.add('kiosk-mode');
+            body.classList.remove('normal-mode');
+            body.classList.add('kiosk-mode');
             isKioskMode = true;
+            // Показать текущего победителя, если есть
+            if (winners.length > 0) {
+                const lastWinner = winners[winners.length - 1];
+                updateKioskDisplay(lastWinner, winners.length);
+            } else {
+                updateKioskDisplay(null, null);
+            }
         } else {
-            document.body.classList.remove('kiosk-mode');
+            body.classList.remove('kiosk-mode');
+            body.classList.add('normal-mode');
             isKioskMode = false;
         }
     }
     
-    document.getElementById('registrationForm').addEventListener('submit', (e) => {
+    document.getElementById('registrationForm').onsubmit = (e) => {
         e.preventDefault();
-        const firstName = document.getElementById('first_name').value.trim();
-        const lastName = document.getElementById('last_name').value.trim();
-        const fullName = `${firstName} ${lastName}`;
+        const name = `${document.getElementById('first_name').value.trim()} ${document.getElementById('last_name').value.trim()}`;
         const phone = document.getElementById('phone').value.trim();
         const email = document.getElementById('email').value.trim();
-        let interest = '';
-        const selected = document.querySelector('input[name="club_interest"]:checked');
-        if (selected) interest = selected.value;
-        
-        if (!firstName || !lastName || !phone) {
-            alert('Заполните имя, фамилию и телефон');
-            return;
-        }
-        
-        if (participants.some(p => p.phone === phone)) {
-            showStatus(`❌ Номер телефона ${phone} уже зарегистрирован!`, true);
-            return;
-        }
-        
-        if (participants.some(p => p.name === fullName)) {
-            showStatus(`❌ Участник с именем ${fullName} уже зарегистрирован!`, true);
-            return;
-        }
-        
+        let interest = document.querySelector('input[name="club_interest"]:checked')?.value || '';
+        if (!name || !phone) { alert('Заполните имя, фамилию и телефон'); return; }
+        if (participants.some(p => p.phone === phone)) { showStatus(`❌ Телефон ${phone} уже зарегистрирован!`, true); return; }
+        if (participants.some(p => p.name === name)) { showStatus(`❌ Имя ${name} уже зарегистрировано!`, true); return; }
         const newId = participants.length + 1;
-        const newParticipant = {
-            id: newId,
-            name: fullName,
-            email: email,
-            phone: phone,
-            timestamp: new Date().toLocaleString(),
-            interest: interest
-        };
-        
-        participants.push(newParticipant);
+        participants.push({ id: newId, name, email, phone, timestamp: new Date().toLocaleString(), interest });
         saveParticipants();
-        
-        showStatus(`✅ ${fullName}, вы зарегистрированы!<br>🎫 <strong style="font-size:1.3rem;">ВАШ НОМЕР: ${newId}</strong>`, false);
-        
+        showStatus(`✅ ${name}, вы зарегистрированы!<br>🎫 ВАШ НОМЕР: ${newId}`, false);
         e.target.reset();
-        document.querySelectorAll('input[name="club_interest"]').forEach(r => r.checked = false);
-        
-        if (isAdmin) {
-            updateTable();
-        }
-    });
+        if (isAdmin) updateTable();
+    };
     
     document.getElementById('loginBtn').onclick = () => {
         if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
@@ -455,66 +447,19 @@
             document.getElementById('loginContainer').classList.add('hidden');
             document.getElementById('adminPanel').classList.remove('hidden');
             updateTable();
-        } else {
-            document.getElementById('loginError').innerText = 'Неверный пароль';
-        }
+        } else { document.getElementById('loginError').innerText = 'Неверный пароль'; }
     };
-    
     document.getElementById('logoutBtn').onclick = () => {
         sessionStorage.removeItem('admin');
         isAdmin = false;
         document.getElementById('loginContainer').classList.remove('hidden');
         document.getElementById('adminPanel').classList.add('hidden');
     };
-    
-    document.getElementById('resetDrawBtn').onclick = () => { 
-        if(participants.length) resetDraw(); 
-        else alert('Нет участников'); 
-    };
-    
+    document.getElementById('resetDrawBtn').onclick = () => { if(participants.length) resetDraw(); else alert('Нет участников'); };
     document.getElementById('drawStepBtn').onclick = drawWinner;
     document.getElementById('prizeCount').onchange = updateUI;
-    
-    document.getElementById('openBigScreenBtn').onclick = () => {
-        // Открываем новое окно в режиме киоска
-        const kioskWindow = window.open('?kiosk=true', '_blank', 'fullscreen=yes,menubar=no,toolbar=no,location=no');
-        if (kioskWindow) {
-            kioskWindow.focus();
-        }
-    };
-    
+    document.getElementById('kioskModeBtn').onclick = toggleKioskMode;
     document.getElementById('exportMainBtn').onclick = exportToCSV;
-    
-    // Проверяем параметр kiosk в URL
-    if (window.location.search.includes('kiosk=true')) {
-        toggleKioskMode();
-        // Скрываем всё лишнее
-        document.getElementById('loginContainer').classList.add('hidden');
-        document.getElementById('adminPanel').classList.add('hidden');
-        // Периодически проверяем обновления
-        setInterval(() => {
-            const saved = localStorage.getItem('winnerDisplay');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    if (data.clear) {
-                        document.getElementById('fullscreenWinnerContent').innerHTML = '';
-                    } else if (data.id && Date.now() - data.time < 60000) {
-                        const fullscreenContent = document.getElementById('fullscreenWinnerContent');
-                        if (!fullscreenContent.innerHTML.includes(data.id)) {
-                            fullscreenContent.innerHTML = `
-                                <div class="winner-announcement">
-                                    <h2>🏆 ПРИЗ №${data.prize} 🏆</h2>
-                                    <div class="winner-number">🎫 № ${data.id}</div>
-                                    <div class="winner-name">${data.name}</div>
-                                </div>
-                            `;
-                        }
-                    }
-                } catch(e) {}
-            }
-        }, 1000);
-    }
     
     if (sessionStorage.getItem('admin') === 'true') {
         isAdmin = true;
@@ -522,10 +467,7 @@
         document.getElementById('adminPanel').classList.remove('hidden');
         updateTable();
     }
-    
-    if (document.getElementById('tableBody')) {
-        updateTable();
-    }
+    updateTable();
 </script>
 </body>
 </html>
