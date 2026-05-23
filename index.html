@@ -231,7 +231,7 @@
     // ================= НАСТРОЙКИ =================
     const ADMIN_PASSWORD = "travelclub2025";
     const SPREADSHEET_ID = '1wN9aTVvbnmTwijUvRF21toueWWjmeUsUeQDCpQvZqEE';
-    // НОВЫЙ URL (ОБНОВЛЁН)
+    // ВАШ URL (ВСТАВЛЕН)
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwv_aOPmeoxfy4BixpjeiX5F9Z6XT8_3KIz4qlIXMwi5IsMgESVOr3jbvmoC3uXkkqS/exec';
     
     let participants = [];
@@ -264,7 +264,7 @@
     async function loadFromGoogleSheets() {
         if (!isAdmin) return;
         const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">🕊️ Загрузка...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">🕊️ Загрузка...<\/td><\/tr>';
         
         try {
             const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
@@ -276,7 +276,7 @@
             
             if (!rows || rows.length < 2) {
                 participants = [];
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">✨ Пока нет участников</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">✨ Пока нет участников<\/td><\/tr>';
                 document.getElementById('lastUpdate').innerHTML = `📭 Участников: 0 | ${new Date().toLocaleString()}`;
                 return;
             }
@@ -312,7 +312,7 @@
             resetDraw();
         } catch(err) {
             console.error(err);
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#b47c6e;">❌ Ошибка доступа к таблице</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#b47c6e;">❌ Ошибка доступа к таблице<\/td><\/tr>';
         }
     }
     
